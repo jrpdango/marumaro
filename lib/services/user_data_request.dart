@@ -3,13 +3,18 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 class UserDataRequest {
-  static void createRequest(MALClient client) async {
+  static Future<Map> createRequest(MALClient client) async {
     String url = 'https://api.myanimelist.net/v2/users/@me';
     Response response = await client.userClient.get(url,
         headers: {"Authorization": "Bearer ${client.token.accessToken}"});
-    Map respMap = json.decode(response.body);
-    //respMap gives a json response of keys {id, name, birthday, location, joined_at}
-    print("User name is ${respMap["name"]}");
-    print(respMap);
+    Map respMap = Map();
+    if (response.statusCode == 200) {
+      //respMap gives a json response of keys {id, name, birthday, location, joined_at}
+      respMap = json.decode(response.body);
+      respMap["status_code"] = 200;
+    } else {
+      respMap["status_code"] = response.statusCode;
+    }
+    return respMap;
   }
 }

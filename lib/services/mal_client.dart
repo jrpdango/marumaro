@@ -8,34 +8,38 @@ import 'package:miru/services/user_data_request.dart';
 class MALClient {
   static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
   String accessCode;
-  Map tokenData;
   Client userClient = Client();
-  LoginRequest loginRequest =
-      LoginRequest(codeChallenge: CodeGenerator.genPKCEcode());
+  OAuthRequest oAuthRequest =
+      OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
   Token token;
 
-  String login() {
+  String getAuthURL() {
     String url;
     try {
       // Receive URL with PKCE challenge
-      url = loginRequest.createRequest(this);
+      url = oAuthRequest.createRequest(this);
     } catch (e) {
       url = "Something happened here";
     }
     return url;
   }
 
-  Future<void> getToken() async {
-    this.token = await loginRequest.generateToken(this, this.accessCode);
-    // this.accessToken = tokenData["access_token"];
-    // this.refreshToken = tokenData["refresh_token"];
+  Future<void> getTokens() async {
+    this.token = await oAuthRequest.generateTokens(this, this.accessCode);
     print("DEBUG: Tokens received:");
-    print("Access token: ${token.accessToken}");
-    print("Refresh token: ${token.refreshToken}");
+    print("Access token: ${this.token.accessToken}");
+    print("Refresh token: ${this.token.refreshToken}");
   }
 
-  Future<void> getUserData() async {
-    UserDataRequest.createRequest(this);
+  Future<void> refreshTokens() async {
+    this.token = await oAuthRequest.refreshTokens(this, this.token);
+    print("DEBUG: Tokens refreshed:");
+    print("Access token: ${this.token.accessToken}");
+    print("Refresh token: ${this.token.refreshToken}");
+  }
+
+  Future<Map> getUserData() async {
+    return UserDataRequest.createRequest(this);
   }
 
   Future<void> updateList(UpdateListRequest updateListRequest) async {

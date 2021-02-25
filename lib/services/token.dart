@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:miru/services/mal_client.dart';
+import 'dart:convert';
+// import 'package:miru/services/mal_client.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 class Token {
   String accessToken;
@@ -9,12 +9,16 @@ class Token {
 
   Token({this.accessToken, this.refreshToken});
 
-  Future<bool> isValid() async {
-    Directory appDir = await getApplicationDocumentsDirectory();
-    File file = File("${appDir.path}/miruTokens.json").existsSync()
-        ? File("${appDir.path}/miruTokens.json")
-        : File("${appDir.path}/miruTokens.json").create();
+  // Method to write tokens to device
+  Future<File> writeToFile() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    File file = File("${directory.path}/miruTokens.json");
+    String data = json.encode(
+        {"access_token": this.accessToken, "refresh_token": this.refreshToken});
+    if (file.readAsStringSync().isNotEmpty) {
+      await File("${directory.path}/miruTokens.json").delete();
+      file = await File("${directory.path}/miruTokens.json").create();
+    }
+    return await file.writeAsString(data);
   }
-  //TODO: method to write tokens to device
-
 }

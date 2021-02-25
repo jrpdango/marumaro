@@ -28,7 +28,7 @@ class _MALWebViewState extends State<MALWebView> {
           },
           onLoadStart: (InAppWebViewController _controller, String url) {
             // User is redirected here
-            if (url.startsWith("http://jpmiru.com/oauth")) {
+            if (url.startsWith("http://localhost/oauth")) {
               Navigator.pop(context, {"accessCode": url});
             }
           },
