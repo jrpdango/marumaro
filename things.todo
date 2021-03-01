@@ -1,0 +1,20 @@
+Things to do:
+    Back-end:
+        ✔ Anime search @done (01/03/2021, 7:22:19 pm)
+        ☐ Fix get request ambiguity
+        ☐ Get anime details
+        ☐ Get anime ranking @low
+        ☐ Get seasonal anime @low
+        ☐ Get suggested anime @low
+        ☐ Delete anime from user list
+        ☐ Save user list to file
+        ☐ Retrieve user list from file
+        ☐ Update file with user list from MAL
+    Front-end:
+        ☐ Splash screen (lottie animated?)
+        ☐ Screen for non-OAuthed users
+        ☐ Home list view
+        ☐ Pagination of user list (watching, ptw, etc.)
+        ☐ Bottom nav bar
+    Future plans:
+        ☐ Add manga list integration

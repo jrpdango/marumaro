@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/services/anime_search_request.dart';
+import 'package:miru/services/mal_client.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -7,17 +9,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Map result;
   List<Map> animeList = List();
+  MALClient client;
 
-  List<Map> testFunc() {
-    Map result = Get.arguments;
-    return result["animeList"];
+  MALClient assignClient() => result["client"];
+
+  List<Map> setupList() => result["anime_list"];
+
+  Future<void> testSearch() async {
+    print(await this.client.animeSearch(AnimeSearchRequest(query: "clannad")));
   }
 
   @override
   void initState() {
     super.initState();
-    animeList = this.testFunc();
+    this.result = Get.arguments;
+    this.animeList = this.setupList();
+    this.client = this.assignClient();
+    this.testSearch();
   }
 
   @override
@@ -32,7 +42,9 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(10.0),
                 child: Card(
                   child: ListTile(
-                    title: Text("${animeList[index]['node']['title']}"),
+                    title: Text("${animeList[index]["node"]["title"]}"),
+                    leading: Image.network(
+                        animeList[index]["node"]["main_picture"]["medium"]),
                   ),
                 ),
               );

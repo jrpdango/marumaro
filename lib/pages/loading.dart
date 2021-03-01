@@ -13,7 +13,7 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   MALClient client = MALClient();
 
-  Future<List<Map>> testFunc() async {
+  Future<List<Map>> getUpToDateList() async {
     List<Map> animeList = List();
     Map response = await client.getAnimeList(AnimeListRequest());
     response["data"].forEach((element) {
@@ -25,7 +25,10 @@ class _LoadingState extends State<Loading> {
 
   void setupMALConnection() async {
     await TokenVerifier.verifyTokens(this.client);
-    Get.offNamed("/home", arguments: {"animeList": await this.testFunc()});
+    Get.offNamed("/home", arguments: {
+      "anime_list": await this.getUpToDateList(),
+      "client": this.client
+    });
   }
 
   @override

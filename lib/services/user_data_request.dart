@@ -8,13 +8,18 @@ class UserDataRequest {
     Response response = await client.userClient.get(url,
         headers: {"Authorization": "Bearer ${client.token.accessToken}"});
     Map respMap = Map();
-    if (response.statusCode == 200) {
-      //respMap gives a json response of keys {id, name, birthday, location, joined_at}
-      respMap = json.decode(response.body);
-      respMap["status_code"] = 200;
-    } else {
-      respMap["status_code"] = response.statusCode;
+    try {
+      if (response.statusCode == 200) {
+        //respMap gives a json response of keys {id, name, birthday, location, joined_at}
+        respMap = json.decode(response.body);
+        respMap["status_code"] = 200;
+      } else {
+        respMap["status_code"] = response.statusCode;
+      }
+      return respMap;
+    } catch (exception) {
+      print("Oops! Something went wrong. $exception");
+      return Map();
     }
-    return respMap;
   }
 }
