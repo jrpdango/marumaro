@@ -1,4 +1,5 @@
 import 'package:http/http.dart';
+import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/token.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/services/oauth_request.dart';
@@ -40,6 +41,20 @@ class MALClient {
 
   Future<Map> getUserData() async {
     return UserDataRequest.createRequest(this);
+  }
+
+  Future<Map> getAnimeList(AnimeListRequest animeListRequest) async {
+    /*
+    Returns:
+    {
+      data: [{node: {id, title, main_picture: {medium, large}}, 
+      list_status: {status, score, num_episodes_watched, is_rewatching, updated_at}}
+      for each anime in the list]
+      paging: {url to next page}
+      status_code: int
+    }
+    */
+    return await animeListRequest.createRequest(this);
   }
 
   Future<void> updateList(UpdateListRequest updateListRequest) async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 
 class MALWebView extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _MALWebViewState extends State<MALWebView> {
           onLoadStart: (InAppWebViewController _controller, String url) {
             // User is redirected here
             if (url.startsWith("http://localhost/oauth")) {
-              Navigator.pop(context, {"accessCode": url});
+              Get.back(result: {"accessCode": url});
             }
           },
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -6,10 +7,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<Map> animeList = List();
+
+  List<Map> testFunc() {
+    Map result = Get.arguments;
+    return result["animeList"];
+  }
+
   @override
   void initState() {
     super.initState();
-    Navigator.pushNamed(context, "/");
+    animeList = this.testFunc();
   }
 
   @override
@@ -17,17 +25,18 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SafeArea(
         top: false,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "This is the home page.",
-              style: TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
+        child: ListView.builder(
+            itemCount: animeList.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Card(
+                  child: ListTile(
+                    title: Text("${animeList[index]['node']['title']}"),
+                  ),
+                ),
+              );
+            }),
       ),
     );
   }
