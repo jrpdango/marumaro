@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-// import 'package:miru/services/mal_client.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Token {

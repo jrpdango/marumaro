@@ -2,38 +2,31 @@ import 'package:miru/services/mal_client.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
-class AnimeSearchRequest {
-  String query;
-  String limit;
-  String offset;
+class AnimeDetailsRequest {
+  String animeID;
   String fields;
 
-  AnimeSearchRequest({this.query, this.limit, this.offset, this.fields});
+  AnimeDetailsRequest({this.animeID, this.fields});
 
   void setParams() {
-    this.query = this.query == null ? "" : "?q=${this.query}";
-    this.limit = this.limit == null ? "" : "&limit=${this.limit}";
-    this.offset = this.offset == null ? "" : "&offset=${this.offset}";
-    this.fields = this.fields == null ? "" : "&fields=${this.fields}";
+    this.fields = this.fields == null ? "" : "?fields=${this.fields}";
   }
 
   Future<Map> createRequest(MALClient client) async {
     this.setParams();
     try {
-      String url = "https://api.myanimelist.net/v2/anime${this.query}" +
-          this.limit +
-          this.offset +
-          this.fields;
+      String url =
+          "https://api.myanimelist.net/v2/anime/${this.animeID}" + this.fields;
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map respMap = Map();
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {
-        print("Anime searched successfully!");
+        print("Anime details retrieved successfully!");
         respMap["status_code"] = 200;
       } else {
         print(
-            "Anime search request sent, but something went wrong. Status code: ${response.statusCode}");
+            "Anime details request sent, but something went wrong. Status code: ${response.statusCode}");
         respMap["status_code"] = [response.statusCode];
       }
       return respMap;

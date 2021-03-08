@@ -1,20 +1,28 @@
 Things to do:
     Back-end:
         ✔ Anime search @done (01/03/2021, 7:22:19 pm)
-        ☐ Fix get request ambiguity
-        ☐ Get anime details
+        ✔ Fix get request ambiguity @done (02/03/2021, 5:38:29 pm)
+        ✔ Get anime details @done (02/03/2021, 6:03:40 pm)
         ☐ Get anime ranking @low
         ☐ Get seasonal anime @low
         ☐ Get suggested anime @low
-        ☐ Delete anime from user list
-        ☐ Save user list to file
-        ☐ Retrieve user list from file
-        ☐ Update file with user list from MAL
+        ✔ Delete anime from user list @done (02/03/2021, 6:53:46 pm)
+        ✔ Save user list to file @done (05/03/2021, 6:12:40 pm)
+        ✔ Retrieve user list from file @done (05/03/2021, 6:12:41 pm)
+        ✔ Update file with user list from MAL @done (05/03/2021, 6:12:44 pm)
+        ✔ Check if device is offline, if yes, load local list, if no, load from MAL @done (08/03/2021, 7:06:56 pm)
+        ✔ Placeholder image when device is offline functionality @done (08/03/2021, 7:07:26 pm)
+        ☐ Cache anime images for offline loading
+        
     Front-end:
-        ☐ Splash screen (lottie animated?)
+        ☐ Static splash screen
+        ☐ Lottie animated splash screen
         ☐ Screen for non-OAuthed users
         ☐ Home list view
         ☐ Pagination of user list (watching, ptw, etc.)
         ☐ Bottom nav bar
+        ☐ Animated placeholder
     Future plans:
         ☐ Add manga list integration
+        ☐ Offline list updating
+        ☐ Handle http requests when device is offline (do nothing)

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/services/token_verifier.dart';
-import 'package:miru/services/anime_list_request.dart';
+// import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -13,20 +16,22 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   MALClient client = MALClient();
 
-  Future<List<Map>> getUpToDateList() async {
-    List<Map> animeList = List();
-    Map response = await client.getAnimeList(AnimeListRequest());
-    response["data"].forEach((element) {
-      animeList.add(element);
-    });
-    print(response);
+  Future<List<dynamic>> getLocalList() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    File file = File("${directory.path}/miruList.json").existsSync()
+        ? File("${directory.path}/miruList.json")
+        : await File("${directory.path}/miruList.json").create();
+    dynamic animeList = file.readAsStringSync().isNotEmpty
+        ? json.decode(file.readAsStringSync())
+        : List<Map>();
+    print(animeList.runtimeType);
     return animeList;
   }
 
   void setupMALConnection() async {
     await TokenVerifier.verifyTokens(this.client);
     Get.offNamed("/home", arguments: {
-      "anime_list": await this.getUpToDateList(),
+      "anime_list": await this.getLocalList(),
       "client": this.client
     });
   }

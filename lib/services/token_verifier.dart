@@ -28,9 +28,9 @@ class TokenVerifier {
     }
   }
 
-  static Future<bool> hasValidAccessToken(MALClient client, Token token) async {
+  static Future<Map> hasValidAccessToken(MALClient client, Token token) async {
     Map checker = await client.getUserData();
-    return checker["status_code"] == 200;
+    return checker;
   }
 
   static Future<void> oAuthNewTokens(MALClient client) async {
@@ -47,9 +47,13 @@ class TokenVerifier {
 
   static Future<void> verifyTokens(MALClient client) async {
     await assignTokenFromFile(client);
-    if (await hasValidAccessToken(client, client.token)) {
+    Map checkResult = await hasValidAccessToken(client, client.token);
+    if (checkResult["status_code"] == 200) {
       // Access token is valid, client can make calls
       print("Access code in file is valid, ez calls (line 38)");
+    } else if (checkResult["status_code"] == "invalid_code") {
+      print(
+          "Device is offline. Showing list stored in file. Status code: ${checkResult["status_code"]}");
     } else {
       print("Access code in file is not valid, gonna refresh (line 41)");
       await client.refreshTokens();
