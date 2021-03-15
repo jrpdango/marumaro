@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/delete_anime_request.dart';
 import 'package:miru/services/mal_client.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:miru/widgets/ColoredTabBar.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -57,6 +59,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
     this.result = Get.arguments;
     this.client = this.assignClient();
@@ -67,36 +70,68 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Text("Update List"),
-        onPressed: () {
-          this.refreshList();
-        },
-      ),
-      body: SafeArea(
-        top: false,
-        child: ListView.builder(
-            itemCount: animeList.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Card(
-                  child: ListTile(
-                    title: Text("${animeList[index]["node"]["title"]}"),
-                    leading: this.netConnected
-                        ? FadeInImage.assetNetwork(
-                            placeholder: "assets/404img.png",
-                            image: animeList[index]["node"]["main_picture"]
-                                ["medium"],
-                            imageErrorBuilder: (context, error, stackTrace) =>
-                                Image.asset("assets/404img.png"),
-                          )
-                        : Image.asset("assets/404img.png"),
-                  ),
-                ),
-              );
-            }),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          child: Text("Update List"),
+          onPressed: () {
+            this.refreshList();
+          },
+        ),
+        appBar: AppBar(
+          bottom: ColoredTabBar(
+            color: Colors.black,
+            tabBar: TabBar(
+              tabs: <Widget>[
+                Tab(child: Text("1st Tab")),
+                Tab(child: Text("2nd Tab")),
+                Tab(child: Text("3rd Tab")),
+                Tab(child: Text("4th Tab"))
+              ],
+            ),
+          ),
+          flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
+          leading: IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {},
+          ),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.search), onPressed: () {})
+          ],
+        ),
+        body: TabBarView(
+          children: [
+            SafeArea(
+              top: false,
+              child: ListView.builder(
+                  itemCount: animeList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Card(
+                        child: ListTile(
+                          title: Text("${animeList[index]["node"]["title"]}"),
+                          leading: this.netConnected
+                              ? FadeInImage.assetNetwork(
+                                  placeholder: "assets/404img.png",
+                                  image: animeList[index]["node"]
+                                      ["main_picture"]["medium"],
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) =>
+                                          Image.asset("assets/404img.png"),
+                                )
+                              : Image.asset("assets/404img.png"),
+                        ),
+                      ),
+                    );
+                  }),
+            ),
+            Center(child: Text("2nd tab")),
+            Center(child: Text("3rd tab")),
+            Center(child: Text("4th tab"))
+          ],
+        ),
       ),
     );
   }

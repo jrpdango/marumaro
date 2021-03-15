@@ -7,6 +7,7 @@ import 'package:miru/pages/mal_web_view.dart';
 void main() {
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: "/",
       routes: {
         "/": (context) => Loading(),

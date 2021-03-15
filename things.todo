@@ -15,13 +15,16 @@ Things to do:
         ☐ Cache anime images for offline loading
         
     Front-end:
+        Home:
+            ☐ Fix top navbar padding
+            ☐ Make top navbar scrollable
+            ☐ List view
+            ☐ Bottom nav bar
+            ☐ Animated image placeholder
+            ☐ Tabbing user list (watching, ptw, etc.)
         ☐ Static splash screen
         ☐ Lottie animated splash screen
         ☐ Screen for non-OAuthed users
-        ☐ Home list view
-        ☐ Pagination of user list (watching, ptw, etc.)
-        ☐ Bottom nav bar
-        ☐ Animated placeholder
     Future plans:
         ☐ Add manga list integration
         ☐ Offline list updating
