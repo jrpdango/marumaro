@@ -23,7 +23,7 @@ class _LoadingState extends State<Loading> {
         : await File("${directory.path}/miruList.json").create();
     dynamic animeList = file.readAsStringSync().isNotEmpty
         ? json.decode(file.readAsStringSync())
-        : List<Map>();
+        : [];
     print(animeList.runtimeType);
     return animeList;
   }

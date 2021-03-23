@@ -57,6 +57,21 @@ class _HomeState extends State<Home> {
     });
   }
 
+  List<Widget> createTabs() {
+    List<String> tabNames = [
+      "Currently Watching",
+      "Plan To Watch",
+      "Completed",
+      "On Hold",
+      "Dropped"
+    ];
+    List<Widget> menuTabs = [];
+    for (int i = 0; i < 5; i++) {
+      menuTabs.add(SizedBox(height: 30, child: Tab(child: Text(tabNames[i]))));
+    }
+    return menuTabs;
+  }
+
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([]);
@@ -71,8 +86,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
+        backgroundColor: Colors.black,
         floatingActionButton: FloatingActionButton(
           child: Text("Update List"),
           onPressed: () {
@@ -81,14 +97,10 @@ class _HomeState extends State<Home> {
         ),
         appBar: AppBar(
           bottom: ColoredTabBar(
-            color: Colors.black,
+            color: Colors.grey[900],
             tabBar: TabBar(
-              tabs: <Widget>[
-                Tab(child: Text("1st Tab")),
-                Tab(child: Text("2nd Tab")),
-                Tab(child: Text("3rd Tab")),
-                Tab(child: Text("4th Tab"))
-              ],
+              isScrollable: true,
+              tabs: this.createTabs(),
             ),
           ),
           flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
@@ -108,28 +120,48 @@ class _HomeState extends State<Home> {
                   itemCount: animeList.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: EdgeInsets.all(10.0),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
                       child: Card(
-                        child: ListTile(
-                          title: Text("${animeList[index]["node"]["title"]}"),
-                          leading: this.netConnected
-                              ? FadeInImage.assetNetwork(
-                                  placeholder: "assets/404img.png",
-                                  image: animeList[index]["node"]
-                                      ["main_picture"]["medium"],
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) =>
-                                          Image.asset("assets/404img.png"),
-                                )
-                              : Image.asset("assets/404img.png"),
+                        color: Colors.grey[900],
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5.0),
+                                  bottomLeft: Radius.circular(5.0)),
+                              child: this.netConnected
+                                  ? FadeInImage.assetNetwork(
+                                      fit: BoxFit.cover,
+                                      height: 90,
+                                      placeholder: "assets/404img.png",
+                                      image: animeList[index]["node"]
+                                          ["main_picture"]["medium"],
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Image.asset("assets/404img.png"),
+                                    )
+                                  : Image.asset("assets/404img.png"),
+                            ),
+                            Text("${animeList[index]["node"]["title"]}",
+                                style: TextStyle(color: Colors.white))
+                          ],
                         ),
                       ),
                     );
                   }),
             ),
-            Center(child: Text("2nd tab")),
-            Center(child: Text("3rd tab")),
-            Center(child: Text("4th tab"))
+            Center(
+                child: Text("Plan To Watch",
+                    style: TextStyle(color: Colors.white))),
+            Center(
+                child:
+                    Text("Completed", style: TextStyle(color: Colors.white))),
+            Center(
+                child: Text("On Hold", style: TextStyle(color: Colors.white))),
+            Center(
+                child: Text("Dropped", style: TextStyle(color: Colors.white))),
           ],
         ),
       ),
