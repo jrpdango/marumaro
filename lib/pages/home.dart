@@ -8,6 +8,7 @@ import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/delete_anime_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ColoredTabBar.dart';
+import 'package:miru/widgets/ShowDetails.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -135,6 +136,9 @@ class _HomeState extends State<Home> {
                                   ? FadeInImage.assetNetwork(
                                       fit: BoxFit.cover,
                                       height: 90,
+                                      width: 65,
+                                      placeholderCacheHeight: 90,
+                                      placeholderCacheWidth: 65,
                                       placeholder: "assets/404img.png",
                                       image: animeList[index]["node"]
                                           ["main_picture"]["medium"],
@@ -144,8 +148,16 @@ class _HomeState extends State<Home> {
                                     )
                                   : Image.asset("assets/404img.png"),
                             ),
-                            Text("${animeList[index]["node"]["title"]}",
-                                style: TextStyle(color: Colors.white))
+                            ShowDetails(
+                              title: "${animeList[index]["node"]["title"]}",
+                              status: "Show status here",
+                              progress:
+                                  "${animeList[index]["list_status"]["num_episodes_watched"]}",
+                              score:
+                                  "${animeList[index]["list_status"]["score"]}",
+                            ),
+                            // Text("${animeList[index]["node"]["title"]}",
+                            //     style: TextStyle(color: Colors.white))
                           ],
                         ),
                       ),

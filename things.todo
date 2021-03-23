@@ -19,6 +19,7 @@ Things to do:
             ☐ Completed
             ☐ On hold
             ☐ Dropped
+        ☐ Search show for airing status
     Front-end:
         Home:
             ✔ Fix top navbar padding @done (23/03/2021, 4:46:34 pm)
@@ -29,11 +30,12 @@ Things to do:
                 ✔ Image fit to left @done (23/03/2021, 5:38:20 pm)
                 ✔ Image curve with card @done (23/03/2021, 6:02:54 pm)
                 ☐ Widget for Title, Status, Progress, Score
-                    ☐ Title font size
+                    ✔ Title @done (23/03/2021, 7:02:26 pm)
                     ☐ Show status (airing, completed, etc)
                     ☐ Status color
-                    ☐ Progress
-                    ☐ Score card
+                    ✔ Progress @done (23/03/2021, 7:02:29 pm)
+                    ✔ Score @done (23/03/2021, 7:02:35 pm)
+                    ☐ Align text
             ☐ Bottom nav bar
                 ☐ Home
                 ☐ Schedule
