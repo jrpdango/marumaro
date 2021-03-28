@@ -150,7 +150,6 @@ class _HomeState extends State<Home> {
                             ),
                             ShowDetails(
                               title: "${animeList[index]["node"]["title"]}",
-                              status: "Show status here",
                               progress:
                                   "${animeList[index]["list_status"]["num_episodes_watched"]}",
                               score:
