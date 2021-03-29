@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
   Future<void> refreshList() async {
     Map result = await this.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
-    // print(result["data"]);
+    // print(result);
     // print(result["data"].runtimeType);
     setState(() {
       this.animeList = result["data"];
@@ -90,12 +90,6 @@ class _HomeState extends State<Home> {
       length: 5,
       child: Scaffold(
         backgroundColor: Colors.black,
-        floatingActionButton: FloatingActionButton(
-          child: Text("Update List"),
-          onPressed: () {
-            this.refreshList();
-          },
-        ),
         appBar: AppBar(
           bottom: ColoredTabBar(
             color: Colors.grey[900],
@@ -117,51 +111,57 @@ class _HomeState extends State<Home> {
           children: [
             SafeArea(
               top: false,
-              child: ListView.builder(
-                  itemCount: animeList.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                      child: Card(
-                        color: Colors.grey[900],
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(5.0),
-                                  bottomLeft: Radius.circular(5.0)),
-                              child: this.netConnected
-                                  ? FadeInImage.assetNetwork(
-                                      fit: BoxFit.cover,
-                                      height: 90,
-                                      width: 65,
-                                      placeholderCacheHeight: 90,
-                                      placeholderCacheWidth: 65,
-                                      placeholder: "assets/404img.png",
-                                      image: animeList[index]["node"]
-                                          ["main_picture"]["medium"],
-                                      imageErrorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Image.asset("assets/404img.png"),
-                                    )
-                                  : Image.asset("assets/404img.png"),
-                            ),
-                            ShowDetails(
-                              title: "${animeList[index]["node"]["title"]}",
-                              progress:
-                                  "${animeList[index]["list_status"]["num_episodes_watched"]}",
-                              score:
-                                  "${animeList[index]["list_status"]["score"]}",
-                            ),
-                            // Text("${animeList[index]["node"]["title"]}",
-                            //     style: TextStyle(color: Colors.white))
-                          ],
+              child: RefreshIndicator(
+                onRefresh: () => this.refreshList(),
+                child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: animeList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 10.0),
+                        child: Card(
+                          color: Colors.grey[900],
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(5.0),
+                                    bottomLeft: Radius.circular(5.0)),
+                                child: this.netConnected
+                                    ? FadeInImage.assetNetwork(
+                                        fit: BoxFit.cover,
+                                        height: 90,
+                                        width: 65,
+                                        placeholderCacheHeight: 90,
+                                        placeholderCacheWidth: 65,
+                                        placeholder: "assets/404img.png",
+                                        image: animeList[index]["node"]
+                                            ["main_picture"]["medium"],
+                                        imageErrorBuilder: (context, error,
+                                                stackTrace) =>
+                                            Image.asset("assets/404img.png"),
+                                      )
+                                    : Image.asset("assets/404img.png"),
+                              ),
+                              ShowDetails(
+                                title: "${animeList[index]["node"]["title"]}",
+                                progress:
+                                    "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
+                                score:
+                                    "${animeList[index]["list_status"]["score"]}",
+                                airingStatus:
+                                    "${animeList[index]["node"]["status"]}",
+                              ),
+                              // Text("${animeList[index]["node"]["title"]}",
+                              //     style: TextStyle(color: Colors.white))
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
+              ),
             ),
             Center(
                 child: Text("Plan To Watch",

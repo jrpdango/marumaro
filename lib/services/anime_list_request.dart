@@ -38,7 +38,7 @@ class AnimeListRequest {
     this.setParams();
     try {
       String url =
-          "https://api.myanimelist.net/v2/users/${this.username}/animelist?fields=list_status" +
+          "https://api.myanimelist.net/v2/users/${this.username}/animelist?fields=list_status,num_episodes,status" +
               this.status +
               this.sort +
               this.limit +
