@@ -16,7 +16,7 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   MALClient client = MALClient();
 
-  Future<List<dynamic>> getLocalList() async {
+  Future<Map> getLocalList() async {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File("${directory.path}/miruList.json").existsSync()
         ? File("${directory.path}/miruList.json")

@@ -26,7 +26,7 @@ class AnimeListRequest {
     File file = File("${directory.path}/miruList.json").existsSync()
         ? File("${directory.path}/miruList.json")
         : await File("${directory.path}/miruList.json").create();
-    String data = json.encode(listInfo["data"]);
+    String data = json.encode(listInfo);
     if (file.readAsStringSync().isNotEmpty) {
       await File("${directory.path}/miruList.json").delete();
       file = await File("${directory.path}/miruList.json").create();
@@ -79,7 +79,7 @@ class AnimeListRequest {
       if (response.statusCode == 200) {
         print("List retrieved successfully!");
         respMap = sortMap(respMap);
-        // writeToFile(respMap);
+        writeToFile(respMap);
         respMap["status_code"] = 200;
       } else {
         print(

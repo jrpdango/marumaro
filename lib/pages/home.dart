@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/anime_details_request.dart';
-import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/delete_anime_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ColoredTabBar.dart';
-import 'package:miru/widgets/ShowDetails.dart';
+import 'package:miru/widgets/ListContainer.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,13 +17,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Map result;
-  List<dynamic> animeList;
+  Map animeMap;
   MALClient client;
   bool netConnected = false;
 
   MALClient assignClient() => result["client"];
 
-  List<dynamic> setupList() => result["anime_list"];
+  Map setupAnimeMap() => result["anime_map"];
 
   Future<void> searchAnime(String query,
       {String limit, String offset, String fields}) async {
@@ -38,17 +38,6 @@ class _HomeState extends State<Home> {
 
   Future<void> deleteAnime(String animeID) async {
     await this.client.deleteAnime(DeleteAnimeRequest(animeID: animeID));
-  }
-
-  Future<void> refreshList() async {
-    Map result = await this.client.getAnimeList(AnimeListRequest());
-    bool checkConn = await DataConnectionChecker().hasConnection;
-    // print(result);
-    // print(result["data"].runtimeType);
-    setState(() {
-      this.animeList = result["watching"];
-      this.netConnected = checkConn;
-    });
   }
 
   Future<void> testConnection() async {
@@ -73,13 +62,24 @@ class _HomeState extends State<Home> {
     return menuTabs;
   }
 
+  Future<void> refreshList() async {
+    Map result = await this.client.getAnimeList(AnimeListRequest());
+    bool checkConn = await DataConnectionChecker().hasConnection;
+    // print(result);
+    // print(result["data"].runtimeType);
+    setState(() {
+      this.animeMap = result;
+      this.netConnected = checkConn;
+    });
+  }
+
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
     this.result = Get.arguments;
     this.client = this.assignClient();
-    this.animeList = this.setupList();
+    this.animeMap = this.setupAnimeMap();
     this.testConnection();
     // this.refreshList();
   }
@@ -109,68 +109,48 @@ class _HomeState extends State<Home> {
         ),
         body: TabBarView(
           children: [
-            SafeArea(
-              top: false,
-              child: RefreshIndicator(
-                onRefresh: () => this.refreshList(),
-                child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: animeList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 10.0),
-                        child: Card(
-                          color: Colors.grey[900],
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5.0),
-                                    bottomLeft: Radius.circular(5.0)),
-                                child: this.netConnected
-                                    ? FadeInImage.assetNetwork(
-                                        fit: BoxFit.cover,
-                                        height: 90,
-                                        width: 65,
-                                        placeholderCacheHeight: 90,
-                                        placeholderCacheWidth: 65,
-                                        placeholder: "assets/404img.png",
-                                        image: animeList[index]["node"]
-                                            ["main_picture"]["medium"],
-                                        imageErrorBuilder: (context, error,
-                                                stackTrace) =>
-                                            Image.asset("assets/404img.png"),
-                                      )
-                                    : Image.asset("assets/404img.png"),
-                              ),
-                              ShowDetails(
-                                title: "${animeList[index]["node"]["title"]}",
-                                progress:
-                                    "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
-                                score:
-                                    "${animeList[index]["list_status"]["score"]}",
-                                airingStatus:
-                                    "${animeList[index]["node"]["status"]}",
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-              ),
+            RefreshIndicator(
+              onRefresh: () => this.refreshList(),
+              child: ListContainer(
+                  animeList: this.animeMap["watching"],
+                  client: this.client,
+                  listType: "watching",
+                  connStatus: this.netConnected),
             ),
-            Center(
-                child: Text("Plan To Watch",
-                    style: TextStyle(color: Colors.white))),
-            Center(
-                child:
-                    Text("Completed", style: TextStyle(color: Colors.white))),
-            Center(
-                child: Text("On Hold", style: TextStyle(color: Colors.white))),
-            Center(
-                child: Text("Dropped", style: TextStyle(color: Colors.white))),
+            RefreshIndicator(
+              onRefresh: () => this.refreshList(),
+              child: ListContainer(
+                  animeList: this.animeMap["plan_to_watch"],
+                  client: this.client,
+                  listType: "plan_to_watch",
+                  connStatus: this.netConnected),
+            ),
+            RefreshIndicator(
+              onRefresh: () => this.refreshList(),
+              child: ListContainer(
+                  animeList: this.animeMap["completed"],
+                  client: this.client,
+                  listType: "completed",
+                  connStatus: this.netConnected),
+            ),
+            RefreshIndicator(
+              onRefresh: () => this.refreshList(),
+              child: ListContainer(
+                  animeList: this.animeMap["on_hold"],
+                  client: this.client,
+                  listType: "on_hold",
+                  connStatus: this.netConnected),
+            ),
+            RefreshIndicator(
+              onRefresh: () => this.refreshList(),
+              child: ListContainer(
+                  animeList: this.animeMap["dropped"],
+                  client: this.client,
+                  listType: "dropped",
+                  connStatus: this.netConnected),
+            ),
+            // Center(
+            //     child: Text("Dropped", style: TextStyle(color: Colors.white))),
           ],
         ),
       ),
