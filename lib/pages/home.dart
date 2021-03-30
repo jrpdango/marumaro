@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
     // print(result);
     // print(result["data"].runtimeType);
     setState(() {
-      this.animeList = result["data"];
+      this.animeList = result["watching"];
       this.netConnected = checkConn;
     });
   }
@@ -154,8 +154,6 @@ class _HomeState extends State<Home> {
                                 airingStatus:
                                     "${animeList[index]["node"]["status"]}",
                               ),
-                              // Text("${animeList[index]["node"]["title"]}",
-                              //     style: TextStyle(color: Colors.white))
                             ],
                           ),
                         ),

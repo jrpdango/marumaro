@@ -21,17 +21,17 @@ class _LoadingState extends State<Loading> {
     File file = File("${directory.path}/miruList.json").existsSync()
         ? File("${directory.path}/miruList.json")
         : await File("${directory.path}/miruList.json").create();
-    dynamic animeList = file.readAsStringSync().isNotEmpty
+    dynamic animeMap = file.readAsStringSync().isNotEmpty
         ? json.decode(file.readAsStringSync())
         : [];
-    print(animeList.runtimeType);
-    return animeList;
+    print(animeMap.runtimeType);
+    return animeMap;
   }
 
   void setupMALConnection() async {
     await TokenVerifier.verifyTokens(this.client);
     Get.offNamed("/home", arguments: {
-      "anime_list": await this.getLocalList(),
+      "anime_map": await this.getLocalList(),
       "client": this.client
     });
   }

@@ -19,7 +19,6 @@ Things to do:
             ☐ Completed
             ☐ On hold
             ☐ Dropped
-        ☐ Search show for airing status
         ✔ Drag down to refresh @done (29/03/2021, 7:07:08 pm)
         ☐ Replace refreshindicator to cancellable one
     Front-end:
@@ -46,7 +45,7 @@ Things to do:
                 ☐ Browse
                 ☐ Profile
                 ☐ More
-            ☐ Animated image placeholder when loading image
+        ☐ Animated image placeholder when loading image
         ☐ Static splash screen
         ☐ Lottie animated splash screen
         ☐ Screen for non-OAuthed users
