@@ -1,3 +1,4 @@
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/services/mal_client.dart';
@@ -16,23 +17,29 @@ class Loading extends StatefulWidget {
 class _LoadingState extends State<Loading> {
   MALClient client = MALClient();
 
-  Future<List<dynamic>> getLocalList() async {
+  Future<Map> getLocalList() async {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File("${directory.path}/miruList.json").existsSync()
         ? File("${directory.path}/miruList.json")
         : await File("${directory.path}/miruList.json").create();
-    dynamic animeList = file.readAsStringSync().isNotEmpty
+    dynamic animeMap = file.readAsStringSync().isNotEmpty
         ? json.decode(file.readAsStringSync())
         : [];
-    print(animeList.runtimeType);
-    return animeList;
+    print(animeMap.runtimeType);
+    return animeMap;
+  }
+
+  Future<bool> testConnection() async {
+    return await DataConnectionChecker().hasConnection;
   }
 
   void setupMALConnection() async {
+    bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(this.client);
     Get.offNamed("/home", arguments: {
-      "anime_list": await this.getLocalList(),
-      "client": this.client
+      "anime_map": await this.getLocalList(),
+      "client": this.client,
+      "connStatus": connStatus
     });
   }
 

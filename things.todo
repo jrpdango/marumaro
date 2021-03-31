@@ -13,15 +13,22 @@ Things to do:
         ✔ Check if device is offline, if yes, load local list, if no, load from MAL @done (08/03/2021, 7:06:56 pm)
         ✔ Placeholder image when device is offline functionality @done (08/03/2021, 7:07:26 pm)
         ☐ Cache anime images for offline loading @low
-        ☐ Separate animeList by status
-            ☐ Watching
-            ☐ PTW
-            ☐ Completed
-            ☐ On hold
-            ☐ Dropped
-        ☐ Search show for airing status
+        ✔ Separate animeList by status @done (30/03/2021, 9:55:01 pm)
+            ✔ Watching @done (30/03/2021, 9:55:09 pm)
+            ✔ PTW @done (30/03/2021, 9:55:08 pm)
+            ✔ Completed @done (30/03/2021, 9:55:08 pm)
+            ✔ On hold @done (30/03/2021, 9:55:07 pm)
+            ✔ Dropped @done (30/03/2021, 9:55:05 pm)
         ✔ Drag down to refresh @done (29/03/2021, 7:07:08 pm)
         ☐ Replace refreshindicator to cancellable one
+        ☐ Account for if wifi is lost
+        ☐ Pages for navbar
+            ☐ Schedule
+            ☐ Browse
+            ☐ Profile
+            ☐ More
+        ☐ Bottom navbar
+            ☐ Switching pages
     Front-end:
         Home:
             ✔ Fix top navbar padding @done (23/03/2021, 4:46:34 pm)
@@ -46,7 +53,10 @@ Things to do:
                 ☐ Browse
                 ☐ Profile
                 ☐ More
-            ☐ Animated image placeholder when loading image
+                ☐ Color for active
+                ☐ Update Icons
+            ☐ Blank page for empty list categories
+        ☐ Animated image placeholder when loading image
         ☐ Static splash screen
         ☐ Lottie animated splash screen
         ☐ Screen for non-OAuthed users

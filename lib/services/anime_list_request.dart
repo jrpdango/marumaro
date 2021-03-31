@@ -26,12 +26,41 @@ class AnimeListRequest {
     File file = File("${directory.path}/miruList.json").existsSync()
         ? File("${directory.path}/miruList.json")
         : await File("${directory.path}/miruList.json").create();
-    String data = json.encode(listInfo["data"]);
+    String data = json.encode(listInfo);
     if (file.readAsStringSync().isNotEmpty) {
       await File("${directory.path}/miruList.json").delete();
       file = await File("${directory.path}/miruList.json").create();
     }
     return await file.writeAsString(data);
+  }
+
+  Map sortMap(Map rawMap) {
+    Map animeMap = Map();
+    animeMap["watching"] = [];
+    animeMap["completed"] = [];
+    animeMap["plan_to_watch"] = [];
+    animeMap["on_hold"] = [];
+    animeMap["dropped"] = [];
+    for (Map element in rawMap["data"]) {
+      switch (element["list_status"]["status"]) {
+        case "watching":
+          animeMap["watching"].add(element);
+          break;
+        case "completed":
+          animeMap["completed"].add(element);
+          break;
+        case "plan_to_watch":
+          animeMap["plan_to_watch"].add(element);
+          break;
+        case "on_hold":
+          animeMap["on_hold"].add(element);
+          break;
+        case "dropped":
+          animeMap["dropped"].add(element);
+          break;
+      }
+    }
+    return animeMap;
   }
 
   Future<Map> createRequest(MALClient client) async {
@@ -49,6 +78,7 @@ class AnimeListRequest {
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {
         print("List retrieved successfully!");
+        respMap = sortMap(respMap);
         writeToFile(respMap);
         respMap["status_code"] = 200;
       } else {
