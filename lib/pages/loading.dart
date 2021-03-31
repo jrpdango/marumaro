@@ -1,3 +1,4 @@
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/services/mal_client.dart';
@@ -28,11 +29,17 @@ class _LoadingState extends State<Loading> {
     return animeMap;
   }
 
+  Future<bool> testConnection() async {
+    return await DataConnectionChecker().hasConnection;
+  }
+
   void setupMALConnection() async {
+    bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(this.client);
     Get.offNamed("/home", arguments: {
       "anime_map": await this.getLocalList(),
-      "client": this.client
+      "client": this.client,
+      "connStatus": connStatus
     });
   }
 

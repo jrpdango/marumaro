@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
 
@@ -29,7 +27,9 @@ class _ListContainerState extends State<ListContainer> {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Container(
+      width: size.width,
       child: ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(),
           itemCount: animeList.length,
@@ -37,9 +37,11 @@ class _ListContainerState extends State<ListContainer> {
             return Padding(
               padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
               child: Container(
+                width: size.width,
                 child: Card(
                   color: Colors.grey[900],
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       ClipRRect(
@@ -60,7 +62,10 @@ class _ListContainerState extends State<ListContainer> {
                                     (context, error, stackTrace) =>
                                         Image.asset("assets/404img.png"),
                               )
-                            : Image.asset("assets/404img.png"),
+                            : Container(
+                                height: 90,
+                                width: 65,
+                                child: Image.asset("assets/404img.png")),
                       ),
                       Expanded(
                         child: ShowDetails(

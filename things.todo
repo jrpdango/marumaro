@@ -22,6 +22,13 @@ Things to do:
         ✔ Drag down to refresh @done (29/03/2021, 7:07:08 pm)
         ☐ Replace refreshindicator to cancellable one
         ☐ Account for if wifi is lost
+        ☐ Pages for navbar
+            ☐ Schedule
+            ☐ Browse
+            ☐ Profile
+            ☐ More
+        ☐ Bottom navbar
+            ☐ Switching pages
     Front-end:
         Home:
             ✔ Fix top navbar padding @done (23/03/2021, 4:46:34 pm)
@@ -46,6 +53,8 @@ Things to do:
                 ☐ Browse
                 ☐ Profile
                 ☐ More
+                ☐ Color for active
+                ☐ Update Icons
             ☐ Blank page for empty list categories
         ☐ Animated image placeholder when loading image
         ☐ Static splash screen

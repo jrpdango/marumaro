@@ -40,13 +40,6 @@ class _HomeState extends State<Home> {
     await this.client.deleteAnime(DeleteAnimeRequest(animeID: animeID));
   }
 
-  Future<void> testConnection() async {
-    bool checkConn = await DataConnectionChecker().hasConnection;
-    setState(() {
-      this.netConnected = checkConn;
-    });
-  }
-
   List<Widget> createTabs() {
     List<String> tabNames = [
       "Currently Watching",
@@ -76,12 +69,12 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([]);
-    super.initState();
     this.result = Get.arguments;
     this.client = this.assignClient();
     this.animeMap = this.setupAnimeMap();
-    this.testConnection();
-    // this.refreshList();
+    this.netConnected = result["connStatus"];
+    this.refreshList();
+    super.initState();
   }
 
   @override
@@ -108,7 +101,7 @@ class _HomeState extends State<Home> {
           ],
         ),
         body: TabBarView(
-          children: [
+          children: <RefreshIndicator>[
             RefreshIndicator(
               onRefresh: () => this.refreshList(),
               child: ListContainer(
@@ -151,6 +144,30 @@ class _HomeState extends State<Home> {
             ),
             // Center(
             //     child: Text("Dropped", style: TextStyle(color: Colors.white))),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                backgroundColor: Colors.black87,
+                label: "Home"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today_rounded),
+                backgroundColor: Colors.black87,
+                label: "Schedule"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.compass_calibration_rounded),
+                backgroundColor: Colors.black87,
+                label: "Browse"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                backgroundColor: Colors.black87,
+                label: "Profile"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.more),
+                backgroundColor: Colors.black87,
+                label: "More"),
           ],
         ),
       ),
