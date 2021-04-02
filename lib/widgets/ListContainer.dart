@@ -40,43 +40,51 @@ class _ListContainerState extends State<ListContainer> {
                 width: size.width,
                 child: Card(
                   color: Colors.grey[900],
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5.0),
-                            bottomLeft: Radius.circular(5.0)),
-                        child: this.netConnected
-                            ? FadeInImage.assetNetwork(
-                                fit: BoxFit.cover,
-                                height: 90,
-                                width: 65,
-                                placeholderCacheHeight: 90,
-                                placeholderCacheWidth: 65,
-                                placeholder: "assets/404img.png",
-                                image: animeList[index]["node"]["main_picture"]
-                                    ["medium"],
-                                imageErrorBuilder:
-                                    (context, error, stackTrace) =>
-                                        Image.asset("assets/404img.png"),
-                              )
-                            : Container(
-                                height: 90,
-                                width: 65,
-                                child: Image.asset("assets/404img.png")),
-                      ),
-                      Expanded(
-                        child: ShowDetails(
-                          title: "${animeList[index]["node"]["title"]}",
-                          progress:
-                              "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
-                          score: "${animeList[index]["list_status"]["score"]}",
-                          airingStatus: "${animeList[index]["node"]["status"]}",
+                  child: InkWell(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    onTap: () {
+                      print("anime tapped");
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5.0),
+                              bottomLeft: Radius.circular(5.0)),
+                          child: this.netConnected
+                              ? FadeInImage.assetNetwork(
+                                  fit: BoxFit.cover,
+                                  height: 90,
+                                  width: 65,
+                                  placeholderCacheHeight: 90,
+                                  placeholderCacheWidth: 65,
+                                  placeholder: "assets/404img.png",
+                                  image: animeList[index]["node"]
+                                      ["main_picture"]["medium"],
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) =>
+                                          Image.asset("assets/404img.png"),
+                                )
+                              : Container(
+                                  height: 90,
+                                  width: 65,
+                                  child: Image.asset("assets/404img.png")),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: ShowDetails(
+                            title: "${animeList[index]["node"]["title"]}",
+                            progress:
+                                "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
+                            score:
+                                "${animeList[index]["list_status"]["score"]}",
+                            airingStatus:
+                                "${animeList[index]["node"]["status"]}",
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

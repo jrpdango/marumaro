@@ -29,6 +29,8 @@ Things to do:
             ☐ More
         ☐ Bottom navbar
             ☐ Switching pages
+        ☐ Individual anime pages
+        ☐ Tap on list item pushes anime page on top of Home
     Front-end:
         Home:
             ✔ Fix top navbar padding @done (23/03/2021, 4:46:34 pm)
@@ -62,6 +64,7 @@ Things to do:
         ☐ Screen for non-OAuthed users
         ☐ Tab bar opacity
     Future plans:
+        ☐ Use Jikan API for details and stuff like producer search
         ☐ Add manga list integration
         ☐ Offline list updating
         ☐ Handle http requests when device is offline (do nothing)
