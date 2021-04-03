@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
 
@@ -43,7 +44,12 @@ class _ListContainerState extends State<ListContainer> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     onTap: () {
-                      print("anime tapped");
+                      // print(this.animeList[index]);
+                      Get.toNamed("/animeDetailsPage", arguments: {
+                        "animeMap": this.animeList[index],
+                        "connStatus": this.netConnected,
+                        "deviceWidth": size.width,
+                      });
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
