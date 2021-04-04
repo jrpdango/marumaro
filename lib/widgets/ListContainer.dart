@@ -70,8 +70,11 @@ class _ListContainerState extends State<ListContainer> {
                                   image: animeList[index]["node"]
                                       ["main_picture"]["medium"],
                                   imageErrorBuilder:
-                                      (context, error, stackTrace) =>
-                                          Image.asset("assets/404img.png"),
+                                      (context, error, stackTrace) => Container(
+                                          height: 90,
+                                          width: 65,
+                                          child:
+                                              Image.asset("assets/404img.png")),
                                 )
                               : Container(
                                   height: 90,

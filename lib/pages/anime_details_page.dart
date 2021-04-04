@@ -25,20 +25,24 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     List<Widget> infoRows = [];
     for (String element in this.animeInfoCategs) {
       infoRows.add(
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Container(
           height: 20.0,
           width: this.result["deviceWidth"] - 100,
-          child: ListTile(
-            leading: Text(
-              "$element",
-              style: TextStyle(color: Colors.white, fontSize: 10.0),
-            ),
-            trailing: Text("${animeMap["node"][element]}",
-                style: TextStyle(color: Colors.white, fontSize: 10.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Text>[
+              Text(
+                "$element",
+                style: TextStyle(color: Colors.white, fontSize: 10.0),
+              ),
+              Text(
+                "${animeMap["node"][element]}",
+                style: TextStyle(color: Colors.white, fontSize: 10.0),
+              )
+            ],
           ),
         ),
-      ]));
+      );
     }
     return infoRows;
   }
@@ -79,7 +83,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                         placeholder: "assets/404img.png",
                         image: animeMap["node"]["main_picture"]["medium"],
                         imageErrorBuilder: (context, error, stackTrace) =>
-                            Image.asset("assets/404img.png"),
+                            Container(
+                                height: 90,
+                                width: 65,
+                                child: Image.asset("assets/404img.png")),
                       )
                     : Container(
                         height: 90,
@@ -106,8 +113,73 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               ),
             ],
           ),
-          Column(
-            children: buildInfoList(this.animeInfoCategs),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: InkWell(
+                    onTap: () {},
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.bar_chart,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "${animeMap["list_status"]["status"]}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: InkWell(
+                    onTap: () {},
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.remove_red_eye,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "${animeMap["list_status"]["num_episodes_watched"]}/${animeMap["node"]["num_episodes"]}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: InkWell(
+                    onTap: () {},
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.star,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "${animeMap["list_status"]["score"]}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Column(
+              children: buildInfoList(this.animeInfoCategs),
+            ),
           ),
         ],
       ),
