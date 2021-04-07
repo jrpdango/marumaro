@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/widgets/ListStatusPopup.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
   @override
@@ -7,9 +8,11 @@ class AnimeDetailsPage extends StatefulWidget {
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
+  bool detailChanged = false;
   Map result;
   Map animeMap;
   bool netConnected;
+  String chosenListStatus;
   List<String> animeInfoCategs = [
     "num_episodes",
     "status",
@@ -21,13 +24,39 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     "average_episode_duration"
   ];
 
+  void showStatusList(BuildContext context) {
+    OverlayState overlayState = Overlay.of(context);
+    OverlayEntry overlayEntry;
+    GestureDetector closer = GestureDetector(
+        onTap: () {
+          overlayEntry.remove();
+        },
+        child: Container(
+          color: Color.fromRGBO(38, 38, 38, 0.8),
+          height: this.result["deviceSize"].height,
+          width: this.result["deviceSize"].width,
+        ));
+    overlayEntry = OverlayEntry(
+        builder: (context) => Stack(children: <Widget>[
+              closer,
+              ListStatusPopup(
+                callback: (val) => setState(() => detailChanged = val),
+                stringChoice: (choice) =>
+                    setState(() => chosenListStatus = choice),
+                overlayEntry: overlayEntry,
+              )
+            ]));
+
+    overlayState.insert(overlayEntry);
+  }
+
   List<Widget> buildInfoList(List<String> categories) {
     List<Widget> infoRows = [];
     for (String element in this.animeInfoCategs) {
       infoRows.add(
         Container(
           height: 20.0,
-          width: this.result["deviceWidth"] - 100,
+          width: this.result["deviceSize"].width - 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Text>[
@@ -52,6 +81,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     this.result = Get.arguments;
     this.netConnected = this.result["connStatus"];
     this.animeMap = this.result["animeMap"];
+    this.chosenListStatus = animeMap["list_status"]["status"];
     super.initState();
   }
 
@@ -94,7 +124,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                         child: Image.asset("assets/404img.png")),
               ),
               Container(
-                width: this.result["deviceWidth"] - 85,
+                width: this.result["deviceSize"].width - 85,
                 child: Column(
                   children: [
                     Text(
@@ -119,7 +149,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               Expanded(
                 child: Container(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      showStatusList(context);
+                    },
                     child: Column(
                       children: <Widget>[
                         Icon(
@@ -127,7 +159,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          "${animeMap["list_status"]["status"]}",
+                          this.chosenListStatus,
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -138,7 +170,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               Expanded(
                 child: Container(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      print(detailChanged);
+                      print(chosenListStatus);
+                    },
                     child: Column(
                       children: <Widget>[
                         Icon(
@@ -175,6 +210,15 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               ),
             ],
           ),
+          this.detailChanged
+              ? TextButton(
+                  onPressed: () {
+                    // TODO
+                    print("List updated");
+                  },
+                  child: Text("Update List"),
+                )
+              : SizedBox(height: 0, width: 0),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(

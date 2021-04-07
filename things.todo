@@ -33,8 +33,14 @@ Things to do:
             ✔ Align text @done (04/04/2021, 5:41:36 pm)
             ✔ Anime info @done (04/04/2021, 5:42:14 pm)
             ☐ Change list status
+                ✔ Popup @done (07/04/2021, 6:21:02 pm)
+                ☐ MAL update
             ☐ Edit episodes watched
+                ☐ Popup
+                ☐ MAL update
             ☐ Edit score
+                ☐ Popup
+                ☐ MAL update
         ✔ Tap on list item pushes anime page on top of Home @done (04/04/2021, 5:42:01 pm)
     Front-end:
         Home:
@@ -63,12 +69,16 @@ Things to do:
                 ☐ Color for active
                 ☐ Update Icons
             ☐ Blank page for empty list categories
-        ☐ Page transition animations
-        ☐ Animated image placeholder when loading image
-        ☐ Static splash screen
-        ☐ Lottie animated splash screen
-        ☐ Screen for non-OAuthed users
-        ☐ Tab bar opacity
+            ☐ Page transition animations
+            ☐ Animated image placeholder when loading image
+            ☐ Static splash screen
+            ☐ Lottie animated splash screen
+            ☐ Screen for non-OAuthed users
+            ☐ Tab bar opacity
+        ListStatusPopup:
+            ☐ Animated transition
+            ☐ Button highlighting
+
     Future plans:
         ☐ Use Jikan API for details and stuff like producer search
         ☐ Add manga list integration

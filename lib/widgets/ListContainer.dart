@@ -48,7 +48,7 @@ class _ListContainerState extends State<ListContainer> {
                       Get.toNamed("/animeDetailsPage", arguments: {
                         "animeMap": this.animeList[index],
                         "connStatus": this.netConnected,
-                        "deviceWidth": size.width,
+                        "deviceSize": size,
                       });
                     },
                     child: Row(
