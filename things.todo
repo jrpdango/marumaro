@@ -84,3 +84,6 @@ Things to do:
         ☐ Add manga list integration
         ☐ Offline list updating
         ☐ Handle http requests when device is offline (do nothing)
+
+    Current Issues:
+        ☐ Tab doesn't refresh after updating list (might need custom tab controller)

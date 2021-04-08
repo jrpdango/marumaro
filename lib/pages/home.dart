@@ -19,6 +19,7 @@ class _HomeState extends State<Home> {
   Map result;
   Map animeMap;
   MALClient client;
+  List<RefreshIndicator> tabContents;
   bool netConnected = false;
 
   MALClient assignClient() => result["client"];
@@ -55,6 +56,28 @@ class _HomeState extends State<Home> {
     return menuTabs;
   }
 
+  List<RefreshIndicator> getTabContents() {
+    List<String> tabNames = [
+      "watching",
+      "plan_to_watch",
+      "completed",
+      "on_hold",
+      "dropped"
+    ];
+    List<RefreshIndicator> tabContents = [];
+    for (String tabName in tabNames) {
+      tabContents.add(RefreshIndicator(
+        onRefresh: () => this.refreshList(),
+        child: ListContainer(
+            animeList: this.animeMap[tabName],
+            client: this.client,
+            listType: tabName,
+            connStatus: this.netConnected),
+      ));
+    }
+    return tabContents;
+  }
+
   Future<void> refreshList() async {
     Map result = await this.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
@@ -63,6 +86,7 @@ class _HomeState extends State<Home> {
     setState(() {
       this.animeMap = result;
       this.netConnected = checkConn;
+      this.tabContents = getTabContents();
     });
   }
 
@@ -101,50 +125,7 @@ class _HomeState extends State<Home> {
           ],
         ),
         body: TabBarView(
-          children: <RefreshIndicator>[
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["watching"],
-                  client: this.client,
-                  listType: "watching",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["plan_to_watch"],
-                  client: this.client,
-                  listType: "plan_to_watch",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["completed"],
-                  client: this.client,
-                  listType: "completed",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["on_hold"],
-                  client: this.client,
-                  listType: "on_hold",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["dropped"],
-                  client: this.client,
-                  listType: "dropped",
-                  connStatus: this.netConnected),
-            ),
-            // Center(
-            //     child: Text("Dropped", style: TextStyle(color: Colors.white))),
-          ],
+          children: tabContents,
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/services/mal_client.dart';
+import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
@@ -9,10 +11,13 @@ class AnimeDetailsPage extends StatefulWidget {
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   bool detailChanged = false;
+  MALClient client;
   Map result;
   Map animeMap;
   bool netConnected;
   String chosenListStatus;
+  String chosenScore;
+  String chosenEpsWatched;
   List<String> animeInfoCategs = [
     "num_episodes",
     "status",
@@ -23,6 +28,23 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     "rating",
     "average_episode_duration"
   ];
+
+  String statusJSONify(String status) {
+    switch (status) {
+      case "Watching":
+        return "watching";
+      case "Plan to Watch":
+        return "plan_to_watch";
+      case "Completed":
+        return "completed";
+      case "On Hold":
+        return "on_hold";
+      case "Dropped":
+        return "dropped";
+      default:
+        return "watching";
+    }
+  }
 
   void showStatusList(BuildContext context) {
     OverlayState overlayState = Overlay.of(context);
@@ -81,7 +103,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     this.result = Get.arguments;
     this.netConnected = this.result["connStatus"];
     this.animeMap = this.result["animeMap"];
+    this.client = this.result["client"];
     this.chosenListStatus = animeMap["list_status"]["status"];
+    this.chosenScore = "${animeMap["list_status"]["score"]}";
+    this.chosenEpsWatched =
+        "${animeMap["list_status"]["num_episodes_watched"]}";
     super.initState();
   }
 
@@ -181,7 +207,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          "${animeMap["list_status"]["num_episodes_watched"]}/${animeMap["node"]["num_episodes"]}",
+                          "${this.chosenEpsWatched}/${animeMap["node"]["num_episodes"]}",
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -200,7 +226,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          "${animeMap["list_status"]["score"]}",
+                          "${this.chosenScore}",
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -212,9 +238,19 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           ),
           this.detailChanged
               ? TextButton(
-                  onPressed: () {
-                    // TODO
-                    print("List updated");
+                  onPressed: () async {
+                    if (await this.client.updateList(UpdateListRequest(
+                              animeID: "${this.animeMap["node"]["id"]}",
+                              status: statusJSONify(this.chosenListStatus),
+                              score: this.chosenScore,
+                              episodesWatched: this.chosenEpsWatched,
+                            )) ==
+                        "200") {
+                      print("List updated");
+                      setState(() {
+                        this.detailChanged = false;
+                      });
+                    }
                   },
                   child: Text("Update List"),
                 )

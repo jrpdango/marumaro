@@ -25,7 +25,7 @@ class UpdateListRequest {
         "num_watched_episodes": this.episodesWatched
       });
       if (response.statusCode == 200) {
-        return "Anime added successfully!";
+        return "200";
       } else {
         return "List update request sent, but something went wrong. Status code: ${response.statusCode}";
       }

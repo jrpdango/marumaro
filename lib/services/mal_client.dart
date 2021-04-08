@@ -68,9 +68,10 @@ class MALClient {
     return await animeDetailsRequest.createRequest(this);
   }
 
-  Future<void> updateList(UpdateListRequest updateListRequest) async {
+  Future<String> updateList(UpdateListRequest updateListRequest) async {
     String response = await updateListRequest.createRequest(this);
     print(response);
+    return response;
   }
 
   Future<void> deleteAnime(DeleteAnimeRequest deleteAnimeRequest) async {

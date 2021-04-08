@@ -49,6 +49,7 @@ class _ListContainerState extends State<ListContainer> {
                         "animeMap": this.animeList[index],
                         "connStatus": this.netConnected,
                         "deviceSize": size,
+                        "client": widget.client,
                       });
                     },
                     child: Row(
