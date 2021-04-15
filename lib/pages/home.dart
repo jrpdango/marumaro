@@ -11,6 +11,11 @@ import 'package:miru/widgets/ColoredTabBar.dart';
 import 'package:miru/widgets/ListContainer.dart';
 
 class Home extends StatefulWidget {
+  final Map animeMap;
+  final MALClient client;
+
+  const Home({Key key, this.animeMap, this.client}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -18,27 +23,24 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Map result;
   Map animeMap;
-  MALClient client;
-  List<RefreshIndicator> tabContents;
+  List<ListContainer> _tabContents;
   bool netConnected = false;
-
-  MALClient assignClient() => result["client"];
 
   Map setupAnimeMap() => result["anime_map"];
 
   Future<void> searchAnime(String query,
       {String limit, String offset, String fields}) async {
-    print(await this.client.animeSearch(AnimeSearchRequest(
+    print(await widget.client.animeSearch(AnimeSearchRequest(
         query: query, limit: limit, offset: offset, fields: fields)));
   }
 
   Future<void> getAnimeDetails(String animeID, {String fields}) async {
-    print(await this.client.getAnimeDetails(
+    print(await widget.client.getAnimeDetails(
         AnimeDetailsRequest(animeID: animeID, fields: fields)));
   }
 
   Future<void> deleteAnime(String animeID) async {
-    await this.client.deleteAnime(DeleteAnimeRequest(animeID: animeID));
+    await widget.client.deleteAnime(DeleteAnimeRequest(animeID: animeID));
   }
 
   List<Widget> createTabs() {
@@ -56,7 +58,7 @@ class _HomeState extends State<Home> {
     return menuTabs;
   }
 
-  List<RefreshIndicator> getTabContents() {
+  List<ListContainer> getTabContents(Map newMap) {
     List<String> tabNames = [
       "watching",
       "plan_to_watch",
@@ -64,41 +66,89 @@ class _HomeState extends State<Home> {
       "on_hold",
       "dropped"
     ];
-    List<RefreshIndicator> tabContents = [];
+    List<ListContainer> tabContents = [];
     for (String tabName in tabNames) {
-      tabContents.add(RefreshIndicator(
-        onRefresh: () => this.refreshList(),
-        child: ListContainer(
-            animeList: this.animeMap[tabName],
-            client: this.client,
-            listType: tabName,
-            connStatus: this.netConnected),
-      ));
+      // print("getTabContents animeList: ${newMap[tabName]}");
+      tabContents.add(ListContainer(
+          animeMapCallback: (val) {
+            setState(() => this.animeMap = val);
+            this.refreshList();
+          },
+          animeList: newMap[tabName],
+          client: widget.client,
+          listType: tabName,
+          connStatus: this.netConnected));
     }
     return tabContents;
   }
 
   Future<void> refreshList() async {
-    Map result = await this.client.getAnimeList(AnimeListRequest());
+    Map result = await widget.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
     // print(result);
     // print(result["data"].runtimeType);
     setState(() {
       this.animeMap = result;
       this.netConnected = checkConn;
-      this.tabContents = getTabContents();
+      this._tabContents = getTabContents(result);
     });
   }
 
   @override
   void initState() {
+    super.initState();
     SystemChrome.setEnabledSystemUIOverlays([]);
     this.result = Get.arguments;
-    this.client = this.assignClient();
-    this.animeMap = this.setupAnimeMap();
+    this.animeMap = widget.animeMap;
     this.netConnected = result["connStatus"];
+    _tabContents = [
+      ListContainer(
+          animeMapCallback: (val) {
+            setState(() => this.animeMap = val);
+            this.refreshList();
+          },
+          animeList: this.animeMap["watching"],
+          client: widget.client,
+          listType: "watching",
+          connStatus: this.netConnected),
+      ListContainer(
+          animeMapCallback: (val) {
+            setState(() => this.animeMap = val);
+            this.refreshList();
+          },
+          animeList: this.animeMap["plan_to_watch"],
+          client: widget.client,
+          listType: "plan_to_watch",
+          connStatus: this.netConnected),
+      ListContainer(
+          animeMapCallback: (val) {
+            setState(() => this.animeMap = val);
+            this.refreshList();
+          },
+          animeList: this.animeMap["completed"],
+          client: widget.client,
+          listType: "completed",
+          connStatus: this.netConnected),
+      ListContainer(
+          animeMapCallback: (val) {
+            setState(() => this.animeMap = val);
+            this.refreshList();
+          },
+          animeList: this.animeMap["on_hold"],
+          client: widget.client,
+          listType: "on_hold",
+          connStatus: this.netConnected),
+      ListContainer(
+          animeMapCallback: (val) {
+            setState(() => this.animeMap = val);
+            this.refreshList();
+          },
+          animeList: this.animeMap["dropped"],
+          client: widget.client,
+          listType: "dropped",
+          connStatus: this.netConnected)
+    ];
     this.refreshList();
-    super.initState();
   }
 
   @override
@@ -125,7 +175,7 @@ class _HomeState extends State<Home> {
           ],
         ),
         body: TabBarView(
-          children: tabContents,
+          children: _tabContents,
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

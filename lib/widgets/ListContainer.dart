@@ -1,15 +1,25 @@
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
 
+typedef void AnimeMapCallback(Map animeMap);
+
 class ListContainer extends StatefulWidget {
   final List animeList;
+  final AnimeMapCallback animeMapCallback;
   final MALClient client;
   final String listType;
   final bool connStatus;
   const ListContainer(
-      {Key key, this.animeList, this.client, this.listType, this.connStatus})
+      {Key key,
+      this.animeList,
+      this.animeMapCallback,
+      this.client,
+      this.listType,
+      this.connStatus})
       : super(key: key);
   @override
   _ListContainerState createState() => _ListContainerState();
@@ -18,6 +28,18 @@ class ListContainer extends StatefulWidget {
 class _ListContainerState extends State<ListContainer> {
   List animeList;
   bool netConnected;
+
+  Future<void> refreshList() async {
+    Map result = await widget.client.getAnimeList(AnimeListRequest());
+    bool checkConn = await DataConnectionChecker().hasConnection;
+    // print(result);
+    // print(result["data"].runtimeType);
+    setState(() {
+      widget.animeMapCallback(result);
+      this.animeList = result[widget.listType];
+      this.netConnected = checkConn;
+    });
+  }
 
   @override
   void initState() {
@@ -29,77 +51,98 @@ class _ListContainerState extends State<ListContainer> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width,
-      child: ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: animeList.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-              child: Container(
-                width: size.width,
-                child: Card(
-                  color: Colors.grey[900],
-                  child: InkWell(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    onTap: () {
-                      // print(this.animeList[index]);
-                      Get.toNamed("/animeDetailsPage", arguments: {
-                        "animeMap": this.animeList[index],
-                        "connStatus": this.netConnected,
-                        "deviceSize": size,
-                        "client": widget.client,
-                      });
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              bottomLeft: Radius.circular(5.0)),
-                          child: this.netConnected
-                              ? FadeInImage.assetNetwork(
-                                  fit: BoxFit.cover,
-                                  height: 90,
-                                  width: 65,
-                                  placeholderCacheHeight: 90,
-                                  placeholderCacheWidth: 65,
-                                  placeholder: "assets/404img.png",
-                                  image: animeList[index]["node"]
-                                      ["main_picture"]["medium"],
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                          height: 90,
-                                          width: 65,
-                                          child:
-                                              Image.asset("assets/404img.png")),
-                                )
-                              : Container(
-                                  height: 90,
-                                  width: 65,
-                                  child: Image.asset("assets/404img.png")),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await refreshList();
+      },
+      child: Container(
+          width: size.width,
+          child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: animeList.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+                  child: Container(
+                    width: size.width,
+                    child: Card(
+                      color: Colors.grey[900],
+                      child: InkWell(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        onTap: () {
+                          String oldStatus =
+                              this.animeList[index]["list_status"]["status"];
+                          Get.toNamed("/animeDetailsPage", arguments: {
+                            "animeMap": this.animeList[index],
+                            "connStatus": this.netConnected,
+                            "deviceSize": size,
+                            "client": widget.client,
+                            "callback": (val) {
+                              setState(() {
+                                if (oldStatus != val["list_status"]["status"]) {
+                                  print("status changed");
+                                  this.animeList.removeAt(index);
+                                } else {
+                                  print("still the same");
+                                  print(this.animeList[index]["list_status"]
+                                      ["status"]);
+                                  print(val["list_status"]["status"]);
+                                  this.animeList[index] = val;
+                                }
+                              });
+                            }
+                          });
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5.0),
+                                  bottomLeft: Radius.circular(5.0)),
+                              child: this.netConnected
+                                  ? FadeInImage.assetNetwork(
+                                      fit: BoxFit.cover,
+                                      height: 90,
+                                      width: 65,
+                                      placeholderCacheHeight: 90,
+                                      placeholderCacheWidth: 65,
+                                      placeholder: "assets/404img.png",
+                                      image: animeList[index]["node"]
+                                          ["main_picture"]["medium"],
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                  height: 90,
+                                                  width: 65,
+                                                  child: Image.asset(
+                                                      "assets/404img.png")),
+                                    )
+                                  : Container(
+                                      height: 90,
+                                      width: 65,
+                                      child: Image.asset("assets/404img.png")),
+                            ),
+                            Expanded(
+                              child: ShowDetails(
+                                title: "${animeList[index]["node"]["title"]}",
+                                progress:
+                                    "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
+                                score:
+                                    "${animeList[index]["list_status"]["score"]}",
+                                airingStatus:
+                                    "${animeList[index]["node"]["status"]}",
+                              ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: ShowDetails(
-                            title: "${animeList[index]["node"]["title"]}",
-                            progress:
-                                "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
-                            score:
-                                "${animeList[index]["list_status"]["score"]}",
-                            airingStatus:
-                                "${animeList[index]["node"]["status"]}",
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }),
+                );
+              })),
     );
   }
 }

@@ -4,6 +4,8 @@ import 'package:miru/services/mal_client.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
 
+typedef void Callback(Map setting);
+
 class AnimeDetailsPage extends StatefulWidget {
   @override
   _AnimeDetailsPageState createState() => _AnimeDetailsPageState();
@@ -11,6 +13,7 @@ class AnimeDetailsPage extends StatefulWidget {
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   bool detailChanged = false;
+  Callback _callback;
   MALClient client;
   Map result;
   Map animeMap;
@@ -108,6 +111,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     this.chosenScore = "${animeMap["list_status"]["score"]}";
     this.chosenEpsWatched =
         "${animeMap["list_status"]["num_episodes_watched"]}";
+    this._callback = this.result["callback"];
     super.initState();
   }
 
@@ -118,6 +122,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
+              Map newMap = animeMap;
+              newMap["list_status"]["status"] = this.chosenListStatus;
+              print("animeMap status: ${animeMap["list_status"]["status"]}");
+              _callback(newMap);
               Get.back();
             },
             icon: Icon(Icons.arrow_back)),

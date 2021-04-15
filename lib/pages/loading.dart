@@ -1,10 +1,12 @@
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:miru/pages/home.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/services/token_verifier.dart';
 // import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
+import 'package:miru/widgets/ListContainer.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +26,7 @@ class _LoadingState extends State<Loading> {
         : await File("${directory.path}/miruList.json").create();
     dynamic animeMap = file.readAsStringSync().isNotEmpty
         ? json.decode(file.readAsStringSync())
-        : [];
+        : Map();
     print(animeMap.runtimeType);
     return animeMap;
   }
@@ -35,12 +37,33 @@ class _LoadingState extends State<Loading> {
 
   void setupMALConnection() async {
     bool connStatus = await testConnection();
+    Map localList = await getLocalList();
+
     await TokenVerifier.verifyTokens(this.client);
-    Get.offNamed("/home", arguments: {
-      "anime_map": await this.getLocalList(),
-      "client": this.client,
-      "connStatus": connStatus
-    });
+    Get.off(() => Home(animeMap: localList, client: this.client),
+        arguments: {"connStatus": connStatus});
+  }
+
+  Future<List<ListContainer>> getTabContents() async {
+    Map animeMap = await getLocalList();
+    bool connStatus = await testConnection();
+    List<String> tabNames = [
+      "watching",
+      "plan_to_watch",
+      "completed",
+      "on_hold",
+      "dropped"
+    ];
+    List<ListContainer> tabContents = [];
+    for (String tabName in tabNames) {
+      tabContents.add(ListContainer(
+        animeList: animeMap[tabName],
+        client: this.client,
+        listType: tabName,
+        connStatus: connStatus,
+      ));
+    }
+    return tabContents;
   }
 
   @override
