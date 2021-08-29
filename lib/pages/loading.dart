@@ -36,6 +36,12 @@ class _LoadingState extends State<Loading> {
   }
 
   void setupMALConnection() async {
+    /**
+     * Uncomment the deleteSync lines to remove locally-stored list and tokens.
+     */
+    Directory directory = await getApplicationDocumentsDirectory();
+    File("${directory.path}/miruList.json").deleteSync();
+    File("${directory.path}/miruTokens.json").deleteSync();
     bool connStatus = await testConnection();
     Map localList = await getLocalList();
 

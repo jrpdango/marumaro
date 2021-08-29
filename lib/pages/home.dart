@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
             setState(() => this.animeMap = val);
             this.refreshList();
           },
-          animeList: this.animeMap["watching"],
+          animeList: this.animeMap["watching"] ?? [],
           client: widget.client,
           listType: "watching",
           connStatus: this.netConnected),
@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
             setState(() => this.animeMap = val);
             this.refreshList();
           },
-          animeList: this.animeMap["plan_to_watch"],
+          animeList: this.animeMap["plan_to_watch"] ?? [],
           client: widget.client,
           listType: "plan_to_watch",
           connStatus: this.netConnected),
@@ -125,7 +125,7 @@ class _HomeState extends State<Home> {
             setState(() => this.animeMap = val);
             this.refreshList();
           },
-          animeList: this.animeMap["completed"],
+          animeList: this.animeMap["completed"] ?? [],
           client: widget.client,
           listType: "completed",
           connStatus: this.netConnected),
@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
             setState(() => this.animeMap = val);
             this.refreshList();
           },
-          animeList: this.animeMap["on_hold"],
+          animeList: this.animeMap["on_hold"] ?? [],
           client: widget.client,
           listType: "on_hold",
           connStatus: this.netConnected),
@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
             setState(() => this.animeMap = val);
             this.refreshList();
           },
-          animeList: this.animeMap["dropped"],
+          animeList: this.animeMap["dropped"] ?? [],
           client: widget.client,
           listType: "dropped",
           connStatus: this.netConnected)

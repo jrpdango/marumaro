@@ -32,7 +32,7 @@ class _ListContainerState extends State<ListContainer> {
   Future<void> refreshList() async {
     Map result = await widget.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
-    // print(result);
+    print(result);
     // print(result["data"].runtimeType);
     setState(() {
       widget.animeMapCallback(result);
