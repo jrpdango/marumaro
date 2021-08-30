@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
       tabContents.add(ListContainer(
           animeMapCallback: (val) {
             setState(() => this.animeMap = val);
-            this.refreshList();
+            this.refreshListLocal();
           },
           animeList: newMap[tabName],
           client: widget.client,
@@ -82,6 +82,7 @@ class _HomeState extends State<Home> {
     return tabContents;
   }
 
+  // Used to update list on initialization
   Future<void> refreshList() async {
     Map result = await widget.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
@@ -91,6 +92,15 @@ class _HomeState extends State<Home> {
       this.animeMap = result;
       this.netConnected = checkConn;
       this._tabContents = getTabContents(result);
+    });
+  }
+
+  // Used to update list when app is already in use
+  Future<void> refreshListLocal() async {
+    bool checkConn = await DataConnectionChecker().hasConnection;
+    setState(() {
+      this.netConnected = checkConn;
+      this._tabContents = getTabContents(this.animeMap);
     });
   }
 
@@ -105,7 +115,6 @@ class _HomeState extends State<Home> {
       ListContainer(
           animeMapCallback: (val) {
             setState(() => this.animeMap = val);
-            this.refreshList();
           },
           animeList: this.animeMap["watching"] ?? [],
           client: widget.client,
@@ -114,7 +123,6 @@ class _HomeState extends State<Home> {
       ListContainer(
           animeMapCallback: (val) {
             setState(() => this.animeMap = val);
-            this.refreshList();
           },
           animeList: this.animeMap["plan_to_watch"] ?? [],
           client: widget.client,
@@ -123,7 +131,6 @@ class _HomeState extends State<Home> {
       ListContainer(
           animeMapCallback: (val) {
             setState(() => this.animeMap = val);
-            this.refreshList();
           },
           animeList: this.animeMap["completed"] ?? [],
           client: widget.client,
@@ -132,7 +139,6 @@ class _HomeState extends State<Home> {
       ListContainer(
           animeMapCallback: (val) {
             setState(() => this.animeMap = val);
-            this.refreshList();
           },
           animeList: this.animeMap["on_hold"] ?? [],
           client: widget.client,
@@ -141,7 +147,6 @@ class _HomeState extends State<Home> {
       ListContainer(
           animeMapCallback: (val) {
             setState(() => this.animeMap = val);
-            this.refreshList();
           },
           animeList: this.animeMap["dropped"] ?? [],
           client: widget.client,

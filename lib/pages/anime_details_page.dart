@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
+import 'package:miru/widgets/LoadingPopup.dart';
 
 typedef void Callback(Map setting);
 
@@ -13,6 +14,7 @@ class AnimeDetailsPage extends StatefulWidget {
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   bool detailChanged = false;
+  OverlayEntry loadingOverlay;
   Callback _callback;
   MALClient client;
   Map result;
@@ -49,7 +51,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     }
   }
 
-  void showStatusList(BuildContext context) {
+  void showOverlay(BuildContext context, String type) {
     OverlayState overlayState = Overlay.of(context);
     OverlayEntry overlayEntry;
     GestureDetector closer = GestureDetector(
@@ -61,17 +63,46 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           height: this.result["deviceSize"].height,
           width: this.result["deviceSize"].width,
         ));
-    overlayEntry = OverlayEntry(
-        builder: (context) => Stack(children: <Widget>[
-              closer,
-              ListStatusPopup(
-                callback: (val) => setState(() => detailChanged = val),
-                stringChoice: (choice) =>
-                    setState(() => chosenListStatus = choice),
-                overlayEntry: overlayEntry,
-              )
-            ]));
-
+    switch (type) {
+      case "status":
+        overlayEntry = OverlayEntry(
+            builder: (context) => Stack(children: <Widget>[
+                  closer,
+                  ListStatusPopup(
+                    callback: (val) => setState(() => detailChanged = val),
+                    stringChoice: (choice) =>
+                        setState(() => chosenListStatus = choice),
+                    overlayEntry: overlayEntry,
+                  )
+                ]));
+        break;
+      case "loading":
+        overlayEntry = OverlayEntry(
+            builder: (context) => Stack(
+                  children: <Widget>[
+                    Container(
+                      color: Color.fromRGBO(38, 38, 38, 0.8),
+                      height: this.result["deviceSize"].height,
+                      width: this.result["deviceSize"].width,
+                    ),
+                    LoadingPopup(),
+                  ],
+                ));
+        this.loadingOverlay = overlayEntry;
+        break;
+      default:
+        overlayEntry = OverlayEntry(
+            builder: (context) => Stack(children: <Widget>[
+                  closer,
+                  ListStatusPopup(
+                    callback: (val) => setState(() => detailChanged = val),
+                    stringChoice: (choice) =>
+                        setState(() => chosenListStatus = choice),
+                    overlayEntry: overlayEntry,
+                  )
+                ]));
+        break;
+    }
     overlayState.insert(overlayEntry);
   }
 
@@ -122,10 +153,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
-              Map newMap = animeMap;
-              newMap["list_status"]["status"] = this.chosenListStatus;
+              // Map newMap = animeMap;
+              // newMap["list_status"]["status"] = this.chosenListStatus;
               print("animeMap status: ${animeMap["list_status"]["status"]}");
-              _callback(newMap);
+              // _callback(newMap);
               Get.back();
             },
             icon: Icon(Icons.arrow_back)),
@@ -184,7 +215,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 child: Container(
                   child: InkWell(
                     onTap: () {
-                      showStatusList(context);
+                      showOverlay(context, "status");
                     },
                     child: Column(
                       children: <Widget>[
@@ -247,6 +278,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           this.detailChanged
               ? TextButton(
                   onPressed: () async {
+                    showOverlay(context, "loading");
                     if (await this.client.updateList(UpdateListRequest(
                               animeID: "${this.animeMap["node"]["id"]}",
                               status: statusJSONify(this.chosenListStatus),
@@ -258,7 +290,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                       setState(() {
                         this.detailChanged = false;
                       });
+                      Map newMap = animeMap;
+                      newMap["list_status"]["status"] = this.chosenListStatus;
+                      _callback(newMap);
                     }
+                    loadingOverlay.remove();
                   },
                   child: Text("Update List"),
                 )

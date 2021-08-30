@@ -32,7 +32,7 @@ class _ListContainerState extends State<ListContainer> {
   Future<void> refreshList() async {
     Map result = await widget.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
-    print(result);
+    // print(result);
     // print(result["data"].runtimeType);
     setState(() {
       widget.animeMapCallback(result);
@@ -78,7 +78,7 @@ class _ListContainerState extends State<ListContainer> {
                             "connStatus": this.netConnected,
                             "deviceSize": size,
                             "client": widget.client,
-                            "callback": (val) {
+                            "callback": (val) async {
                               setState(() {
                                 if (oldStatus != val["list_status"]["status"]) {
                                   print("status changed");
@@ -91,6 +91,7 @@ class _ListContainerState extends State<ListContainer> {
                                   this.animeList[index] = val;
                                 }
                               });
+                              await refreshList();
                             }
                           });
                         },
