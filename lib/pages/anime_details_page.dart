@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/services/update_list_request.dart';
+import 'package:miru/widgets/EpisodesWatchedPopup.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
 import 'package:miru/widgets/LoadingPopup.dart';
 
@@ -72,6 +73,19 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                     callback: (val) => setState(() => detailChanged = val),
                     stringChoice: (choice) =>
                         setState(() => chosenListStatus = choice),
+                    overlayEntry: overlayEntry,
+                  )
+                ]));
+        break;
+      case "episodes":
+        overlayEntry = OverlayEntry(
+            builder: (context) => Stack(children: <Widget>[
+                  closer,
+                  EpisodesWatchedPopup(
+                    callback: (val) => setState(() => detailChanged = val),
+                    numEpsChoice: (choice) =>
+                        setState(() => chosenEpsWatched = choice),
+                    totalEps: animeMap["node"]["num_episodes"],
                     overlayEntry: overlayEntry,
                   )
                 ]));
@@ -237,7 +251,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                   child: InkWell(
                     onTap: () {
                       print(detailChanged);
-                      print(chosenListStatus);
+                      print(chosenEpsWatched);
+                      showOverlay(context, "episodes");
                     },
                     child: Column(
                       children: <Widget>[
