@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-typedef void BoolCallback(bool val);
-typedef void NumEpsChoice(String choice);
-
 class EpisodesWatchedPopup extends StatefulWidget {
   final OverlayEntry overlayEntry;
-  final BoolCallback callback;
-  final NumEpsChoice numEpsChoice;
+  final Function callback;
+  final Function numEpsChoice;
   final int totalEps;
 
   const EpisodesWatchedPopup(

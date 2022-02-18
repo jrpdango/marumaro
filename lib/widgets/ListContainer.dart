@@ -5,11 +5,11 @@ import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
 
-typedef void AnimeMapCallback(Map animeMap);
+// typedef void AnimeMapCallback(Map animeMap);
 
 class ListContainer extends StatefulWidget {
   final List animeList;
-  final AnimeMapCallback animeMapCallback;
+  final Function animeMapCallback;
   final MALClient client;
   final String listType;
   final bool connStatus;

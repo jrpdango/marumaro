@@ -6,7 +6,7 @@ import 'package:miru/widgets/EpisodesWatchedPopup.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
 import 'package:miru/widgets/LoadingPopup.dart';
 
-typedef void Callback(Map setting);
+// typedef void Callback(Map setting);
 
 class AnimeDetailsPage extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class AnimeDetailsPage extends StatefulWidget {
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   bool detailChanged = false;
   OverlayEntry loadingOverlay;
-  Callback _callback;
+  Function _callback;
   MALClient client;
   Map result;
   Map animeMap;
@@ -36,20 +36,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   ];
 
   String statusJSONify(String status) {
-    switch (status) {
-      case "Watching":
-        return "watching";
-      case "Plan to Watch":
-        return "plan_to_watch";
-      case "Completed":
-        return "completed";
-      case "On Hold":
-        return "on_hold";
-      case "Dropped":
-        return "dropped";
-      default:
-        return "watching";
-    }
+    status = status.replaceAll(" ", "_").toLowerCase();
+    return status;
   }
 
   void showOverlay(BuildContext context, String type) {
@@ -307,6 +295,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                       });
                       Map newMap = animeMap;
                       newMap["list_status"]["status"] = this.chosenListStatus;
+                      print(this.chosenListStatus);
                       _callback(newMap);
                     }
                     loadingOverlay.remove();

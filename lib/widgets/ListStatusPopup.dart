@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-typedef void BoolCallback(bool val);
-typedef void StringChoice(String choice);
+// typedef void BoolCallback(bool val);
+// typedef void StringChoice(String choice);
 
 class ListStatusPopup extends StatefulWidget {
   final OverlayEntry overlayEntry;
-  final BoolCallback callback;
-  final StringChoice stringChoice;
+  final Function callback;
+  final Function stringChoice;
 
   const ListStatusPopup({this.overlayEntry, this.callback, this.stringChoice});
   @override
