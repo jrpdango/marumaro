@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-// typedef void BoolCallback(bool val);
-// typedef void StringChoice(String choice);
-
 class ListStatusPopup extends StatefulWidget {
   final OverlayEntry overlayEntry;
   final Function callback;
@@ -45,7 +42,6 @@ class _ListStatusPopupState extends State<ListStatusPopup> {
 
   @override
   Widget build(BuildContext context) {
-    // final Size size = MediaQuery.of(context).size;
     return Center(
       child: Container(
         color: Colors.grey[850],

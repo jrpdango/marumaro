@@ -29,6 +29,7 @@ dependencies:
   path_provider: ^1.6.27
   get: ^3.25.6
   data_connection_checker: ^0.3.4
+  infinite_carousel: ^1.0.2
 
 
   # The following adds the Cupertino Icons font to your application.

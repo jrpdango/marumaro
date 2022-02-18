@@ -5,8 +5,6 @@ import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
 
-// typedef void AnimeMapCallback(Map animeMap);
-
 class ListContainer extends StatefulWidget {
   final List animeList;
   final Function animeMapCallback;
@@ -32,8 +30,6 @@ class _ListContainerState extends State<ListContainer> {
   Future<void> refreshList() async {
     Map result = await widget.client.getAnimeList(AnimeListRequest());
     bool checkConn = await DataConnectionChecker().hasConnection;
-    // print(result);
-    // print(result["data"].runtimeType);
     setState(() {
       widget.animeMapCallback(result);
       this.animeList = result[widget.listType];

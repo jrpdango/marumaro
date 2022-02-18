@@ -5,8 +5,7 @@ import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/EpisodesWatchedPopup.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
 import 'package:miru/widgets/LoadingPopup.dart';
-
-// typedef void Callback(Map setting);
+import 'package:miru/widgets/ScorePopup.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
   @override
@@ -35,6 +34,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     "average_episode_duration"
   ];
 
+  /// Turns given [status] into valid text to send back through the MAL API.
+  ///
+  /// ```dart
+  /// statusJSONify("Plan To Watch"); // plan_to_watch
+  /// ```
   String statusJSONify(String status) {
     status = status.replaceAll(" ", "_").toLowerCase();
     return status;
@@ -74,6 +78,18 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                     numEpsChoice: (choice) =>
                         setState(() => chosenEpsWatched = choice),
                     totalEps: animeMap["node"]["num_episodes"],
+                    overlayEntry: overlayEntry,
+                  )
+                ]));
+        break;
+      case "score":
+        overlayEntry = OverlayEntry(
+            builder: (context) => Stack(children: <Widget>[
+                  closer,
+                  ScorePopup(
+                    callback: (val) => setState(() => detailChanged = val),
+                    scoreChoice: (choice) =>
+                        setState(() => chosenScore = choice),
                     overlayEntry: overlayEntry,
                   )
                 ]));
@@ -155,10 +171,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
-              // Map newMap = animeMap;
-              // newMap["list_status"]["status"] = this.chosenListStatus;
               print("animeMap status: ${animeMap["list_status"]["status"]}");
-              // _callback(newMap);
               Get.back();
             },
             icon: Icon(Icons.arrow_back)),
@@ -238,8 +251,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 child: Container(
                   child: InkWell(
                     onTap: () {
-                      print(detailChanged);
-                      print(chosenEpsWatched);
                       showOverlay(context, "episodes");
                     },
                     child: Column(
@@ -260,7 +271,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               Expanded(
                 child: Container(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      showOverlay(context, "score");
+                    },
                     child: Column(
                       children: <Widget>[
                         Icon(
@@ -289,6 +302,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                               episodesWatched: this.chosenEpsWatched,
                             )) ==
                         "200") {
+                      print("Chosen score: ${this.chosenScore}");
                       print("List updated");
                       setState(() {
                         this.detailChanged = false;
