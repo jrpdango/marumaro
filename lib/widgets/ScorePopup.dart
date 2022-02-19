@@ -5,8 +5,10 @@ class ScorePopup extends StatefulWidget {
   final OverlayEntry overlayEntry;
   final Function callback;
   final Function scoreChoice;
+  final int initialScore;
 
-  const ScorePopup({this.overlayEntry, this.callback, this.scoreChoice});
+  const ScorePopup(
+      {this.overlayEntry, this.callback, this.scoreChoice, this.initialScore});
   @override
   _ScorePopupState createState() => _ScorePopupState();
 }
@@ -39,8 +41,10 @@ class _ScorePopupState extends State<ScorePopup> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController _controller =
+        InfiniteScrollController(initialItem: widget.initialScore);
     Size size = MediaQuery.of(context).size;
-    int score = 0;
+    int currentScore = widget.initialScore;
 
     return Center(
       child: Column(
@@ -51,12 +55,13 @@ class _ScorePopupState extends State<ScorePopup> {
             width: size.width / 1.3,
             color: Colors.grey[850],
             child: InfiniteCarousel.builder(
+              controller: _controller,
               loop: false,
               velocityFactor: 0.4,
               itemCount: 11,
               itemExtent: size.width / 1.5,
               onIndexChanged: (index) {
-                score = index;
+                currentScore = index;
               },
               itemBuilder: (context, itemIndex, realIndex) {
                 return Column(
@@ -79,9 +84,8 @@ class _ScorePopupState extends State<ScorePopup> {
           ),
           TextButton(
             onPressed: () {
-              // print(score);
-              widget.callback(true);
-              widget.scoreChoice(score.toString());
+              if (widget.initialScore != currentScore) widget.callback(true);
+              widget.scoreChoice(currentScore.toString());
               widget.overlayEntry.remove();
             },
             child: Text("Done"),

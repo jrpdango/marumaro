@@ -78,7 +78,9 @@ class _ListContainerState extends State<ListContainer> {
                               setState(() {
                                 if (oldStatus != val["list_status"]["status"]) {
                                   print("status changed");
-                                  this.animeList.removeAt(index);
+                                  if (animeList[index] != null) {
+                                    this.animeList.removeAt(index);
+                                  }
                                 } else {
                                   print("still the same");
                                   print(this.animeList[index]["list_status"]

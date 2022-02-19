@@ -83,6 +83,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 ]));
         break;
       case "score":
+        print(animeMap);
         overlayEntry = OverlayEntry(
             builder: (context) => Stack(children: <Widget>[
                   closer,
@@ -90,6 +91,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                     callback: (val) => setState(() => detailChanged = val),
                     scoreChoice: (choice) =>
                         setState(() => chosenScore = choice),
+                    initialScore: int.parse(this.chosenScore),
                     overlayEntry: overlayEntry,
                   )
                 ]));
@@ -311,8 +313,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                       newMap["list_status"]["status"] = this.chosenListStatus;
                       print(this.chosenListStatus);
                       _callback(newMap);
+                      loadingOverlay.remove();
                     }
-                    loadingOverlay.remove();
                   },
                   child: Text("Update List"),
                 )
