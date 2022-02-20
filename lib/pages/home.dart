@@ -114,11 +114,11 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     this.result = Get.arguments;
     this.animeMap = widget.animeMap;
     this.netConnected = result["connStatus"];
-    if (netConnected) this.refreshList();
+    // if (netConnected) this.refreshList();
     _tabContents = [
       ListContainer(
         animeMapCallback: (val) {

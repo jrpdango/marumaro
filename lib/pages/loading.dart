@@ -17,10 +17,11 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  MALClient client = MALClient();
+  MALClient client;
+  bool hasMorePages;
 
-  /// Legacy function, saving lists locally probably isn't the best idea for now
-  ///
+  // Legacy function, saving lists locally probably isn't the best idea for now
+  //
   // Future<Map> getLocalList() async {
   //   Directory directory = await getApplicationDocumentsDirectory();
   //   File file = File("${directory.path}/miruList.json").existsSync()
@@ -33,8 +34,22 @@ class _LoadingState extends State<Loading> {
   //   return animeMap;
   // }
 
-  Future<Map> initList() async {
-    Map result = await client.getAnimeList(AnimeListRequest(limit: "500"));
+  Future<Map> initList(_limit) async {
+    // int numCalls = 1;
+    Map newMap = Map();
+    Map result = await client.getAnimeList(AnimeListRequest(limit: _limit));
+    while (result["paging"]["next"] != null) {
+      // print("Number of calls to retrieve full list: $numCalls");
+      newMap = await client.getAnimeList(
+          AnimeListRequest(limit: _limit, url: result["paging"]["next"]));
+      for (String item in newMap.keys) {
+        if (item != "paging" && item != "status_code") {
+          result[item].addAll(newMap[item]);
+        }
+      }
+      result["paging"]["next"] = newMap["paging"]["next"];
+      // numCalls++;
+    }
     return result;
   }
 
@@ -51,7 +66,7 @@ class _LoadingState extends State<Loading> {
     // File("${directory.path}/miruTokens.json").deleteSync();
     bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(this.client);
-    Map currentList = await initList();
+    Map currentList = await initList(500.toString());
 
     Get.off(() => Home(animeMap: currentList, client: this.client),
         arguments: {"connStatus": connStatus});
@@ -61,6 +76,8 @@ class _LoadingState extends State<Loading> {
   void initState() {
     super.initState();
     setupMALConnection();
+    client = MALClient();
+    hasMorePages = false;
   }
 
   @override
