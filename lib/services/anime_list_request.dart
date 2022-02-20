@@ -1,18 +1,24 @@
 import 'package:miru/services/mal_client.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+// import 'dart:io';
+// import 'package:path_provider/path_provider.dart';
 
 class AnimeListRequest {
   String username;
+  String url;
   String status;
   String sort;
   String limit;
   String offset;
 
   AnimeListRequest(
-      {this.status, this.sort, this.limit, this.offset, this.username = "@me"});
+      {this.status,
+      this.sort,
+      this.limit,
+      this.offset,
+      this.username = "@me",
+      this.url});
 
   void setParams() {
     this.status = this.status == null ? "" : "&status=${this.status}";
@@ -21,18 +27,20 @@ class AnimeListRequest {
     this.offset = this.offset == null ? "" : "&offset=${this.offset}";
   }
 
-  static Future<File> writeToFile(Map listInfo) async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    File file = File("${directory.path}/miruList.json").existsSync()
-        ? File("${directory.path}/miruList.json")
-        : await File("${directory.path}/miruList.json").create();
-    String data = json.encode(listInfo);
-    if (file.readAsStringSync().isNotEmpty) {
-      await File("${directory.path}/miruList.json").delete();
-      file = await File("${directory.path}/miruList.json").create();
-    }
-    return await file.writeAsString(data);
-  }
+  /// Legacy function, saving lists locally probably isn't the best idea for now
+  ///
+  // static Future<File> writeToFile(Map listInfo) async {
+  //   Directory directory = await getApplicationDocumentsDirectory();
+  //   File file = File("${directory.path}/miruList.json").existsSync()
+  //       ? File("${directory.path}/miruList.json")
+  //       : await File("${directory.path}/miruList.json").create();
+  //   String data = json.encode(listInfo);
+  //   if (file.readAsStringSync().isNotEmpty) {
+  //     await File("${directory.path}/miruList.json").delete();
+  //     file = await File("${directory.path}/miruList.json").create();
+  //   }
+  //   return await file.writeAsString(data);
+  // }
 
   Map sortMap(Map rawMap) {
     Map animeMap = Map();
@@ -60,18 +68,20 @@ class AnimeListRequest {
           break;
       }
     }
+    animeMap["paging"] = rawMap["paging"];
     return animeMap;
   }
 
   Future<Map> createRequest(MALClient client) async {
     this.setParams();
     try {
-      String url =
-          "https://api.myanimelist.net/v2/users/${this.username}/animelist?fields=list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres" +
-              this.status +
-              this.sort +
-              this.limit +
-              this.offset;
+      if (url == null)
+        url =
+            "https://api.myanimelist.net/v2/users/${this.username}/animelist?fields=list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres" +
+                this.status +
+                this.sort +
+                this.limit +
+                this.offset;
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map respMap = Map();
@@ -79,7 +89,7 @@ class AnimeListRequest {
       if (response.statusCode == 200) {
         print("List retrieved successfully!");
         respMap = sortMap(respMap);
-        writeToFile(respMap);
+        // writeToFile(respMap);
         respMap["status_code"] = 200;
       } else {
         print(

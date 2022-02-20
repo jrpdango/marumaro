@@ -310,8 +310,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                         this.detailChanged = false;
                       });
                       Map newMap = animeMap;
-                      newMap["list_status"]["status"] = this.chosenListStatus;
-                      print(this.chosenListStatus);
+                      newMap["list_status"]["status"] =
+                          statusJSONify(this.chosenListStatus);
+                      print(statusJSONify(this.chosenListStatus));
                       _callback(newMap);
                       loadingOverlay.remove();
                     }

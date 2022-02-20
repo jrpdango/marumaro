@@ -8,17 +8,19 @@ import 'package:miru/widgets/ShowDetails.dart';
 class ListContainer extends StatefulWidget {
   final List animeList;
   final Function animeMapCallback;
+  final Function animeListCallback;
   final MALClient client;
   final String listType;
   final bool connStatus;
-  const ListContainer(
-      {Key key,
-      this.animeList,
-      this.animeMapCallback,
-      this.client,
-      this.listType,
-      this.connStatus})
-      : super(key: key);
+  const ListContainer({
+    Key key,
+    this.animeList,
+    this.animeMapCallback,
+    this.animeListCallback,
+    this.client,
+    this.listType,
+    this.connStatus,
+  }) : super(key: key);
   @override
   _ListContainerState createState() => _ListContainerState();
 }
@@ -28,7 +30,8 @@ class _ListContainerState extends State<ListContainer> {
   bool netConnected;
 
   Future<void> refreshList() async {
-    Map result = await widget.client.getAnimeList(AnimeListRequest());
+    Map result =
+        await widget.client.getAnimeList(AnimeListRequest(limit: "500"));
     bool checkConn = await DataConnectionChecker().hasConnection;
     setState(() {
       widget.animeMapCallback(result);
@@ -74,13 +77,14 @@ class _ListContainerState extends State<ListContainer> {
                             "connStatus": this.netConnected,
                             "deviceSize": size,
                             "client": widget.client,
-                            "callback": (val) async {
+                            "callback": (val) {
                               setState(() {
                                 if (oldStatus != val["list_status"]["status"]) {
                                   print("status changed");
-                                  if (animeList[index] != null) {
-                                    this.animeList.removeAt(index);
-                                  }
+                                  // Update list locally so no need to call API again to refresh
+                                  widget.animeListCallback(
+                                      val, oldStatus, index);
+                                  oldStatus = val["list_status"]["status"];
                                 } else {
                                   print("still the same");
                                   print(this.animeList[index]["list_status"]
@@ -89,7 +93,7 @@ class _ListContainerState extends State<ListContainer> {
                                   this.animeList[index] = val;
                                 }
                               });
-                              await refreshList();
+                              // await refreshList();
                             }
                           });
                         },

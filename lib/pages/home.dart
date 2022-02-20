@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
   List<ListContainer> _tabContents;
   bool netConnected = false;
 
-  Map setupAnimeMap() => result["anime_map"];
+  Map setupAnimeMap() => widget.animeMap;
 
   Future<void> searchAnime(String query,
       {String limit, String offset, String fields}) async {
@@ -70,21 +70,29 @@ class _HomeState extends State<Home> {
     for (String tabName in tabNames) {
       // print("getTabContents animeList: ${newMap[tabName]}");
       tabContents.add(ListContainer(
-          animeMapCallback: (val) {
-            setState(() => this.animeMap = val);
-            this.refreshListLocal();
-          },
-          animeList: newMap[tabName],
-          client: widget.client,
-          listType: tabName,
-          connStatus: this.netConnected));
+        animeMapCallback: (val) {
+          setState(() => this.animeMap = val);
+          this.refreshListLocal();
+        },
+        animeList: newMap[tabName],
+        animeListCallback: (val, oldStatus, index) async {
+          setState(() {
+            this.animeMap[val["list_status"]["status"]].add(val);
+            this.animeMap[oldStatus].removeAt(index);
+          });
+        },
+        client: widget.client,
+        listType: tabName,
+        connStatus: this.netConnected,
+      ));
     }
     return tabContents;
   }
 
   // Used to update list on initialization
   Future<void> refreshList() async {
-    Map result = await widget.client.getAnimeList(AnimeListRequest());
+    Map result =
+        await widget.client.getAnimeList(AnimeListRequest(limit: "500"));
     bool checkConn = await DataConnectionChecker().hasConnection;
     // print(result);
     // print(result["data"].runtimeType);
@@ -106,54 +114,89 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
     SystemChrome.setEnabledSystemUIOverlays([]);
     this.result = Get.arguments;
     this.animeMap = widget.animeMap;
     this.netConnected = result["connStatus"];
+    if (netConnected) this.refreshList();
     _tabContents = [
       ListContainer(
-          animeMapCallback: (val) {
-            setState(() => this.animeMap = val);
-          },
-          animeList: this.animeMap["watching"] ?? [],
-          client: widget.client,
-          listType: "watching",
-          connStatus: this.netConnected),
+        animeMapCallback: (val) {
+          setState(() => this.animeMap = val);
+        },
+        animeList: this.animeMap["watching"] ?? [],
+        animeListCallback: (val, oldStatus, index) {
+          setState(() {
+            this.animeMap[val["list_status"]["status"]].add(val);
+            this.animeMap[oldStatus].removeAt(index);
+          });
+        },
+        client: widget.client,
+        listType: "watching",
+        connStatus: this.netConnected,
+      ),
       ListContainer(
-          animeMapCallback: (val) {
-            setState(() => this.animeMap = val);
-          },
-          animeList: this.animeMap["plan_to_watch"] ?? [],
-          client: widget.client,
-          listType: "plan_to_watch",
-          connStatus: this.netConnected),
+        animeMapCallback: (val) {
+          setState(() => this.animeMap = val);
+        },
+        animeList: this.animeMap["plan_to_watch"] ?? [],
+        animeListCallback: (val, oldStatus, index) {
+          setState(() {
+            this.animeMap[val["list_status"]["status"]].add(val);
+            this.animeMap[oldStatus].removeAt(index);
+          });
+        },
+        client: widget.client,
+        listType: "plan_to_watch",
+        connStatus: this.netConnected,
+      ),
       ListContainer(
-          animeMapCallback: (val) {
-            setState(() => this.animeMap = val);
-          },
-          animeList: this.animeMap["completed"] ?? [],
-          client: widget.client,
-          listType: "completed",
-          connStatus: this.netConnected),
+        animeMapCallback: (val) {
+          setState(() => this.animeMap = val);
+        },
+        animeList: this.animeMap["completed"] ?? [],
+        animeListCallback: (val, oldStatus, index) {
+          setState(() {
+            this.animeMap[val["list_status"]["status"]].add(val);
+            this.animeMap[oldStatus].removeAt(index);
+          });
+        },
+        client: widget.client,
+        listType: "completed",
+        connStatus: this.netConnected,
+      ),
       ListContainer(
-          animeMapCallback: (val) {
-            setState(() => this.animeMap = val);
-          },
-          animeList: this.animeMap["on_hold"] ?? [],
-          client: widget.client,
-          listType: "on_hold",
-          connStatus: this.netConnected),
+        animeMapCallback: (val) {
+          setState(() => this.animeMap = val);
+        },
+        animeList: this.animeMap["on_hold"] ?? [],
+        animeListCallback: (val, oldStatus, index) {
+          setState(() {
+            this.animeMap[val["list_status"]["status"]].add(val);
+            this.animeMap[oldStatus].removeAt(index);
+          });
+        },
+        client: widget.client,
+        listType: "on_hold",
+        connStatus: this.netConnected,
+      ),
       ListContainer(
-          animeMapCallback: (val) {
-            setState(() => this.animeMap = val);
-          },
-          animeList: this.animeMap["dropped"] ?? [],
-          client: widget.client,
-          listType: "dropped",
-          connStatus: this.netConnected)
+        animeMapCallback: (val) {
+          setState(() => this.animeMap = val);
+        },
+        animeList: this.animeMap["dropped"] ?? [],
+        animeListCallback: (val, oldStatus, index) {
+          setState(() {
+            this.animeMap[val["list_status"]["status"]].add(val);
+            this.animeMap[oldStatus].removeAt(index);
+          });
+        },
+        client: widget.client,
+        listType: "dropped",
+        connStatus: this.netConnected,
+      )
     ];
-    this.refreshList();
+    super.initState();
   }
 
   @override
