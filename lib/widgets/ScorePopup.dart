@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:infinite_carousel/infinite_carousel.dart';
 
 class ScorePopup extends StatefulWidget {
-  final OverlayEntry overlayEntry;
+  final Function closeOverlayCallback;
   final Function callback;
   final Function scoreChoice;
   final int initialScore;
 
   const ScorePopup(
-      {this.overlayEntry, this.callback, this.scoreChoice, this.initialScore});
+      {this.closeOverlayCallback,
+      this.callback,
+      this.scoreChoice,
+      this.initialScore});
   @override
   _ScorePopupState createState() => _ScorePopupState();
 }
@@ -86,7 +89,7 @@ class _ScorePopupState extends State<ScorePopup> {
             onPressed: () {
               if (widget.initialScore != currentScore) widget.callback(true);
               widget.scoreChoice(currentScore.toString());
-              widget.overlayEntry.remove();
+              widget.closeOverlayCallback();
             },
             child: Text("Done"),
           )

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class EpisodesWatchedPopup extends StatefulWidget {
-  final OverlayEntry overlayEntry;
+  final Function closeOverlayCallback;
   final Function callback;
   final Function numEpsChoice;
   final int totalEps;
 
   const EpisodesWatchedPopup(
       {Key key,
-      this.overlayEntry,
+      this.closeOverlayCallback,
       this.callback,
       this.numEpsChoice,
       this.totalEps})
@@ -63,7 +63,7 @@ class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
                     onPressed: () {
                       widget.callback(true);
                       widget.numEpsChoice(currentEps);
-                      widget.overlayEntry.remove();
+                      widget.closeOverlayCallback();
                     },
                     child: Text("Done"),
                   )

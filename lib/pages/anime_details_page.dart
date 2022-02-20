@@ -13,17 +13,17 @@ class AnimeDetailsPage extends StatefulWidget {
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
-  bool detailChanged = false;
-  OverlayEntry loadingOverlay;
+  OverlayEntry _loadingOverlay;
   Function _callback;
-  MALClient client;
-  Map result;
-  Map animeMap;
-  bool netConnected;
-  String chosenListStatus;
-  String chosenScore;
-  String chosenEpsWatched;
-  List<String> animeInfoCategs = [
+  MALClient _client;
+  Map _animeMap;
+  bool _netConnected;
+  bool _detailChanged;
+  String _chosenListStatus;
+  String _chosenScore;
+  String _chosenEpsWatched;
+  final Size _deviceSize = Get.arguments["deviceSize"];
+  final List<String> _animeInfoCategs = [
     "num_episodes",
     "status",
     "rank",
@@ -44,95 +44,110 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     return status;
   }
 
+  /// Generates an [OverlayEntry] with the given [popup].
+  ///
+  OverlayEntry createPopupOverlay(closer, popup) {
+    return OverlayEntry(
+      builder: (context) => Stack(
+        children: <Widget>[
+          closer,
+          popup,
+        ],
+      ),
+    );
+  }
+
+  /// Shows an overlaying widget depending on the given [type].
+  ///
   void showOverlay(BuildContext context, String type) {
     OverlayState overlayState = Overlay.of(context);
     OverlayEntry overlayEntry;
-    GestureDetector closer = GestureDetector(
-        onTap: () {
-          overlayEntry.remove();
-        },
-        child: Container(
-          color: Color.fromRGBO(38, 38, 38, 0.8),
-          height: this.result["deviceSize"].height,
-          width: this.result["deviceSize"].width,
-        ));
+    final GestureDetector closer = GestureDetector(
+      onTap: () {
+        overlayEntry.remove();
+      },
+      child: Container(
+        color: Color.fromRGBO(38, 38, 38, 0.8),
+        height: _deviceSize.height,
+        width: _deviceSize.width,
+      ),
+    );
+
     switch (type) {
       case "status":
-        overlayEntry = OverlayEntry(
-            builder: (context) => Stack(children: <Widget>[
-                  closer,
-                  ListStatusPopup(
-                    callback: (val) => setState(() => detailChanged = val),
-                    stringChoice: (choice) =>
-                        setState(() => chosenListStatus = choice),
-                    overlayEntry: overlayEntry,
-                  )
-                ]));
+        overlayEntry = createPopupOverlay(
+          closer,
+          ListStatusPopup(
+            callback: (val) => setState(() => _detailChanged = val),
+            stringChoice: (choice) =>
+                setState(() => _chosenListStatus = choice),
+            closeOverlayCallback: () => overlayEntry.remove(),
+          ),
+        );
         break;
       case "episodes":
-        overlayEntry = OverlayEntry(
-            builder: (context) => Stack(children: <Widget>[
-                  closer,
-                  EpisodesWatchedPopup(
-                    callback: (val) => setState(() => detailChanged = val),
-                    numEpsChoice: (choice) =>
-                        setState(() => chosenEpsWatched = choice),
-                    totalEps: animeMap["node"]["num_episodes"],
-                    overlayEntry: overlayEntry,
-                  )
-                ]));
+        overlayEntry = createPopupOverlay(
+          closer,
+          EpisodesWatchedPopup(
+            callback: (val) => setState(() => _detailChanged = val),
+            numEpsChoice: (choice) =>
+                setState(() => _chosenEpsWatched = choice),
+            totalEps: _animeMap["node"]["num_episodes"],
+            closeOverlayCallback: () => overlayEntry.remove(),
+          ),
+        );
         break;
       case "score":
-        print(animeMap);
-        overlayEntry = OverlayEntry(
-            builder: (context) => Stack(children: <Widget>[
-                  closer,
-                  ScorePopup(
-                    callback: (val) => setState(() => detailChanged = val),
-                    scoreChoice: (choice) =>
-                        setState(() => chosenScore = choice),
-                    initialScore: int.parse(this.chosenScore),
-                    overlayEntry: overlayEntry,
-                  )
-                ]));
+        overlayEntry = createPopupOverlay(
+          closer,
+          ScorePopup(
+            callback: (val) => setState(() => _detailChanged = val),
+            scoreChoice: (choice) => setState(() => _chosenScore = choice),
+            initialScore: int.parse(_chosenScore),
+            closeOverlayCallback: () => overlayEntry.remove(),
+          ),
+        );
         break;
       case "loading":
         overlayEntry = OverlayEntry(
-            builder: (context) => Stack(
-                  children: <Widget>[
-                    Container(
-                      color: Color.fromRGBO(38, 38, 38, 0.8),
-                      height: this.result["deviceSize"].height,
-                      width: this.result["deviceSize"].width,
-                    ),
-                    LoadingPopup(),
-                  ],
-                ));
-        this.loadingOverlay = overlayEntry;
+          builder: (context) => Stack(
+            children: <Widget>[
+              Container(
+                color: Color.fromRGBO(38, 38, 38, 0.8),
+                height: _deviceSize.height,
+                width: _deviceSize.width,
+              ),
+              LoadingPopup(),
+            ],
+          ),
+        );
+        _loadingOverlay = overlayEntry;
         break;
       default:
-        overlayEntry = OverlayEntry(
-            builder: (context) => Stack(children: <Widget>[
-                  closer,
-                  ListStatusPopup(
-                    callback: (val) => setState(() => detailChanged = val),
-                    stringChoice: (choice) =>
-                        setState(() => chosenListStatus = choice),
-                    overlayEntry: overlayEntry,
-                  )
-                ]));
+        overlayEntry = createPopupOverlay(
+          closer,
+          ListStatusPopup(
+            callback: (val) => setState(() => _detailChanged = val),
+            stringChoice: (choice) =>
+                setState(() => _chosenListStatus = choice),
+            closeOverlayCallback: () => overlayEntry.remove(),
+          ),
+        );
         break;
     }
+
     overlayState.insert(overlayEntry);
   }
 
+  /// Creates a [List] of [Widget]s that displays details for the currently selected anime.
+  ///
   List<Widget> buildInfoList(List<String> categories) {
     List<Widget> infoRows = [];
-    for (String element in this.animeInfoCategs) {
+    for (String element in categories) {
       infoRows.add(
         Container(
           height: 20.0,
-          width: this.result["deviceSize"].width - 100,
+          width: _deviceSize.width - 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Text>[
@@ -141,7 +156,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
               ),
               Text(
-                "${animeMap["node"][element]}",
+                "${_animeMap["node"][element]}",
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
               )
             ],
@@ -154,16 +169,15 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
   @override
   void initState() {
-    this.result = Get.arguments;
-    this.netConnected = this.result["connStatus"];
-    this.animeMap = this.result["animeMap"];
-    this.client = this.result["client"];
-    this.chosenListStatus = animeMap["list_status"]["status"];
-    this.chosenScore = "${animeMap["list_status"]["score"]}";
-    this.chosenEpsWatched =
-        "${animeMap["list_status"]["num_episodes_watched"]}";
-    this._callback = this.result["callback"];
     super.initState();
+    _netConnected = Get.arguments["connStatus"];
+    _animeMap = Get.arguments["animeMap"];
+    _client = Get.arguments["client"];
+    _chosenListStatus = _animeMap["list_status"]["status"];
+    _chosenScore = "${_animeMap["list_status"]["score"]}";
+    _chosenEpsWatched = "${_animeMap["list_status"]["num_episodes_watched"]}";
+    _callback = Get.arguments["callback"];
+    _detailChanged = false;
   }
 
   @override
@@ -172,11 +186,12 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-            onPressed: () {
-              print("animeMap status: ${animeMap["list_status"]["status"]}");
-              Get.back();
-            },
-            icon: Icon(Icons.arrow_back)),
+          onPressed: () {
+            print("animeMap status: ${_animeMap["list_status"]["status"]}");
+            Get.back();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       backgroundColor: Colors.black,
       body: Column(
@@ -185,7 +200,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(10.0),
-                child: this.netConnected
+                child: _netConnected
                     ? FadeInImage.assetNetwork(
                         fit: BoxFit.cover,
                         height: 90,
@@ -193,7 +208,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                         placeholderCacheHeight: 90,
                         placeholderCacheWidth: 65,
                         placeholder: "assets/404img.png",
-                        image: animeMap["node"]["main_picture"]["medium"],
+                        image: _animeMap["node"]["main_picture"]["medium"],
                         imageErrorBuilder: (context, error, stackTrace) =>
                             Container(
                                 height: 90,
@@ -203,20 +218,21 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                     : Container(
                         height: 90,
                         width: 65,
-                        child: Image.asset("assets/404img.png")),
+                        child: Image.asset("assets/404img.png"),
+                      ),
               ),
               Container(
-                width: this.result["deviceSize"].width - 85,
+                width: _deviceSize.width - 85,
                 child: Column(
                   children: [
                     Text(
-                      animeMap["node"]["title"],
+                      _animeMap["node"]["title"],
                       style: TextStyle(color: Colors.white, fontSize: 20.0),
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      "Mean Score: ${animeMap["node"]["mean"]}" ??
+                      "Mean Score: ${_animeMap["node"]["mean"]}" ??
                           "Score not found.",
                       style: TextStyle(color: Colors.amber, fontSize: 15.0),
                     ),
@@ -241,7 +257,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          this.chosenListStatus,
+                          _chosenListStatus,
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -262,7 +278,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          "${this.chosenEpsWatched}/${animeMap["node"]["num_episodes"]}",
+                          "$_chosenEpsWatched/${_animeMap["node"]["num_episodes"]}",
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -283,7 +299,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          "${this.chosenScore}",
+                          "$_chosenScore",
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -293,28 +309,30 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               ),
             ],
           ),
-          this.detailChanged
+          this._detailChanged
               ? TextButton(
                   onPressed: () async {
                     showOverlay(context, "loading");
-                    if (await this.client.updateList(UpdateListRequest(
-                              animeID: "${this.animeMap["node"]["id"]}",
-                              status: statusJSONify(this.chosenListStatus),
-                              score: this.chosenScore,
-                              episodesWatched: this.chosenEpsWatched,
-                            )) ==
+                    if (await _client.updateList(UpdateListRequest(
+                          animeID: "${_animeMap["node"]["id"]}",
+                          status: statusJSONify(_chosenListStatus),
+                          score: _chosenScore,
+                          episodesWatched: _chosenEpsWatched,
+                        )) ==
                         "200") {
-                      print("Chosen score: ${this.chosenScore}");
+                      print("Chosen score: $_chosenScore");
                       print("List updated");
                       setState(() {
-                        this.detailChanged = false;
+                        this._detailChanged = false;
                       });
-                      Map newMap = animeMap;
+                      Map newMap = _animeMap;
                       newMap["list_status"]["status"] =
-                          statusJSONify(this.chosenListStatus);
-                      print(statusJSONify(this.chosenListStatus));
+                          statusJSONify(_chosenListStatus);
+                      print(
+                        statusJSONify(_chosenListStatus),
+                      );
                       _callback(newMap);
-                      loadingOverlay.remove();
+                      _loadingOverlay.remove();
                     }
                   },
                   child: Text("Update List"),
@@ -323,7 +341,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Column(
-              children: buildInfoList(this.animeInfoCategs),
+              children: buildInfoList(_animeInfoCategs),
             ),
           ),
         ],
