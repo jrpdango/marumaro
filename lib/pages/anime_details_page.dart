@@ -57,6 +57,37 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     );
   }
 
+  /// Defines behavior for updating list through API.
+  ///
+  void updateItem() async {
+    showOverlay(context, "loading");
+    if (await _client.updateList(
+          UpdateListRequest(
+            animeID: "${_animeMap["node"]["id"]}",
+            status: statusJSONify(_chosenListStatus),
+            score: _chosenScore,
+            episodesWatched: _chosenEpsWatched,
+          ),
+        ) ==
+        "200") {
+      print("Chosen score: $_chosenScore");
+      print("List updated");
+      setState(
+        () {
+          this._detailChanged = false;
+        },
+      );
+
+      // Locally set status/score/epsWatched before callback
+      _animeMap["list_status"]["status"] = statusJSONify(_chosenListStatus);
+      _animeMap["list_status"]["score"] = _chosenScore;
+      _animeMap["list_status"]["num_episodes_watched"] = _chosenEpsWatched;
+
+      _callback(_animeMap);
+      _loadingOverlay.remove();
+    }
+  }
+
   /// Shows an overlaying widget depending on the given [type].
   ///
   void showOverlay(BuildContext context, String type) {
@@ -309,31 +340,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               ),
             ],
           ),
+          // Display a button if a change was made to update list item
           this._detailChanged
               ? TextButton(
-                  onPressed: () async {
-                    showOverlay(context, "loading");
-                    if (await _client.updateList(UpdateListRequest(
-                          animeID: "${_animeMap["node"]["id"]}",
-                          status: statusJSONify(_chosenListStatus),
-                          score: _chosenScore,
-                          episodesWatched: _chosenEpsWatched,
-                        )) ==
-                        "200") {
-                      print("Chosen score: $_chosenScore");
-                      print("List updated");
-                      setState(() {
-                        this._detailChanged = false;
-                      });
-                      Map newMap = _animeMap;
-                      newMap["list_status"]["status"] =
-                          statusJSONify(_chosenListStatus);
-                      print(
-                        statusJSONify(_chosenListStatus),
-                      );
-                      _callback(newMap);
-                      _loadingOverlay.remove();
-                    }
+                  onPressed: () {
+                    updateItem();
                   },
                   child: Text("Update List"),
                 )
