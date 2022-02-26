@@ -6,7 +6,7 @@ import 'package:miru/services/mal_client.dart';
 import 'package:miru/services/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
-// import 'package:miru/widgets/ListContainer.dart';
+import 'package:miru/constants.dart' as Constants show limitOfListItems;
 // import 'dart:convert';
 // import 'dart:io';
 // import 'package:path_provider/path_provider.dart';
@@ -20,7 +20,7 @@ class _LoadingState extends State<Loading> {
   MALClient client;
   bool hasMorePages;
 
-  // Legacy function, saving lists locally probably isn't the best idea for now
+  // Legacy function, saving lists locally may be a future feature
   //
   // Future<Map> getLocalList() async {
   //   Directory directory = await getApplicationDocumentsDirectory();
@@ -34,21 +34,21 @@ class _LoadingState extends State<Loading> {
   //   return animeMap;
   // }
 
-  Future<Map> initList(_limit) async {
-    // int numCalls = 1;
+  Future<Map> initializeList(_limit) async {
     Map newMap = Map();
-    Map result = await client.getAnimeList(AnimeListRequest(limit: _limit));
+    Map result = await client.getAnimeList(
+      AnimeListRequest(limit: _limit),
+    );
     while (result["paging"]["next"] != null) {
-      // print("Number of calls to retrieve full list: $numCalls");
       newMap = await client.getAnimeList(
-          AnimeListRequest(limit: _limit, url: result["paging"]["next"]));
+        AnimeListRequest(limit: _limit, url: result["paging"]["next"]),
+      );
       for (String item in newMap.keys) {
         if (item != "paging" && item != "status_code") {
           result[item].addAll(newMap[item]);
         }
       }
       result["paging"]["next"] = newMap["paging"]["next"];
-      // numCalls++;
     }
     return result;
   }
@@ -66,7 +66,7 @@ class _LoadingState extends State<Loading> {
     // File("${directory.path}/miruTokens.json").deleteSync();
     bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(this.client);
-    Map currentList = await initList(500.toString());
+    Map currentList = await initializeList(Constants.limitOfListItems);
 
     Get.off(() => Home(animeMap: currentList, client: this.client),
         arguments: {"connStatus": connStatus});

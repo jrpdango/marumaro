@@ -27,7 +27,7 @@ class AnimeListRequest {
     this.offset = this.offset == null ? "" : "&offset=${this.offset}";
   }
 
-  /// Legacy function, saving lists locally probably isn't the best idea for now
+  /// Legacy function, saving lists locally may be a future feature.
   ///
   // static Future<File> writeToFile(Map listInfo) async {
   //   Directory directory = await getApplicationDocumentsDirectory();

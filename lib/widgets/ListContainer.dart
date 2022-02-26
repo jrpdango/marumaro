@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
+import 'package:miru/constants.dart' as Constants show limitOfListItems;
 
 class ListContainer extends StatefulWidget {
   final List animeList;
@@ -29,14 +30,27 @@ class _ListContainerState extends State<ListContainer> {
   List animeList;
   bool netConnected;
 
-  Future<void> refreshList() async {
-    Map result =
-        await widget.client.getAnimeList(AnimeListRequest(limit: "500"));
-    bool checkConn = await DataConnectionChecker().hasConnection;
+  Future<void> refreshList(_limit) async {
+    Map newMap = Map();
+    bool hasConnection = await DataConnectionChecker().hasConnection;
+    Map result = await widget.client.getAnimeList(
+      AnimeListRequest(limit: _limit),
+    );
+    while (result["paging"]["next"] != null) {
+      newMap = await widget.client.getAnimeList(
+        AnimeListRequest(limit: _limit, url: result["paging"]["next"]),
+      );
+      for (String item in newMap.keys) {
+        if (item != "paging" && item != "status_code") {
+          result[item].addAll(newMap[item]);
+        }
+      }
+      result["paging"]["next"] = newMap["paging"]["next"];
+    }
     setState(() {
       widget.animeMapCallback(result);
       this.animeList = result[widget.listType];
-      this.netConnected = checkConn;
+      this.netConnected = hasConnection;
     });
   }
 
@@ -52,7 +66,7 @@ class _ListContainerState extends State<ListContainer> {
     final Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: () async {
-        await refreshList();
+        await refreshList(Constants.limitOfListItems);
       },
       child: Container(
           width: size.width,
