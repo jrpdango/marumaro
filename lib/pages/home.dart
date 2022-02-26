@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/delete_anime_request.dart';
@@ -21,28 +20,37 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Map result;
-  Map animeMap;
+  Map _getArgs;
+  Map _animeMap;
   List<ListContainer> _tabContents;
-  bool netConnected = false;
-
-  Map setupAnimeMap() => widget.animeMap;
+  bool _netConnected = false;
 
   Future<void> searchAnime(String query,
       {String limit, String offset, String fields}) async {
-    print(await widget.client.animeSearch(AnimeSearchRequest(
-        query: query, limit: limit, offset: offset, fields: fields)));
+    print(
+      await widget.client.animeSearch(
+        AnimeSearchRequest(
+            query: query, limit: limit, offset: offset, fields: fields),
+      ),
+    );
   }
 
   Future<void> getAnimeDetails(String animeID, {String fields}) async {
-    print(await widget.client.getAnimeDetails(
-        AnimeDetailsRequest(animeID: animeID, fields: fields)));
+    print(
+      await widget.client.getAnimeDetails(
+        AnimeDetailsRequest(animeID: animeID, fields: fields),
+      ),
+    );
   }
 
   Future<void> deleteAnime(String animeID) async {
-    await widget.client.deleteAnime(DeleteAnimeRequest(animeID: animeID));
+    await widget.client.deleteAnime(
+      DeleteAnimeRequest(animeID: animeID),
+    );
   }
 
+  /// Creates tabs for TabBar.
+  ///
   List<Widget> createTabs() {
     List<String> tabNames = [
       "Currently Watching",
@@ -53,12 +61,21 @@ class _HomeState extends State<Home> {
     ];
     List<Widget> menuTabs = [];
     for (int i = 0; i < 5; i++) {
-      menuTabs.add(SizedBox(height: 30, child: Tab(child: Text(tabNames[i]))));
+      menuTabs.add(
+        SizedBox(
+          height: 30,
+          child: Tab(
+            child: Text(tabNames[i]),
+          ),
+        ),
+      );
     }
     return menuTabs;
   }
 
-  List<ListContainer> getTabContents(Map newMap) {
+  /// Initializes contents defined by [tabMap] for tabs in TabBar.
+  ///
+  List<ListContainer> getTabContents(Map tabMap) {
     List<String> tabNames = [
       "watching",
       "plan_to_watch",
@@ -68,135 +85,50 @@ class _HomeState extends State<Home> {
     ];
     List<ListContainer> tabContents = [];
     for (String tabName in tabNames) {
-      // print("getTabContents animeList: ${newMap[tabName]}");
-      tabContents.add(ListContainer(
-        animeMapCallback: (val) {
-          setState(() => this.animeMap = val);
-          this.refreshListLocal();
-        },
-        animeList: newMap[tabName],
-        animeListCallback: (val, oldStatus, index) async {
-          setState(() {
-            this.animeMap[val["list_status"]["status"]].add(val);
-            this.animeMap[oldStatus].removeAt(index);
-          });
-        },
-        client: widget.client,
-        listType: tabName,
-        connStatus: this.netConnected,
-      ));
+      tabContents.add(
+        ListContainer(
+          animeMapCallback: (val) {
+            setState(() => _animeMap = val);
+            refreshListLocal();
+          },
+          animeList: tabMap[tabName] ?? [],
+          animeListCallback: (val, oldStatus, index) {
+            setState(
+              () {
+                _animeMap[val["list_status"]["status"]].add(val);
+                _animeMap[oldStatus].removeAt(index);
+              },
+            );
+          },
+          client: widget.client,
+          listType: tabName,
+          connStatus: _netConnected,
+        ),
+      );
     }
     return tabContents;
   }
 
-  // Used to update list on initialization
-  Future<void> refreshList() async {
-    Map result =
-        await widget.client.getAnimeList(AnimeListRequest(limit: "500"));
-    bool checkConn = await DataConnectionChecker().hasConnection;
-    // print(result);
-    // print(result["data"].runtimeType);
-    setState(() {
-      this.animeMap = result;
-      this.netConnected = checkConn;
-      this._tabContents = getTabContents(result);
-    });
-  }
-
-  // Used to update list when app is already in use
+  /// Used to update entire list contents when a tab is refreshed.
+  ///
   Future<void> refreshListLocal() async {
     bool checkConn = await DataConnectionChecker().hasConnection;
-    setState(() {
-      this.netConnected = checkConn;
-      this._tabContents = getTabContents(this.animeMap);
-    });
+    setState(
+      () {
+        _netConnected = checkConn;
+        _tabContents = getTabContents(_animeMap);
+      },
+    );
   }
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    this.result = Get.arguments;
-    this.animeMap = widget.animeMap;
-    this.netConnected = result["connStatus"];
-    // if (netConnected) this.refreshList();
-    _tabContents = [
-      ListContainer(
-        animeMapCallback: (val) {
-          setState(() => this.animeMap = val);
-        },
-        animeList: this.animeMap["watching"] ?? [],
-        animeListCallback: (val, oldStatus, index) {
-          setState(() {
-            this.animeMap[val["list_status"]["status"]].add(val);
-            this.animeMap[oldStatus].removeAt(index);
-          });
-        },
-        client: widget.client,
-        listType: "watching",
-        connStatus: this.netConnected,
-      ),
-      ListContainer(
-        animeMapCallback: (val) {
-          setState(() => this.animeMap = val);
-        },
-        animeList: this.animeMap["plan_to_watch"] ?? [],
-        animeListCallback: (val, oldStatus, index) {
-          setState(() {
-            this.animeMap[val["list_status"]["status"]].add(val);
-            this.animeMap[oldStatus].removeAt(index);
-          });
-        },
-        client: widget.client,
-        listType: "plan_to_watch",
-        connStatus: this.netConnected,
-      ),
-      ListContainer(
-        animeMapCallback: (val) {
-          setState(() => this.animeMap = val);
-        },
-        animeList: this.animeMap["completed"] ?? [],
-        animeListCallback: (val, oldStatus, index) {
-          setState(() {
-            this.animeMap[val["list_status"]["status"]].add(val);
-            this.animeMap[oldStatus].removeAt(index);
-          });
-        },
-        client: widget.client,
-        listType: "completed",
-        connStatus: this.netConnected,
-      ),
-      ListContainer(
-        animeMapCallback: (val) {
-          setState(() => this.animeMap = val);
-        },
-        animeList: this.animeMap["on_hold"] ?? [],
-        animeListCallback: (val, oldStatus, index) {
-          setState(() {
-            this.animeMap[val["list_status"]["status"]].add(val);
-            this.animeMap[oldStatus].removeAt(index);
-          });
-        },
-        client: widget.client,
-        listType: "on_hold",
-        connStatus: this.netConnected,
-      ),
-      ListContainer(
-        animeMapCallback: (val) {
-          setState(() => this.animeMap = val);
-        },
-        animeList: this.animeMap["dropped"] ?? [],
-        animeListCallback: (val, oldStatus, index) {
-          setState(() {
-            this.animeMap[val["list_status"]["status"]].add(val);
-            this.animeMap[oldStatus].removeAt(index);
-          });
-        },
-        client: widget.client,
-        listType: "dropped",
-        connStatus: this.netConnected,
-      )
-    ];
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    _getArgs = Get.arguments;
+    _animeMap = widget.animeMap;
+    _netConnected = _getArgs["connStatus"];
+    _tabContents = getTabContents(_animeMap);
   }
 
   @override
@@ -210,7 +142,7 @@ class _HomeState extends State<Home> {
             color: Colors.grey[900],
             tabBar: TabBar(
               isScrollable: true,
-              tabs: this.createTabs(),
+              tabs: createTabs(),
             ),
           ),
           flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
@@ -219,7 +151,10 @@ class _HomeState extends State<Home> {
             onPressed: () {},
           ),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.search), onPressed: () {})
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {},
+            ),
           ],
         ),
         body: TabBarView(
