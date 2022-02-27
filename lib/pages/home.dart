@@ -105,6 +105,11 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
+        drawer: Drawer(
+          child: Container(
+            child: Text("Heyo"),
+          ),
+        ),
         backgroundColor: Colors.black,
         appBar: AppBar(
           bottom: ColoredTabBar(
@@ -115,14 +120,28 @@ class _HomeState extends State<Home> {
             ),
           ),
           flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
-          leading: IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {},
+          leading: Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
+            ),
           ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {},
+            Padding(
+              padding: const EdgeInsets.only(top: 22.0),
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  Get.toNamed("/search");
+                },
+              ),
             ),
           ],
         ),
