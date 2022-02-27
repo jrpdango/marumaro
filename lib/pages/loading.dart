@@ -37,7 +37,7 @@ class _LoadingState extends State<Loading> {
   ///
   Future<Map> initializeAnimeList(_limit) async {
     Map newMap = Map();
-    Map result = await _client.getAnimeList(
+    final Map result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
     try {

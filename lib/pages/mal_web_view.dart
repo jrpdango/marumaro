@@ -21,7 +21,7 @@ class _MALWebViewState extends State<MALWebView> {
 
   @override
   Widget build(BuildContext context) {
-    Map content = Get.arguments;
+    final Map content = Get.arguments;
     return Scaffold(
       body: Builder(
         builder: (BuildContext context) => InAppWebView(

@@ -14,9 +14,9 @@ class AnimeDetailsPage extends StatefulWidget {
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   OverlayEntry? _loadingOverlay;
-  Function _callback = Get.arguments["callback"];
-  MALClient _client = Get.arguments["client"];
-  Map _animeMap = Get.arguments["animeMap"];
+  final Function _callback = Get.arguments["callback"];
+  final MALClient _client = Get.arguments["client"];
+  final Map _animeMap = Get.arguments["animeMap"];
   bool _netConnected = Get.arguments["connStatus"];
   bool _detailChanged = false;
   late String _chosenListStatus = _animeMap["list_status"]["status"];
