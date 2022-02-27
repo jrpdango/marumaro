@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
+// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ColoredTabBar.dart';
 import 'package:miru/widgets/ListContainer.dart';
 
 class Home extends StatefulWidget {
-  final Map animeMap;
-  final MALClient client;
+  final Map? animeMap;
+  final MALClient? client;
 
-  const Home({Key key, this.animeMap, this.client}) : super(key: key);
+  const Home({Key? key, this.animeMap, this.client}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  Map _getArgs;
-  Map _animeMap;
-  List<ListContainer> _tabContents;
-  bool _netConnected = false;
+  Map _getArgs = Get.arguments;
+  late Map _animeMap = widget.animeMap!;
+  late List<ListContainer> _tabContents = getTabContents(_animeMap);
+  late bool _netConnected = _getArgs["connStatus"];
 
   /// Creates tabs for TabBar.
   ///
@@ -73,7 +73,7 @@ class _HomeState extends State<Home> {
               },
             );
           },
-          client: widget.client,
+          client: widget.client!,
           listType: tabName,
           connStatus: _netConnected,
         ),
@@ -85,10 +85,10 @@ class _HomeState extends State<Home> {
   /// Used to update entire list contents when a tab is refreshed.
   ///
   Future<void> refreshListLocal() async {
-    bool checkConn = await DataConnectionChecker().hasConnection;
+    // bool checkConn = await DataConnectionChecker().hasConnection;
     setState(
       () {
-        _netConnected = checkConn;
+        // _netConnected = checkConn;
         _tabContents = getTabContents(_animeMap);
       },
     );
@@ -98,10 +98,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    _getArgs = Get.arguments;
-    _animeMap = widget.animeMap;
-    _netConnected = _getArgs["connStatus"];
-    _tabContents = getTabContents(_animeMap);
   }
 
   @override
@@ -112,7 +108,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.black,
         appBar: AppBar(
           bottom: ColoredTabBar(
-            color: Colors.grey[900],
+            color: Colors.grey[900]!,
             tabBar: TabBar(
               isScrollable: true,
               tabs: createTabs(),

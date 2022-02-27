@@ -36,11 +36,15 @@ class TokenVerifier {
   static Future<void> oAuthNewTokens(MALClient client) async {
     print("No valid tokens. Gotta auth and get new ones.");
     String url = client.getAuthURL();
-    dynamic result =
-        await Get.toNamed("/malweb", arguments: <String, String>{"url": url});
-    Uri params = Uri(query: result["accessCode"]);
+    dynamic result = await Get.toNamed(
+      "/malweb",
+      arguments: <String, Uri>{
+        "url": Uri.parse(url),
+      },
+    );
+    Uri params = result["accessCode"];
     // Access code from URL parameter
-    client.accessCode = params.queryParameters["http://localhost/oauth?code"];
+    client.accessCode = params.queryParameters["code"]!;
     await client.getTokens();
     await client.token.writeToFile();
   }

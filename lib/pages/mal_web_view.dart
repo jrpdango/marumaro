@@ -21,17 +21,17 @@ class _MALWebViewState extends State<MALWebView> {
 
   @override
   Widget build(BuildContext context) {
-    Map content = ModalRoute.of(context).settings.arguments;
+    Map content = Get.arguments;
     return Scaffold(
       body: Builder(
         builder: (BuildContext context) => InAppWebView(
-          initialUrl: content["url"],
+          initialUrlRequest: URLRequest(url: content["url"]),
           onWebViewCreated: (InAppWebViewController webViewController) {
             _controller.complete(webViewController);
           },
-          onLoadStart: (InAppWebViewController _controller, String url) {
+          onLoadStart: (InAppWebViewController _controller, Uri? url) {
             // User is redirected here
-            if (url.startsWith("http://localhost/oauth")) {
+            if (url!.toString().startsWith("http://localhost/oauth")) {
               Get.back(result: {"accessCode": url});
             }
           },

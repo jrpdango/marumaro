@@ -3,20 +3,27 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 class AnimeDetailsRequest {
-  String animeID;
-  String fields;
+  final int animeID;
+  final String? fields;
 
-  AnimeDetailsRequest({this.animeID, this.fields});
+  AnimeDetailsRequest({required this.animeID, this.fields});
 
-  void setParams() {
-    this.fields = this.fields == null ? "" : "?fields=${this.fields}";
+  Uri setParams(Uri url) {
+    url = url.replace(queryParameters: {
+      if (fields != null) "fields": fields!,
+    });
+    return url;
   }
 
   Future<Map> createRequest(MALClient client) async {
-    this.setParams();
     try {
-      String url =
-          "https://api.myanimelist.net/v2/anime/${this.animeID}" + this.fields;
+      Uri url = Uri(
+        scheme: "https",
+        host: "api.myanimelist.net",
+        path: "v2/anime/${this.animeID}",
+      );
+      url = setParams(url);
+      //"https://api.myanimelist.net/v2/anime/${this.animeID}" + this.fields;
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map respMap = Map();

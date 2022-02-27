@@ -4,9 +4,9 @@ import 'package:miru/services/token.dart';
 import 'dart:convert';
 
 class OAuthRequest {
-  String codeChallenge;
+  final String codeChallenge;
 
-  OAuthRequest({this.codeChallenge});
+  OAuthRequest({required this.codeChallenge});
 
   String createRequest(MALClient client) {
     String url =
@@ -15,7 +15,8 @@ class OAuthRequest {
   }
 
   Future<Token> generateTokens(MALClient client, String code) async {
-    String url = "https://myanimelist.net/v1/oauth2/token";
+    Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");
+    // String url = "https://myanimelist.net/v1/oauth2/token";
     Map<String, String> data = {
       "client_id": MALClient.CLIENTID,
       "code": code,
@@ -33,19 +34,20 @@ class OAuthRequest {
   }
 
   Future<Token> refreshTokens(MALClient client, Token token) async {
-    String url = "https://myanimelist.net/v1/oauth2/token";
+    Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");
+    // String url = "https://myanimelist.net/v1/oauth2/token";
     Map<String, String> data = {
       "client_id": MALClient.CLIENTID,
       "grant_type": "refresh_token",
       "refresh_token": token.refreshToken
     };
     Response response = await client.userClient.post(url, body: data);
-    Map responseMap;
+    Map? responseMap;
     Token refreshedToken;
     if (response.statusCode == 200) {
       responseMap = json.decode(response.body);
       refreshedToken = Token(
-          accessToken: responseMap["access_token"],
+          accessToken: responseMap!["access_token"],
           refreshToken: responseMap["refresh_token"]);
     } else {
       refreshedToken =

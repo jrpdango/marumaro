@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 
 class Token {
-  String accessToken;
-  String refreshToken;
+  final String accessToken;
+  final String refreshToken;
 
-  Token({this.accessToken, this.refreshToken});
+  Token({required this.accessToken, required this.refreshToken});
 
   // Method to write tokens to device
   Future<File> writeToFile() async {

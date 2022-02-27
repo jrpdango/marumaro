@@ -8,10 +8,10 @@ class ScorePopup extends StatefulWidget {
   final int initialScore;
 
   const ScorePopup(
-      {this.closeOverlayCallback,
-      this.callback,
-      this.scoreChoice,
-      this.initialScore});
+      {required this.closeOverlayCallback,
+      required this.callback,
+      required this.scoreChoice,
+      required this.initialScore});
   @override
   _ScorePopupState createState() => _ScorePopupState();
 }

@@ -1,4 +1,4 @@
-import 'package:data_connection_checker/data_connection_checker.dart';
+// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/services/anime_list_request.dart';
@@ -12,14 +12,14 @@ class ListContainer extends StatefulWidget {
   final Function animeListCallback;
   final MALClient client;
   final String listType;
-  final bool connStatus;
+  final bool? connStatus;
   const ListContainer({
-    Key key,
-    this.animeList,
-    this.animeMapCallback,
-    this.animeListCallback,
-    this.client,
-    this.listType,
+    Key? key,
+    required this.animeList,
+    required this.animeMapCallback,
+    required this.animeListCallback,
+    required this.client,
+    required this.listType,
     this.connStatus,
   }) : super(key: key);
   @override
@@ -27,18 +27,21 @@ class ListContainer extends StatefulWidget {
 }
 
 class _ListContainerState extends State<ListContainer> {
-  List animeList;
-  bool netConnected;
+  late List animeList = widget.animeList;
+  late bool? netConnected = widget.connStatus;
 
   Future<void> refreshList(_limit) async {
     Map newMap = Map();
-    bool hasConnection = await DataConnectionChecker().hasConnection;
+    // bool hasConnection = await DataConnectionChecker().hasConnection;
     Map result = await widget.client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
     while (result["paging"]["next"] != null) {
       newMap = await widget.client.getAnimeList(
-        AnimeListRequest(limit: _limit, url: result["paging"]["next"]),
+        AnimeListRequest(
+          limit: _limit,
+          url: Uri.parse(result["paging"]["next"]),
+        ),
       );
       for (String item in newMap.keys) {
         if (item != "paging" && item != "status_code") {
@@ -50,14 +53,12 @@ class _ListContainerState extends State<ListContainer> {
     setState(() {
       widget.animeMapCallback(result);
       this.animeList = result[widget.listType];
-      this.netConnected = hasConnection;
+      // this.netConnected = hasConnection;
     });
   }
 
   @override
   void initState() {
-    this.netConnected = widget.connStatus;
-    this.animeList = widget.animeList;
     super.initState();
   }
 
@@ -115,7 +116,7 @@ class _ListContainerState extends State<ListContainer> {
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(5.0),
                               bottomLeft: Radius.circular(5.0)),
-                          child: this.netConnected
+                          child: this.netConnected!
                               ? FadeInImage.assetNetwork(
                                   fit: BoxFit.cover,
                                   height: 90,

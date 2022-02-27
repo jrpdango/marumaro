@@ -1,4 +1,4 @@
-import 'package:data_connection_checker/data_connection_checker.dart';
+// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/pages/home.dart';
@@ -17,7 +17,7 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  MALClient _client;
+  late MALClient _client = MALClient();
 
   // Legacy function, saving lists locally may be a future feature
   //
@@ -40,25 +40,32 @@ class _LoadingState extends State<Loading> {
     Map result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
-    while (result["paging"]["next"] != null) {
-      newMap = await _client.getAnimeList(
-        AnimeListRequest(limit: _limit, url: result["paging"]["next"]),
-      );
-      for (String item in newMap.keys) {
-        if (item != "paging" && item != "status_code") {
-          result[item].addAll(newMap[item]);
+    try {
+      while (result["paging"]["next"] != null) {
+        newMap = await _client.getAnimeList(
+          AnimeListRequest(
+            limit: _limit,
+            url: Uri.parse(result["paging"]["next"]),
+          ),
+        );
+        for (String item in newMap.keys) {
+          if (item != "paging" && item != "status_code") {
+            result[item].addAll(newMap[item]);
+          }
         }
+        result["paging"]["next"] = newMap["paging"]["next"];
       }
-      result["paging"]["next"] = newMap["paging"]["next"];
+    } catch (e) {
+      print(e);
     }
     return result;
   }
 
   /// Checks if user has internet connection.
   ///
-  Future<bool> testConnection() async {
-    return await DataConnectionChecker().hasConnection;
-  }
+  // Future<bool> testConnection() async {
+  //   return await DataConnectionChecker().hasConnection;
+  // }
 
   /// Verify internet connectivity, token validity, and initialization of anime list.
   ///
@@ -69,13 +76,14 @@ class _LoadingState extends State<Loading> {
     // Directory directory = await getApplicationDocumentsDirectory();
     // File("${directory.path}/miruList.json").deleteSync();
     // File("${directory.path}/miruTokens.json").deleteSync();
-    bool connStatus = await testConnection();
+    // bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(_client);
     Map currentList = await initializeAnimeList(Constants.limitOfListItems);
 
     Get.off(
       () => Home(animeMap: currentList, client: _client),
-      arguments: {"connStatus": connStatus},
+      // EDIT LATER
+      arguments: {"connStatus": true},
     );
   }
 
@@ -83,7 +91,6 @@ class _LoadingState extends State<Loading> {
   void initState() {
     super.initState();
     setupMALConnection();
-    _client = MALClient();
   }
 
   @override

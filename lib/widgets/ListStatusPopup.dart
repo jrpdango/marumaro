@@ -6,7 +6,9 @@ class ListStatusPopup extends StatefulWidget {
   final Function closeOverlayCallback;
 
   const ListStatusPopup(
-      {this.callback, this.stringChoice, this.closeOverlayCallback});
+      {required this.callback,
+      required this.stringChoice,
+      required this.closeOverlayCallback});
   @override
   _ListStatusPopupState createState() => _ListStatusPopupState();
 }

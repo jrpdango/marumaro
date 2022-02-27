@@ -1,1 +1,1 @@
-const String limitOfListItems = "300";
+const int limitOfListItems = 300;

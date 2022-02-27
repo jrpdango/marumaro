@@ -13,15 +13,17 @@ class AnimeDetailsPage extends StatefulWidget {
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
-  OverlayEntry _loadingOverlay;
-  Function _callback;
-  MALClient _client;
-  Map _animeMap;
-  bool _netConnected;
-  bool _detailChanged;
-  String _chosenListStatus;
-  String _chosenScore;
-  String _chosenEpsWatched;
+  OverlayEntry? _loadingOverlay;
+  Function _callback = Get.arguments["callback"];
+  MALClient _client = Get.arguments["client"];
+  Map _animeMap = Get.arguments["animeMap"];
+  bool _netConnected = Get.arguments["connStatus"];
+  bool _detailChanged = false;
+  late String _chosenListStatus = _animeMap["list_status"]["status"];
+  late String _chosenScore = "${_animeMap["list_status"]["score"]}";
+  late String _chosenEpsWatched =
+      "${_animeMap["list_status"]["num_episodes_watched"]}";
+
   final Size _deviceSize = Get.arguments["deviceSize"];
   final List<String> _animeInfoCategs = [
     "num_episodes",
@@ -63,7 +65,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     showOverlay(context, "loading");
     if (await _client.updateList(
           UpdateListRequest(
-            animeID: "${_animeMap["node"]["id"]}",
+            animeID: _animeMap["node"]["id"],
             status: statusJSONify(_chosenListStatus),
             score: _chosenScore,
             episodesWatched: _chosenEpsWatched,
@@ -84,18 +86,18 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       _animeMap["list_status"]["num_episodes_watched"] = _chosenEpsWatched;
 
       _callback(_animeMap);
-      _loadingOverlay.remove();
+      _loadingOverlay!.remove();
     }
   }
 
   /// Shows an overlaying widget depending on the given [type].
   ///
   void showOverlay(BuildContext context, String type) {
-    OverlayState overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry;
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry? overlayEntry;
     final GestureDetector closer = GestureDetector(
       onTap: () {
-        overlayEntry.remove();
+        overlayEntry!.remove();
       },
       child: Container(
         color: Color.fromRGBO(38, 38, 38, 0.8),
@@ -112,7 +114,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             callback: (val) => setState(() => _detailChanged = val),
             stringChoice: (choice) =>
                 setState(() => _chosenListStatus = choice),
-            closeOverlayCallback: () => overlayEntry.remove(),
+            closeOverlayCallback: () => overlayEntry!.remove(),
           ),
         );
         break;
@@ -124,7 +126,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             numEpsChoice: (choice) =>
                 setState(() => _chosenEpsWatched = choice),
             totalEps: _animeMap["node"]["num_episodes"],
-            closeOverlayCallback: () => overlayEntry.remove(),
+            closeOverlayCallback: () => overlayEntry!.remove(),
           ),
         );
         break;
@@ -135,7 +137,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             callback: (val) => setState(() => _detailChanged = val),
             scoreChoice: (choice) => setState(() => _chosenScore = choice),
             initialScore: int.parse(_chosenScore),
-            closeOverlayCallback: () => overlayEntry.remove(),
+            closeOverlayCallback: () => overlayEntry!.remove(),
           ),
         );
         break;
@@ -161,13 +163,13 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             callback: (val) => setState(() => _detailChanged = val),
             stringChoice: (choice) =>
                 setState(() => _chosenListStatus = choice),
-            closeOverlayCallback: () => overlayEntry.remove(),
+            closeOverlayCallback: () => overlayEntry!.remove(),
           ),
         );
         break;
     }
 
-    overlayState.insert(overlayEntry);
+    overlayState!.insert(overlayEntry);
   }
 
   /// Creates a [List] of [Widget]s that displays details for the currently selected anime.
@@ -201,14 +203,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _netConnected = Get.arguments["connStatus"];
-    _animeMap = Get.arguments["animeMap"];
-    _client = Get.arguments["client"];
-    _chosenListStatus = _animeMap["list_status"]["status"];
-    _chosenScore = "${_animeMap["list_status"]["score"]}";
-    _chosenEpsWatched = "${_animeMap["list_status"]["num_episodes_watched"]}";
-    _callback = Get.arguments["callback"];
-    _detailChanged = false;
   }
 
   @override
@@ -263,8 +257,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      "Mean Score: ${_animeMap["node"]["mean"]}" ??
-                          "Score not found.",
+                      "Mean Score: ${_animeMap["node"]["mean"] ?? "Score not found."}",
                       style: TextStyle(color: Colors.amber, fontSize: 15.0),
                     ),
                   ],

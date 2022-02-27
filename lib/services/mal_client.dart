@@ -11,11 +11,11 @@ import 'package:miru/services/user_data_request.dart';
 
 class MALClient {
   static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
-  String accessCode;
-  Client userClient = Client();
-  OAuthRequest oAuthRequest =
+  late String accessCode;
+  final Client userClient = Client();
+  final OAuthRequest oAuthRequest =
       OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
-  Token token;
+  late Token token;
 
   String getAuthURL() {
     String url;

@@ -5,26 +5,39 @@ import 'dart:convert';
 // import 'package:path_provider/path_provider.dart';
 
 class AnimeListRequest {
-  String username;
-  String url;
-  String status;
-  String sort;
-  String limit;
-  String offset;
+  final int limit;
+  final int? offset;
+  final String username;
+  final String? status;
+  final String sort;
+  final String fields;
+  Uri? url;
 
   AnimeListRequest(
       {this.status,
-      this.sort,
-      this.limit,
+      this.sort = "list_updated_at",
+      this.limit = 100,
       this.offset,
       this.username = "@me",
-      this.url});
+      this.url,
+      this.fields =
+          "list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres"});
 
-  void setParams() {
-    this.status = this.status == null ? "" : "&status=${this.status}";
-    this.sort = this.sort == null ? "" : "&sort=${this.sort}";
-    this.limit = this.limit == null ? "" : "&limit=${this.limit}";
-    this.offset = this.offset == null ? "" : "&offset=${this.offset}";
+  Uri setParams(Uri url) {
+    Map<String, dynamic> parameters = {
+      if (status != null) "status": status!,
+      if (offset != null) "offset": offset!.toString(),
+      "fields": fields,
+      "sort": sort,
+      "limit": limit.toString()
+    };
+    url = url.replace(queryParameters: parameters);
+    return url;
+
+    // this.status = this.status == null ? "" : "&status=${this.status}";
+    // this.sort = this.sort == null ? "" : "&sort=${this.sort}";
+    // this.limit = this.limit == null ? "" : "&limit=${this.limit}";
+    // this.offset = this.offset == null ? "" : "&offset=${this.offset}";
   }
 
   /// Deprecated function, saving lists locally may be a future feature.
@@ -77,16 +90,21 @@ class AnimeListRequest {
   /// Sends a request to update anime list to MAL servers through API.
   ///
   Future<Map> createRequest(MALClient client) async {
-    this.setParams();
     try {
-      if (url == null)
-        url =
-            "https://api.myanimelist.net/v2/users/${this.username}/animelist?fields=list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres" +
-                this.status +
-                this.sort +
-                this.limit +
-                this.offset;
-      Response response = await client.userClient.get(url,
+      if (url == null) {
+        url = Uri(
+            scheme: "https",
+            host: "api.myanimelist.net",
+            path: "v2/users/${this.username}/animelist");
+        url = setParams(url!);
+      }
+      // url =
+      //     "https://api.myanimelist.net/v2/users/${this.username}/animelist?fields=list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres" +
+      //         this.status! +
+      //         this.sort +
+      //         this.limit +
+      //         this.offset;
+      Response response = await client.userClient.get(url!,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map respMap = Map();
       respMap = json.decode(response.body);
@@ -101,7 +119,7 @@ class AnimeListRequest {
       }
       return respMap;
     } catch (exception) {
-      print("Oops! Something went wrong. $exception");
+      print("Oops! Something went wrong. Anime_List_Request $exception");
       return Map();
     }
   }
