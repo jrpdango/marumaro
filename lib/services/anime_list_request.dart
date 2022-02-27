@@ -27,7 +27,7 @@ class AnimeListRequest {
     this.offset = this.offset == null ? "" : "&offset=${this.offset}";
   }
 
-  /// Legacy function, saving lists locally may be a future feature.
+  /// Deprecated function, saving lists locally may be a future feature.
   ///
   // static Future<File> writeToFile(Map listInfo) async {
   //   Directory directory = await getApplicationDocumentsDirectory();
@@ -42,6 +42,8 @@ class AnimeListRequest {
   //   return await file.writeAsString(data);
   // }
 
+  /// Sort a [Map] by status.
+  ///
   Map sortMap(Map rawMap) {
     Map animeMap = Map();
     animeMap["watching"] = [];
@@ -72,6 +74,8 @@ class AnimeListRequest {
     return animeMap;
   }
 
+  /// Sends a request to update anime list to MAL servers through API.
+  ///
   Future<Map> createRequest(MALClient client) async {
     this.setParams();
     try {
@@ -89,7 +93,6 @@ class AnimeListRequest {
       if (response.statusCode == 200) {
         print("List retrieved successfully!");
         respMap = sortMap(respMap);
-        // writeToFile(respMap);
         respMap["status_code"] = 200;
       } else {
         print(

@@ -17,8 +17,7 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  MALClient client;
-  bool hasMorePages;
+  MALClient _client;
 
   // Legacy function, saving lists locally may be a future feature
   //
@@ -34,13 +33,15 @@ class _LoadingState extends State<Loading> {
   //   return animeMap;
   // }
 
-  Future<Map> initializeList(_limit) async {
+  /// Initializes the user's anime list.
+  ///
+  Future<Map> initializeAnimeList(_limit) async {
     Map newMap = Map();
-    Map result = await client.getAnimeList(
+    Map result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
     while (result["paging"]["next"] != null) {
-      newMap = await client.getAnimeList(
+      newMap = await _client.getAnimeList(
         AnimeListRequest(limit: _limit, url: result["paging"]["next"]),
       );
       for (String item in newMap.keys) {
@@ -53,10 +54,14 @@ class _LoadingState extends State<Loading> {
     return result;
   }
 
+  /// Checks if user has internet connection.
+  ///
   Future<bool> testConnection() async {
     return await DataConnectionChecker().hasConnection;
   }
 
+  /// Verify internet connectivity, token validity, and initialization of anime list.
+  ///
   void setupMALConnection() async {
     /**
      * Uncomment the deleteSync lines to remove locally-stored tokens.
@@ -65,19 +70,20 @@ class _LoadingState extends State<Loading> {
     // File("${directory.path}/miruList.json").deleteSync();
     // File("${directory.path}/miruTokens.json").deleteSync();
     bool connStatus = await testConnection();
-    await TokenVerifier.verifyTokens(this.client);
-    Map currentList = await initializeList(Constants.limitOfListItems);
+    await TokenVerifier.verifyTokens(_client);
+    Map currentList = await initializeAnimeList(Constants.limitOfListItems);
 
-    Get.off(() => Home(animeMap: currentList, client: this.client),
-        arguments: {"connStatus": connStatus});
+    Get.off(
+      () => Home(animeMap: currentList, client: _client),
+      arguments: {"connStatus": connStatus},
+    );
   }
 
   @override
   void initState() {
     super.initState();
     setupMALConnection();
-    client = MALClient();
-    hasMorePages = false;
+    _client = MALClient();
   }
 
   @override

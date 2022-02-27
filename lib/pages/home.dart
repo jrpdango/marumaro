@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:miru/services/anime_search_request.dart';
-import 'package:miru/services/anime_details_request.dart';
-import 'package:miru/services/delete_anime_request.dart';
 import 'package:miru/services/mal_client.dart';
 import 'package:miru/widgets/ColoredTabBar.dart';
 import 'package:miru/widgets/ListContainer.dart';
@@ -24,30 +21,6 @@ class _HomeState extends State<Home> {
   Map _animeMap;
   List<ListContainer> _tabContents;
   bool _netConnected = false;
-
-  Future<void> searchAnime(String query,
-      {String limit, String offset, String fields}) async {
-    print(
-      await widget.client.animeSearch(
-        AnimeSearchRequest(
-            query: query, limit: limit, offset: offset, fields: fields),
-      ),
-    );
-  }
-
-  Future<void> getAnimeDetails(String animeID, {String fields}) async {
-    print(
-      await widget.client.getAnimeDetails(
-        AnimeDetailsRequest(animeID: animeID, fields: fields),
-      ),
-    );
-  }
-
-  Future<void> deleteAnime(String animeID) async {
-    await widget.client.deleteAnime(
-      DeleteAnimeRequest(animeID: animeID),
-    );
-  }
 
   /// Creates tabs for TabBar.
   ///
