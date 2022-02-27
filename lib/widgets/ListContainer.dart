@@ -72,7 +72,9 @@ class _ListContainerState extends State<ListContainer> {
       child: Container(
         width: size.width,
         child: ListView.builder(
+          key: PageStorageKey(widget.listType),
           physics: const AlwaysScrollableScrollPhysics(),
+          itemExtent: 106.0,
           itemCount: animeList.length,
           itemBuilder: (context, index) {
             return Padding(
