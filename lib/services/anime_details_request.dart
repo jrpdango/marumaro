@@ -19,8 +19,8 @@ class AnimeDetailsRequest {
     try {
       Uri url = Uri(
         scheme: "https",
-        host: "api.myanimelist.net",
-        path: "v2/anime/${this.animeID}",
+        host: "api.jikan.moe",
+        path: "v4/anime/${this.animeID}",
       );
       url = setParams(url);
       //"https://api.myanimelist.net/v2/anime/${this.animeID}" + this.fields;
