@@ -6,7 +6,10 @@ class Token {
   final String accessToken;
   final String refreshToken;
 
-  Token({required this.accessToken, required this.refreshToken});
+  Token({
+    required this.accessToken,
+    required this.refreshToken,
+  });
 
   // Method to write tokens to device
   Future<File> writeToFile() async {
