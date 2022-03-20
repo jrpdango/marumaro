@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/update_list_request.dart';
-import 'package:miru/widgets/EpisodesWatchedPopup.dart';
-import 'package:miru/widgets/ListStatusPopup.dart';
-import 'package:miru/widgets/LoadingPopup.dart';
-import 'package:miru/widgets/ScorePopup.dart';
+import 'package:miru/widgets/episodes_watched_popup.dart';
+import 'package:miru/widgets/list_status_popup.dart';
+import 'package:miru/widgets/loading_popup.dart';
+import 'package:miru/widgets/score_popup.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
   @override

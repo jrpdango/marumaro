@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:miru/models/mal_client.dart';
-import 'package:miru/widgets/ColoredTabBar.dart';
-import 'package:miru/widgets/ListContainer.dart';
+import 'package:miru/widgets/colored_tab_bar.dart';
+import 'package:miru/widgets/list_container.dart';
 
 class Home extends StatefulWidget {
   final Map? animeMap;
