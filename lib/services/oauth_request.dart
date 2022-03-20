@@ -1,6 +1,6 @@
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart';
-import 'package:miru/services/token.dart';
+import 'package:miru/models/token.dart';
 import 'dart:convert';
 
 class OAuthRequest {

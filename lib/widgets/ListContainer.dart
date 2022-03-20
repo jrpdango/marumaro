@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/services/anime_list_request.dart';
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/ShowDetails.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
 

@@ -3,7 +3,7 @@ import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/delete_anime_request.dart';
-import 'package:miru/services/token.dart';
+import 'package:miru/models/token.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/services/oauth_request.dart';
 import 'package:miru/services/pkce_code_gen.dart';

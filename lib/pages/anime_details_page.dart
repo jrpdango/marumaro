@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/EpisodesWatchedPopup.dart';
 import 'package:miru/widgets/ListStatusPopup.dart';
