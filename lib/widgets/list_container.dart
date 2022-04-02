@@ -1,13 +1,14 @@
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/show_details.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
 
 class ListContainer extends StatefulWidget {
-  final List animeList;
+  final List<Anime> animeList;
   final Function animeMapCallback;
   final Function animeListCallback;
   final MALClient client;
@@ -27,7 +28,7 @@ class ListContainer extends StatefulWidget {
 }
 
 class _ListContainerState extends State<ListContainer> {
-  late List animeList = widget.animeList;
+  late List<Anime> animeList = widget.animeList;
   late bool? netConnected = widget.connStatus;
 
   Future<void> refreshList(_limit) async {
@@ -86,21 +87,20 @@ class _ListContainerState extends State<ListContainer> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     onTap: () {
-                      String oldStatus =
-                          this.animeList[index]["list_status"]["status"];
+                      String oldStatus = this.animeList[index].userStatus;
                       Get.toNamed(
                         "/animeDetailsPage",
                         arguments: {
-                          "animeMap": this.animeList[index],
+                          "anime": this.animeList[index],
                           "connStatus": this.netConnected,
                           "deviceSize": size,
                           "client": widget.client,
-                          "callback": (val) {
-                            if (oldStatus != val["list_status"]["status"]) {
+                          "callback": (Anime val) {
+                            if (oldStatus != val.userStatus) {
                               print("status changed");
                               // Update list locally so no need to call API again to refresh
                               widget.animeListCallback(val, oldStatus, index);
-                              oldStatus = val["list_status"]["status"];
+                              oldStatus = val.userStatus;
                             }
                             // setState() edits the entire state based on anime_details_page
                             setState(
@@ -126,8 +126,7 @@ class _ListContainerState extends State<ListContainer> {
                                   placeholderCacheHeight: 90,
                                   placeholderCacheWidth: 65,
                                   placeholder: "assets/404img.png",
-                                  image: animeList[index]["node"]
-                                      ["main_picture"]["medium"],
+                                  image: animeList[index].picture.toString(),
                                   imageErrorBuilder:
                                       (context, error, stackTrace) => Container(
                                           height: 90,
@@ -142,13 +141,11 @@ class _ListContainerState extends State<ListContainer> {
                         ),
                         Expanded(
                           child: ShowDetails(
-                            title: "${animeList[index]["node"]["title"]}",
+                            title: "${animeList[index].title}",
                             progress:
-                                "${animeList[index]["list_status"]["num_episodes_watched"]}/${animeList[index]["node"]["num_episodes"]}",
-                            score:
-                                "${animeList[index]["list_status"]["score"]}",
-                            airingStatus:
-                                "${animeList[index]["node"]["status"]}",
+                                "${animeList[index].userEpisodesWatched}/${animeList[index].totalEpisodes}",
+                            score: "${animeList[index].userScore}",
+                            airingStatus: "${animeList[index].userStatus}",
                           ),
                         ),
                       ],

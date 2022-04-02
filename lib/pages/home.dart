@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:miru/models/anime.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
 
 class Home extends StatefulWidget {
-  final Map? animeMap;
+  final Map<String, dynamic>? animeMap;
   final MALClient? client;
 
   const Home({Key? key, this.animeMap, this.client}) : super(key: key);
@@ -18,7 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Map _getArgs = Get.arguments;
-  late Map _animeMap = widget.animeMap!;
+  late Map<String, dynamic> _animeMap = widget.animeMap!;
   late List<ListContainer> _tabContents = getTabContents(_animeMap);
   late bool _netConnected = _getArgs["connStatus"];
 
@@ -65,11 +66,12 @@ class _HomeState extends State<Home> {
             refreshListLocal();
           },
           animeList: tabMap[tabName] ?? [],
-          animeListCallback: (val, oldStatus, index) {
+          animeListCallback: (Anime val, String oldStatus, int index) {
+            print("animeListCallback");
             setState(
               () {
-                _animeMap[val["list_status"]["status"]].add(val);
                 _animeMap[oldStatus].removeAt(index);
+                _animeMap[val.userStatus].insert(0, val);
               },
             );
           },

@@ -1,6 +1,7 @@
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/token_verifier.dart';
@@ -35,9 +36,9 @@ class _LoadingState extends State<Loading> {
 
   /// Initializes the user's anime list.
   ///
-  Future<Map> initializeAnimeList(_limit) async {
-    Map newMap = Map();
-    final Map result = await _client.getAnimeList(
+  Future<Map<String, dynamic>> initializeAnimeList(_limit) async {
+    Map<String, dynamic> newMap = Map();
+    final Map<String, dynamic> result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
     try {
@@ -53,7 +54,8 @@ class _LoadingState extends State<Loading> {
             result[item].addAll(newMap[item]);
           }
         }
-        result["paging"]["next"] = newMap["paging"]["next"];
+        print(result["paging"]["next"]);
+        result["paging"]["next"] = newMap["paging"]!["next"];
       }
     } catch (e) {
       print(e);
@@ -78,7 +80,8 @@ class _LoadingState extends State<Loading> {
     // File("${directory.path}/miruTokens.json").deleteSync();
     // bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(_client);
-    Map currentList = await initializeAnimeList(Constants.limitOfListItems);
+    Map<String, dynamic>? currentList =
+        await initializeAnimeList(Constants.limitOfListItems);
 
     Get.off(
       () => Home(animeMap: currentList, client: _client),

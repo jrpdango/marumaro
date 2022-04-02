@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/episodes_watched_popup.dart';
@@ -16,13 +17,12 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   OverlayEntry? _loadingOverlay;
   final Function _callback = Get.arguments["callback"];
   final MALClient _client = Get.arguments["client"];
-  final Map _animeMap = Get.arguments["animeMap"];
+  final Anime _anime = Get.arguments["anime"];
   bool _netConnected = Get.arguments["connStatus"];
   bool _detailChanged = false;
-  late String _chosenListStatus = _animeMap["list_status"]["status"];
-  late String _chosenScore = "${_animeMap["list_status"]["score"]}";
-  late String _chosenEpsWatched =
-      "${_animeMap["list_status"]["num_episodes_watched"]}";
+  late String _chosenListStatus = _anime.userStatus;
+  late String _chosenScore = "${_anime.userScore}";
+  late String _chosenEpsWatched = "${_anime.userEpisodesWatched}";
 
   final Size _deviceSize = Get.arguments["deviceSize"];
   final List<String> _animeInfoCategs = [
@@ -65,7 +65,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     showOverlay(context, "loading");
     if (await _client.updateList(
           UpdateListRequest(
-            animeID: _animeMap["node"]["id"],
+            animeID: _anime.id,
             status: statusJSONify(_chosenListStatus),
             score: _chosenScore,
             episodesWatched: _chosenEpsWatched,
@@ -81,11 +81,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       );
 
       // Locally set status/score/epsWatched before callback
-      _animeMap["list_status"]["status"] = statusJSONify(_chosenListStatus);
-      _animeMap["list_status"]["score"] = _chosenScore;
-      _animeMap["list_status"]["num_episodes_watched"] = _chosenEpsWatched;
+      _anime.userStatus = statusJSONify(_chosenListStatus);
+      _anime.userScore = int.parse(_chosenScore);
+      _anime.userEpisodesWatched = int.parse(_chosenEpsWatched);
 
-      _callback(_animeMap);
+      _callback(_anime);
       _loadingOverlay!.remove();
     }
   }
@@ -125,7 +125,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             callback: (val) => setState(() => _detailChanged = val),
             numEpsChoice: (choice) =>
                 setState(() => _chosenEpsWatched = choice),
-            totalEps: _animeMap["node"]["num_episodes"],
+            totalEps: _anime.totalEpisodes,
             closeOverlayCallback: () => overlayEntry!.remove(),
           ),
         );
@@ -189,7 +189,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
               ),
               Text(
-                "${_animeMap["node"][element]}",
+                // TODO
+                //"${_animeMap["node"][element]}",
+                "Temp Data",
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
               )
             ],
@@ -212,7 +214,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
-            print("animeMap status: ${_animeMap["list_status"]["status"]}");
+            print("animeMap status: ${_anime.userStatus}");
             Get.back();
           },
           icon: Icon(Icons.arrow_back),
@@ -233,7 +235,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                         placeholderCacheHeight: 90,
                         placeholderCacheWidth: 65,
                         placeholder: "assets/404img.png",
-                        image: _animeMap["node"]["main_picture"]["medium"],
+                        image: _anime.picture.toString(),
                         imageErrorBuilder: (context, error, stackTrace) =>
                             Container(
                                 height: 90,
@@ -251,13 +253,14 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 child: Column(
                   children: [
                     Text(
-                      _animeMap["node"]["title"],
+                      _anime.title,
                       style: TextStyle(color: Colors.white, fontSize: 20.0),
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      "Mean Score: ${_animeMap["node"]["mean"] ?? "Score not found."}",
+                      // TODO
+                      "Mean Score: ${"Score not found."}",
                       style: TextStyle(color: Colors.amber, fontSize: 15.0),
                     ),
                   ],
@@ -302,7 +305,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          "$_chosenEpsWatched/${_animeMap["node"]["num_episodes"]}",
+                          "$_chosenEpsWatched/${_anime.totalEpisodes}",
                           style: TextStyle(color: Colors.white),
                         ),
                       ],

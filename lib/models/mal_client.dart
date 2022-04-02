@@ -1,4 +1,5 @@
 import 'package:http/http.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/anime_search_request.dart';
@@ -46,7 +47,8 @@ class MALClient {
     return UserDataRequest.createRequest(this);
   }
 
-  Future<Map> getAnimeList(AnimeListRequest animeListRequest) async {
+  Future<Map<String, dynamic>> getAnimeList(
+      AnimeListRequest animeListRequest) async {
     /*
     Returns:
     {
@@ -57,6 +59,15 @@ class MALClient {
       status_code: int
     }
     */
+
+    /*
+    New:
+    {
+      <all statuses (watching...plan to watch)>: [list of Anime],
+      paging: {next: url to next page},
+      status_code: int
+    }
+     */
     return await animeListRequest.createRequest(this);
   }
 

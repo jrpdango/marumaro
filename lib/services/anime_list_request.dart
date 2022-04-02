@@ -1,3 +1,4 @@
+import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -57,15 +58,24 @@ class AnimeListRequest {
 
   /// Sort a [Map] by status.
   ///
-  Map sortMap(Map rawMap) {
-    Map animeMap = Map();
-    animeMap["watching"] = [];
-    animeMap["completed"] = [];
-    animeMap["plan_to_watch"] = [];
-    animeMap["on_hold"] = [];
-    animeMap["dropped"] = [];
+  Map<String, dynamic> sortMap(Map rawMap) {
+    Map<String, dynamic> animeMap = Map();
+    animeMap["watching"] = <Anime>[];
+    animeMap["completed"] = <Anime>[];
+    animeMap["plan_to_watch"] = <Anime>[];
+    animeMap["on_hold"] = <Anime>[];
+    animeMap["dropped"] = <Anime>[];
     for (Map element in rawMap["data"]) {
-      animeMap[element["list_status"]["status"]].add(element);
+      animeMap[element["list_status"]["status"]]!.add(Anime(
+        id: element["node"]["id"],
+        title: element["node"]["title"],
+        picture: Uri.parse(element["node"]["main_picture"]["medium"]),
+        totalEpisodes: element["node"]["num_episodes"],
+        showStatus: element["node"]["status"],
+        userStatus: element["list_status"]["status"],
+        userEpisodesWatched: element["list_status"]["num_episodes_watched"],
+        userScore: element["list_status"]["score"],
+      ));
     }
     animeMap["paging"] = rawMap["paging"];
     return animeMap;
@@ -73,7 +83,7 @@ class AnimeListRequest {
 
   /// Sends a request to update anime list to MAL servers through API.
   ///
-  Future<Map> createRequest(MALClient client) async {
+  Future<Map<String, dynamic>> createRequest(MALClient client) async {
     try {
       if (url == null) {
         url = Uri(
@@ -90,16 +100,16 @@ class AnimeListRequest {
       //         this.offset;
       Response response = await client.userClient.get(url!,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
-      Map respMap = Map();
+      Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {
         print("List retrieved successfully!");
         respMap = sortMap(respMap);
-        respMap["status_code"] = 200;
+        // respMap["status_code"] = 200;
       } else {
         print(
             "List retrieval request sent, but something went wrong. Status code: ${response.statusCode}");
-        respMap["status_code"] = [response.statusCode];
+        // respMap["status_code"] = [response.statusCode];
       }
       return respMap;
     } catch (exception) {
