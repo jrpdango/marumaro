@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
+import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/episodes_watched_popup.dart';
 import 'package:miru/widgets/list_status_popup.dart';
@@ -23,17 +24,19 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   late String _chosenListStatus = _anime.userStatus;
   late String _chosenScore = "${_anime.userScore}";
   late String _chosenEpsWatched = "${_anime.userEpisodesWatched}";
+  late Future<Map<String, dynamic>> _animeDetails = getAnimeDetails();
 
   final Size _deviceSize = Get.arguments["deviceSize"];
   final List<String> _animeInfoCategs = [
     "num_episodes",
     "status",
+    "start_date",
+    "end_date",
     "rank",
     "popularity",
     "source",
-    "studios",
     "rating",
-    "average_episode_duration"
+    "average_episode_duration",
   ];
 
   /// Turns given [status] into valid text to send back through the MAL API.
@@ -174,7 +177,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
   /// Creates a [List] of [Widget]s that displays details for the currently selected anime.
   ///
-  List<Widget> buildInfoList(List<String> categories) {
+  List<Widget> buildInfoList(
+      List<String> categories, Map<String, dynamic> animeDetails) {
     List<Widget> infoRows = [];
     for (String element in categories) {
       infoRows.add(
@@ -189,10 +193,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
               ),
               Text(
-                // TODO
-                //"${_animeMap["node"][element]}",
-                "Temp Data",
+                "${animeDetails[element]}",
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
+                overflow: TextOverflow.clip,
               )
             ],
           ),
@@ -200,6 +203,13 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       );
     }
     return infoRows;
+  }
+
+  /// Retrieve anime details for the corresponding [Anime].
+  ///
+  Future<Map<String, dynamic>> getAnimeDetails() async {
+    return await _client
+        .getAnimeDetails(AnimeDetailsRequest(animeID: _anime.id));
   }
 
   @override
@@ -258,10 +268,20 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      // TODO
-                      "Mean Score: ${"Score not found."}",
-                      style: TextStyle(color: Colors.amber, fontSize: 15.0),
+                    FutureBuilder(
+                      future: _animeDetails,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        Text text = Text("");
+                        // TODO add .hasError
+                        if (snapshot.hasData) {
+                          text = Text(
+                            "Mean Score: ${snapshot.data["mean"]}",
+                            style:
+                                TextStyle(color: Colors.amber, fontSize: 15.0),
+                          );
+                        }
+                        return text;
+                      },
                     ),
                   ],
                 ),
@@ -347,8 +367,23 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               : SizedBox(height: 0, width: 0),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Column(
-              children: buildInfoList(_animeInfoCategs),
+            child: FutureBuilder(
+              future: _animeDetails,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                List<Widget> children = <Widget>[];
+                if (snapshot.hasData) {
+                  children = buildInfoList(_animeInfoCategs, snapshot.data);
+                }
+                // TODO fix this
+                else if (snapshot.hasError) {
+                  children = <Widget>[
+                    Text("Loading data."),
+                  ];
+                }
+                return Column(
+                  children: children,
+                );
+              },
             ),
           ),
         ],

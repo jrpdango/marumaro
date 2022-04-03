@@ -1,5 +1,7 @@
+import 'dart:io';
+
 import 'package:http/http.dart';
-import 'package:miru/models/anime.dart';
+import 'package:http/io_client.dart';
 import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/anime_search_request.dart';
@@ -13,7 +15,10 @@ import 'package:miru/services/user_data_request.dart';
 class MALClient {
   static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
   late String accessCode;
-  final Client userClient = Client();
+  final HttpClient httpClient = new HttpClient()
+    ..badCertificateCallback =
+        ((X509Certificate cert, String host, int port) => true);
+  late Client userClient = IOClient(httpClient);
   final OAuthRequest oAuthRequest =
       OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
   late Token token;
@@ -75,7 +80,8 @@ class MALClient {
     return await animeSearchRequest.createRequest(this);
   }
 
-  Future<Map> getAnimeDetails(AnimeDetailsRequest animeDetailsRequest) async {
+  Future<Map<String, dynamic>> getAnimeDetails(
+      AnimeDetailsRequest animeDetailsRequest) async {
     return await animeDetailsRequest.createRequest(this);
   }
 

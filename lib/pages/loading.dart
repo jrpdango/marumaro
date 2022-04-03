@@ -1,7 +1,6 @@
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:miru/models/anime.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/token_verifier.dart';

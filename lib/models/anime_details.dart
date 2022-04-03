@@ -1,7 +1,7 @@
 class AnimeDetails {
   final Uri url;
-  final Map<String, Uri> mediumImageUrl;
-  final Map<String, Uri> largeImageUrl;
+  final Uri mediumImageUrl;
+  final Uri largeImageUrl;
   final String title;
   final String englishTitle;
   final String japaneseTitle;
