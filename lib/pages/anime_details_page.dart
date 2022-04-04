@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
@@ -27,17 +28,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   late Future<Map<String, dynamic>> _animeDetails = getAnimeDetails();
 
   final Size _deviceSize = Get.arguments["deviceSize"];
-  final List<String> _animeInfoCategs = [
-    "num_episodes",
-    "status",
-    "start_date",
-    "end_date",
-    "rank",
-    "popularity",
-    "source",
-    "rating",
-    "average_episode_duration",
-  ];
 
   /// Turns given [status] into valid text to send back through the MAL API.
   ///
@@ -177,8 +167,24 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
   /// Creates a [List] of [Widget]s that displays details for the currently selected anime.
   ///
-  List<Widget> buildInfoList(
-      List<String> categories, Map<String, dynamic> animeDetails) {
+  List<Widget> buildInfoList(Map<String, dynamic> animeDetails) {
+    const List<String> categories = [
+      "num_episodes",
+      "status",
+      "start_date",
+      "end_date",
+      "rank",
+      "popularity",
+      "source",
+      "rating",
+      "average_episode_duration",
+    ];
+    if (animeDetails.length == 1)
+      return <Widget>[
+        SpinKitPulse(
+          color: Colors.amber,
+        )
+      ];
     List<Widget> infoRows = [];
     for (String element in categories) {
       infoRows.add(
@@ -270,15 +276,18 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                     ),
                     FutureBuilder(
                       future: _animeDetails,
+                      initialData: {"mean": "Loading data."},
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         Text text = Text("");
-                        // TODO add .hasError
                         if (snapshot.hasData) {
                           text = Text(
                             "Mean Score: ${snapshot.data["mean"]}",
                             style:
                                 TextStyle(color: Colors.amber, fontSize: 15.0),
                           );
+                        } else if (snapshot.hasError) {
+                          text = Text(
+                              "Error loading data. Please try again later.");
                         }
                         return text;
                       },
@@ -369,15 +378,14 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: FutureBuilder(
               future: _animeDetails,
+              initialData: {"loading": true},
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 List<Widget> children = <Widget>[];
                 if (snapshot.hasData) {
-                  children = buildInfoList(_animeInfoCategs, snapshot.data);
-                }
-                // TODO fix this
-                else if (snapshot.hasError) {
+                  children = buildInfoList(snapshot.data);
+                } else if (snapshot.hasError) {
                   children = <Widget>[
-                    Text("Loading data."),
+                    Text("Error loading data. Please try again later."),
                   ];
                 }
                 return Column(

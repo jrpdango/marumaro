@@ -48,38 +48,9 @@ class AnimeDetailsRequest {
             "Anime details request sent, but something went wrong. Status code: ${response.statusCode}");
         respMap["status_code"] = [response.statusCode];
       }
-      // TODO
-      // return AnimeDetails(
-      //     url: Uri.parse(respMap["data"]["url"]),
-      //     mediumImageUrl:
-      //         Uri.parse(respMap["data"]["images"]["jpg"]["image_url"]),
-      //     largeImageUrl:
-      //         Uri.parse(respMap["data"]["images"]["jpg"]["large_image_url"]),
-      //     title: respMap["data"]["title"],
-      //     englishTitle: respMap["data"]["title_english"],
-      //     japaneseTitle: respMap["data"]["title_japanese"],
-      //     titleSynonyms: respMap["data"]["title_synonyms"],
-      //     type: respMap["data"]["type"],
-      //     source: respMap["data"]["source"],
-      //     totalEpisodes: respMap["data"]["episodes"],
-      //     showStatus: respMap["data"]["status"],
-      //     airedFromTo: respMap["data"]["aired"]["string"],
-      //     episodeDuration: respMap["data"]["duration"],
-      //     rating: respMap["data"]["rating"],
-      //     meanScore: respMap["data"]["score"],
-      //     scoredBy: respMap["data"]["scored_by"],
-      //     rank: respMap["data"]["rank"],
-      //     popularity: respMap["data"]["popularity"],
-      //     members: respMap["data"]["members"],
-      //     favorites: respMap["data"]["favorites"],
-      //     synopsis: respMap["data"]["synopsis"],
-      //     season: respMap["data"]["season"],
-      //     year: respMap["data"]["year"],
-      //     producers: respMap["data"]["producers"]);
       return respMap;
     } catch (exception) {
       print("Oops! Something went wrong. $exception");
-      // print(client.token.accessToken);
       return Map<String, dynamic>();
     }
   }
