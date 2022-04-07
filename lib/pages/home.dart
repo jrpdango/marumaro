@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
@@ -118,8 +121,11 @@ class _HomeState extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: TextButton.icon(
-                      onPressed: () {
-                        print("delete tokens and go to initial screen");
+                      onPressed: () async {
+                        Directory directory =
+                            await getApplicationDocumentsDirectory();
+                        File("${directory.path}/miruTokens.json").deleteSync();
+                        Get.offNamed("/");
                       },
                       icon: Icon(
                         Icons.logout_rounded,

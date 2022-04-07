@@ -34,6 +34,13 @@ class MALClient {
     return url;
   }
 
+  // TODO - maybe replace checkValidAccessToken in token_verifier
+  // Future<bool> hasValidAccessToken() async {
+  //   Map checker = await this.getUserData();
+  //   if (checker["status_code"] == 200) return true;
+  //   return false;
+  // }
+
   Future<void> getTokens() async {
     this.token = await oAuthRequest.generateTokens(this, this.accessCode);
     print("DEBUG: Tokens received:");

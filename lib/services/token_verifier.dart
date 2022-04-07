@@ -28,12 +28,14 @@ class TokenVerifier {
     }
   }
 
-  static Future<Map> hasValidAccessToken(MALClient client, Token token) async {
+  static Future<Map> checkValidAccessToken(
+      MALClient client, Token token) async {
     Map checker = await client.getUserData();
     return checker;
   }
 
   static Future<void> oAuthNewTokens(MALClient client) async {
+    await Get.toNamed("/login");
     print("No valid tokens. Gotta auth and get new ones.");
     String url = client.getAuthURL();
     dynamic result = await Get.toNamed(
@@ -51,7 +53,7 @@ class TokenVerifier {
 
   static Future<void> verifyTokens(MALClient client) async {
     await assignTokenFromFile(client);
-    Map checkResult = await hasValidAccessToken(client, client.token);
+    Map checkResult = await checkValidAccessToken(client, client.token);
     if (checkResult["status_code"] == 200) {
       // Access token is valid, client can make calls
       print("Access code in file is valid, ez calls (line 38)");
