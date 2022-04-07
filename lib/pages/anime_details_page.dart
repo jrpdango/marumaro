@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/anime_details_request.dart';
+import 'package:miru/services/text_cleaner.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/episodes_watched_popup.dart';
 import 'package:miru/widgets/list_status_popup.dart';
@@ -29,16 +30,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
   final Size _deviceSize = Get.arguments["deviceSize"];
 
-  /// Turns given [status] into valid text to send back through the MAL API.
-  ///
-  /// ```dart
-  /// statusJSONify("Plan To Watch"); // plan_to_watch
-  /// ```
-  String statusJSONify(String status) {
-    status = status.replaceAll(" ", "_").toLowerCase();
-    return status;
-  }
-
   /// Generates an [OverlayEntry] with the given [popup].
   ///
   OverlayEntry createPopupOverlay(closer, popup) {
@@ -59,7 +50,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     if (await _client.updateList(
           UpdateListRequest(
             animeID: _anime.id,
-            status: statusJSONify(_chosenListStatus),
+            status: TextCleaner.jsonify(_chosenListStatus),
             score: _chosenScore,
             episodesWatched: _chosenEpsWatched,
           ),
@@ -74,7 +65,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       );
 
       // Locally set status/score/epsWatched before callback
-      _anime.userStatus = statusJSONify(_chosenListStatus);
+      _anime.userStatus = TextCleaner.jsonify(_chosenListStatus);
       _anime.userScore = int.parse(_chosenScore);
       _anime.userEpisodesWatched = int.parse(_chosenEpsWatched);
 
@@ -179,6 +170,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       "rating",
       "average_episode_duration",
     ];
+    // If loading, show spinkit
     if (animeDetails.length == 1)
       return <Widget>[
         SpinKitPulse(
@@ -195,11 +187,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Text>[
               Text(
-                "$element",
+                TextCleaner.unjsonify(element),
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
               ),
               Text(
-                "${animeDetails[element]}",
+                TextCleaner.unjsonify("${animeDetails[element]}"),
                 style: TextStyle(color: Colors.white, fontSize: 10.0),
                 overflow: TextOverflow.clip,
               )

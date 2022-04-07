@@ -53,7 +53,6 @@ class _LoadingState extends State<Loading> {
             result[item].addAll(newMap[item]);
           }
         }
-        print(result["paging"]["next"]);
         result["paging"]["next"] = newMap["paging"]!["next"];
       }
     } catch (e) {
