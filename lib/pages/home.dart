@@ -108,8 +108,34 @@ class _HomeState extends State<Home> {
       length: 5,
       child: Scaffold(
         drawer: Drawer(
-          child: Container(
-            child: Text("Heyo"),
+          backgroundColor: Color.fromARGB(240, 0, 0, 0),
+          child: Column(
+            children: <Widget>[
+              Text("This is the sidebar."),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextButton.icon(
+                      onPressed: () {
+                        print("delete tokens and go to initial screen");
+                      },
+                      icon: Icon(
+                        Icons.logout_rounded,
+                      ),
+                      label: Text("Logout"),
+                      style: TextButton.styleFrom(
+                        textStyle: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
         backgroundColor: Colors.black,
