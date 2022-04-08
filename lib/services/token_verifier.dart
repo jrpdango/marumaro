@@ -40,8 +40,8 @@ class TokenVerifier {
     String url = client.getAuthURL();
     dynamic result = await Get.toNamed(
       "/malweb",
-      arguments: <String, Uri>{
-        "url": Uri.parse(url),
+      arguments: <String, String>{
+        "url": url,
       },
     );
     Uri params = result["accessCode"];

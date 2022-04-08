@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
 
 /// This page is for user OAuth and token generation.
@@ -11,8 +12,9 @@ class MALWebView extends StatefulWidget {
 }
 
 class _MALWebViewState extends State<MALWebView> {
-  final Completer<InAppWebViewController> _controller =
-      Completer<InAppWebViewController>();
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+  bool loading = false;
 
   @override
   void initState() {
@@ -21,20 +23,36 @@ class _MALWebViewState extends State<MALWebView> {
 
   @override
   Widget build(BuildContext context) {
-    final Map content = Get.arguments;
+    final Map? content = Get.arguments;
     return Scaffold(
       body: Builder(
-        builder: (BuildContext context) => InAppWebView(
-          initialUrlRequest: URLRequest(url: content["url"]),
-          onWebViewCreated: (InAppWebViewController webViewController) {
-            _controller.complete(webViewController);
-          },
-          onLoadStart: (InAppWebViewController _controller, Uri? url) {
-            // User is redirected here
-            if (url!.toString().startsWith("http://localhost/oauth")) {
-              Get.back(result: {"accessCode": url});
-            }
-          },
+        builder: (BuildContext context) => Stack(
+          children: <Widget>[
+            WebView(
+              javascriptMode: JavascriptMode.unrestricted,
+              initialUrl: content?["url"].toString(),
+              onWebViewCreated: (WebViewController webViewController) {
+                _controller.complete(webViewController);
+              },
+              onPageStarted: (String url) {
+                // User is redirected here
+                if (url.startsWith("http://localhost/oauth")) {
+                  setState(() {
+                    loading = true;
+                  });
+                  Get.back(
+                    result: {
+                      "accessCode": Uri.parse(url),
+                    },
+                  );
+                }
+              },
+            ),
+            if (loading)
+              Container(
+                color: Colors.black87,
+              ),
+          ],
         ),
       ),
     );
