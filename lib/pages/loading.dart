@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/models/mal_client.dart';
+import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
@@ -17,7 +18,9 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  late MALClient _client = MALClient();
+  // late MALClient _client = MALClient();
+  final _controller = Get.put(GlobalController());
+  late MALClient _client = _controller.client.value;
 
   // Legacy function, saving lists locally may be a future feature
   //
@@ -78,11 +81,12 @@ class _LoadingState extends State<Loading> {
     // File("${directory.path}/miruTokens.json").deleteSync();
     // bool connStatus = await testConnection();
     await TokenVerifier.verifyTokens(_client);
-    Map<String, dynamic>? currentList =
+    Map<String, dynamic> result =
         await initializeAnimeList(Constants.limitOfListItems);
+    _client.clientAnimeList = result.obs;
 
     Get.off(
-      () => Home(animeMap: currentList, client: _client),
+      () => Home(),
       // EDIT LATER
       arguments: {"connStatus": true},
     );

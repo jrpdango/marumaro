@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/anime_details_request.dart';
+import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/text_cleaner.dart';
 import 'package:miru/services/update_list_request.dart';
 import 'package:miru/widgets/episodes_watched_popup.dart';
@@ -17,9 +18,9 @@ class AnimeDetailsPage extends StatefulWidget {
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
+  MALClient _client = Get.find<GlobalController>().client.value;
   OverlayEntry? _loadingOverlay;
   final Function _callback = Get.arguments["callback"];
-  final MALClient _client = Get.arguments["client"];
   final Anime _anime = Get.arguments["anime"];
   bool _netConnected = Get.arguments["connStatus"];
   bool _detailChanged = false;

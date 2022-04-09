@@ -1,6 +1,7 @@
+import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 // import 'dart:io';
 // import 'package:path_provider/path_provider.dart';
@@ -60,11 +61,11 @@ class AnimeListRequest {
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
     Map<String, dynamic> animeMap = Map();
-    animeMap["watching"] = <Anime>[];
-    animeMap["completed"] = <Anime>[];
-    animeMap["plan_to_watch"] = <Anime>[];
-    animeMap["on_hold"] = <Anime>[];
-    animeMap["dropped"] = <Anime>[];
+    animeMap["watching"] = <Anime>[].obs;
+    animeMap["completed"] = <Anime>[].obs;
+    animeMap["plan_to_watch"] = <Anime>[].obs;
+    animeMap["on_hold"] = <Anime>[].obs;
+    animeMap["dropped"] = <Anime>[].obs;
     for (Map element in rawMap["data"]) {
       animeMap[element["list_status"]["status"]]!.add(Anime(
         id: element["node"]["id"],
@@ -98,7 +99,7 @@ class AnimeListRequest {
       //         this.sort +
       //         this.limit +
       //         this.offset;
-      Response response = await client.userClient.get(url!,
+      http.Response response = await client.userClient.get(url!,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);

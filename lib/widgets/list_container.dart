@@ -4,22 +4,15 @@ import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/models/mal_client.dart';
+import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/show_details.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
 
 class ListContainer extends StatefulWidget {
-  final List<Anime> animeList;
-  final Function animeMapCallback;
-  final Function animeListCallback;
-  final MALClient client;
   final String listType;
   final bool? connStatus;
   const ListContainer({
     Key? key,
-    required this.animeList,
-    required this.animeMapCallback,
-    required this.animeListCallback,
-    required this.client,
     required this.listType,
     this.connStatus,
   }) : super(key: key);
@@ -28,17 +21,18 @@ class ListContainer extends StatefulWidget {
 }
 
 class _ListContainerState extends State<ListContainer> {
-  late List<Anime> animeList = widget.animeList;
+  MALClient _client = Get.find<GlobalController>().client.value;
+  late RxList<Anime> _animeList = _client.clientAnimeList[widget.listType];
   late bool? netConnected = widget.connStatus;
 
   Future<void> refreshList(_limit) async {
     Map newMap = Map();
     // bool hasConnection = await DataConnectionChecker().hasConnection;
-    Map result = await widget.client.getAnimeList(
+    Map result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
     while (result["paging"]["next"] != null) {
-      newMap = await widget.client.getAnimeList(
+      newMap = await _client.getAnimeList(
         AnimeListRequest(
           limit: _limit,
           url: Uri.parse(result["paging"]["next"]),
@@ -52,8 +46,7 @@ class _ListContainerState extends State<ListContainer> {
       result["paging"]["next"] = newMap["paging"]["next"];
     }
     setState(() {
-      widget.animeMapCallback(result);
-      this.animeList = result[widget.listType];
+      _animeList = result[widget.listType];
       // this.netConnected = hasConnection;
     });
   }
@@ -72,89 +65,91 @@ class _ListContainerState extends State<ListContainer> {
       },
       child: Container(
         width: size.width,
-        child: ListView.builder(
-          key: PageStorageKey(widget.listType),
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemExtent: 106.0,
-          itemCount: animeList.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-              child: Container(
-                width: size.width,
-                child: Card(
-                  color: Colors.grey[900],
-                  child: InkWell(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    onTap: () {
-                      String oldStatus = this.animeList[index].userStatus;
-                      Get.toNamed(
-                        "/animeDetailsPage",
-                        arguments: {
-                          "anime": this.animeList[index],
-                          "connStatus": this.netConnected,
-                          "deviceSize": size,
-                          "client": widget.client,
-                          "callback": (Anime val) {
-                            if (oldStatus != val.userStatus) {
-                              print("status changed");
-                              // Update list locally so no need to call API again to refresh
-                              widget.animeListCallback(val, oldStatus, index);
-                              oldStatus = val.userStatus;
-                            }
-                            // setState() edits the entire state based on anime_details_page
-                            setState(
-                              () {},
-                            );
+        child: Obx(
+          () => ListView.builder(
+            key: PageStorageKey(widget.listType),
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemExtent: 106.0,
+            itemCount: _animeList.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+                child: Container(
+                  width: size.width,
+                  child: Card(
+                    color: Colors.grey[900],
+                    child: InkWell(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      onTap: () {
+                        String _oldStatus = _animeList[index].userStatus;
+                        Get.toNamed(
+                          "/animeDetailsPage",
+                          arguments: {
+                            "anime": _animeList[index],
+                            "connStatus": this.netConnected,
+                            "deviceSize": size,
+                            "client": _client,
+                            "callback": (Anime val) {
+                              if (_oldStatus != val.userStatus) {
+                                print("status changed");
+                                // Update list locally so no need to call API again to refresh
+                                _client.clientAnimeList[_oldStatus]
+                                    .removeAt(index);
+                                _client.clientAnimeList[val.userStatus]
+                                    .insert(0, val);
+                                _oldStatus = val.userStatus;
+                              }
+                            },
                           },
-                        },
-                      );
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              bottomLeft: Radius.circular(5.0)),
-                          child: this.netConnected!
-                              ? FadeInImage.assetNetwork(
-                                  fit: BoxFit.cover,
-                                  height: 90,
-                                  width: 65,
-                                  placeholderCacheHeight: 90,
-                                  placeholderCacheWidth: 65,
-                                  placeholder: "assets/404img.png",
-                                  image: animeList[index].picture.toString(),
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                          height: 90,
-                                          width: 65,
-                                          child:
-                                              Image.asset("assets/404img.png")),
-                                )
-                              : Container(
-                                  height: 90,
-                                  width: 65,
-                                  child: Image.asset("assets/404img.png")),
-                        ),
-                        Expanded(
-                          child: ShowDetails(
-                            title: "${animeList[index].title}",
-                            progress:
-                                "${animeList[index].userEpisodesWatched}/${animeList[index].totalEpisodes}",
-                            score: "${animeList[index].userScore}",
-                            airingStatus: "${animeList[index].userStatus}",
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5.0),
+                                bottomLeft: Radius.circular(5.0)),
+                            child: this.netConnected!
+                                ? FadeInImage.assetNetwork(
+                                    fit: BoxFit.cover,
+                                    height: 90,
+                                    width: 65,
+                                    placeholderCacheHeight: 90,
+                                    placeholderCacheWidth: 65,
+                                    placeholder: "assets/404img.png",
+                                    image: _animeList[index].picture.toString(),
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                                height: 90,
+                                                width: 65,
+                                                child: Image.asset(
+                                                    "assets/404img.png")),
+                                  )
+                                : Container(
+                                    height: 90,
+                                    width: 65,
+                                    child: Image.asset("assets/404img.png")),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: ShowDetails(
+                              title: "${_animeList[index].title}",
+                              progress:
+                                  "${_animeList[index].userEpisodesWatched}/${_animeList[index].totalEpisodes}",
+                              score: "${_animeList[index].userScore}",
+                              airingStatus: "${_animeList[index].userStatus}",
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

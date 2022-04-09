@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:miru/models/anime.dart';
+import 'package:miru/services/global_controller.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/models/mal_client.dart';
@@ -11,19 +11,17 @@ import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
 
 class Home extends StatefulWidget {
-  final Map<String, dynamic>? animeMap;
-  final MALClient? client;
-
-  const Home({Key? key, this.animeMap, this.client}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  MALClient _client = Get.find<GlobalController>().client.value;
   Map _getArgs = Get.arguments;
-  late Map<String, dynamic> _animeMap = widget.animeMap!;
-  late List<ListContainer> _tabContents = getTabContents(_animeMap);
+  late List<ListContainer> _tabContents =
+      getTabContents(_client.clientAnimeList);
   late bool _netConnected = _getArgs["connStatus"];
 
   /// Creates tabs for TabBar.
@@ -64,39 +62,12 @@ class _HomeState extends State<Home> {
     for (String tabName in tabNames) {
       tabContents.add(
         ListContainer(
-          animeMapCallback: (val) {
-            setState(() => _animeMap = val);
-            refreshListLocal();
-          },
-          animeList: tabMap[tabName] ?? [],
-          animeListCallback: (Anime val, String oldStatus, int index) {
-            print("animeListCallback");
-            setState(
-              () {
-                _animeMap[oldStatus].removeAt(index);
-                _animeMap[val.userStatus].insert(0, val);
-              },
-            );
-          },
-          client: widget.client!,
           listType: tabName,
           connStatus: _netConnected,
         ),
       );
     }
     return tabContents;
-  }
-
-  /// Used to update entire list contents when a tab is refreshed.
-  ///
-  Future<void> refreshListLocal() async {
-    // bool checkConn = await DataConnectionChecker().hasConnection;
-    setState(
-      () {
-        // _netConnected = checkConn;
-        _tabContents = getTabContents(_animeMap);
-      },
-    );
   }
 
   @override

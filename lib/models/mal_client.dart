@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:miru/services/anime_details_request.dart';
@@ -22,6 +23,7 @@ class MALClient {
   final OAuthRequest oAuthRequest =
       OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
   late Token token;
+  late RxMap<String, dynamic> clientAnimeList;
 
   String getAuthURL() {
     String url;
