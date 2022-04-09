@@ -1,6 +1,7 @@
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/global_controller.dart';
@@ -21,6 +22,7 @@ class _LoadingState extends State<Loading> {
   // late MALClient _client = MALClient();
   final _controller = Get.put(GlobalController());
   late MALClient _client = _controller.client.value;
+  late RxList<Anime> _globalAnimeList = _controller.globalAnimeList;
 
   // Legacy function, saving lists locally may be a future feature
   //
@@ -43,6 +45,11 @@ class _LoadingState extends State<Loading> {
     final Map<String, dynamic> result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
+    for (String item in result.keys) {
+      if (item != "paging" && item != "status_code") {
+        _globalAnimeList.addAll(result[item]);
+      }
+    }
     try {
       while (result["paging"]["next"] != null) {
         newMap = await _client.getAnimeList(
@@ -54,6 +61,7 @@ class _LoadingState extends State<Loading> {
         for (String item in newMap.keys) {
           if (item != "paging" && item != "status_code") {
             result[item].addAll(newMap[item]);
+            _globalAnimeList.addAll(newMap[item]);
           }
         }
         result["paging"]["next"] = newMap["paging"]!["next"];

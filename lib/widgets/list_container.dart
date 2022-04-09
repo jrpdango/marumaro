@@ -9,11 +9,13 @@ import 'package:miru/widgets/show_details.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
 
 class ListContainer extends StatefulWidget {
+  final RxList<Anime>? animeList;
   final String listType;
   final bool? connStatus;
   const ListContainer({
     Key? key,
     required this.listType,
+    this.animeList,
     this.connStatus,
   }) : super(key: key);
   @override
@@ -22,8 +24,9 @@ class ListContainer extends StatefulWidget {
 
 class _ListContainerState extends State<ListContainer> {
   MALClient _client = Get.find<GlobalController>().client.value;
-  late RxList<Anime> _animeList = _client.clientAnimeList[widget.listType];
-  late bool? netConnected = widget.connStatus;
+  late RxList<Anime> _animeList =
+      widget.animeList ?? _client.clientAnimeList[widget.listType];
+  late bool? netConnected = true;
 
   Future<void> refreshList(_limit) async {
     Map newMap = Map();
@@ -139,7 +142,7 @@ class _ListContainerState extends State<ListContainer> {
                               progress:
                                   "${_animeList[index].userEpisodesWatched}/${_animeList[index].totalEpisodes}",
                               score: "${_animeList[index].userScore}",
-                              airingStatus: "${_animeList[index].userStatus}",
+                              airingStatus: "${_animeList[index].showStatus}",
                             ),
                           ),
                         ],
