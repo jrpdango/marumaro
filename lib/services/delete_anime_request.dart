@@ -1,15 +1,19 @@
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart';
 
 class DeleteAnimeRequest {
-  String animeID;
+  final int animeID;
 
-  DeleteAnimeRequest({this.animeID = ""});
+  DeleteAnimeRequest({required this.animeID});
 
   Future<String> createRequest(MALClient client) async {
     try {
-      String url =
-          "https://api.myanimelist.net/v2/anime/${this.animeID}/my_list_status";
+      Uri url = Uri(
+          scheme: "https",
+          host: "api.myanimelist.net",
+          path: "v2/anime/${this.animeID}/my_list_status");
+      // String url =
+      //     "https://api.myanimelist.net/v2/anime/${this.animeID}/my_list_status";
       Response response = await client.userClient.delete(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       if (response.statusCode == 200) {

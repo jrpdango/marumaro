@@ -1,10 +1,15 @@
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
 class UserDataRequest {
   static Future<Map> createRequest(MALClient client) async {
-    String url = 'https://api.myanimelist.net/v2/users/@me';
+    Uri url = Uri(
+      scheme: "https",
+      host: "api.myanimelist.net",
+      path: "v2/users/@me",
+    );
+    // String url = 'https://api.myanimelist.net/v2/users/@me';
     try {
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});

@@ -1,29 +1,46 @@
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
 class AnimeSearchRequest {
-  String query;
-  String limit;
-  String offset;
-  String fields;
+  final String query;
+  final int limit;
+  final int? offset;
+  final String? fields;
 
-  AnimeSearchRequest({this.query, this.limit, this.offset, this.fields});
+  AnimeSearchRequest({
+    required this.query,
+    this.limit = 100,
+    this.offset,
+    this.fields,
+  });
 
-  void setParams() {
-    this.query = this.query == null ? "" : "?q=${this.query}";
-    this.limit = this.limit == null ? "" : "&limit=${this.limit}";
-    this.offset = this.offset == null ? "" : "&offset=${this.offset}";
-    this.fields = this.fields == null ? "" : "&fields=${this.fields}";
+  Uri setParams(Uri url) {
+    Map<String, dynamic> parameters = {
+      if (fields != null) "fields": fields!,
+      if (offset != null) "offset": offset!.toString(),
+      "limit": limit.toString()
+    };
+    url = url.replace(queryParameters: parameters);
+    return url;
+
+    // this.query = this.query == null ? "" : "?q=${this.query}";
+    // this.limit = this.limit == null ? "" : "&limit=${this.limit}";
+    // this.offset = this.offset == null ? "" : "&offset=${this.offset}";
+    // this.fields = this.fields == null ? "" : "&fields=${this.fields}";
   }
 
   Future<Map> createRequest(MALClient client) async {
-    this.setParams();
     try {
-      String url = "https://api.myanimelist.net/v2/anime${this.query}" +
-          this.limit +
-          this.offset +
-          this.fields;
+      Uri url = Uri(
+          scheme: "https",
+          host: "api.myanimelist.net",
+          path: "v2/anime${this.query}");
+      url = setParams(url);
+      // String url = "https://api.myanimelist.net/v2/anime${this.query}" +
+      //     this.limit +
+      //     this.offset +
+      //     this.fields;
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map respMap = Map();

@@ -32,10 +32,17 @@ Things to do:
         ☐ Individual anime pages
             ✔ Align text @done (04/04/2021, 5:41:36 pm)
             ✔ Anime info @done (04/04/2021, 5:42:14 pm)
-            ☐ Change list status
+            ✔ Change list status @done (15/04/2021, 6:47:03 pm)
+                ✔ Popup @done (07/04/2021, 6:21:02 pm)
+                ✔ MAL update @done (15/04/2021, 6:47:02 pm)
             ☐ Edit episodes watched
+                ☐ Popup
+                ☐ MAL update
             ☐ Edit score
+                ☐ Popup
+                ☐ MAL update
         ✔ Tap on list item pushes anime page on top of Home @done (04/04/2021, 5:42:01 pm)
+        ☐ Optimize and clean code
     Front-end:
         Home:
             ✔ Fix top navbar padding @done (23/03/2021, 4:46:34 pm)
@@ -56,6 +63,7 @@ Things to do:
                     ☐ Score color
             ☐ Bottom nav bar
 <<<<<<< HEAD
+<<<<<<< HEAD
                 ☐ Home
                 ☐ Schedule
                 ☐ Browse
@@ -65,6 +73,8 @@ Things to do:
                 ☐ Update Icons
             ☐ Blank page for empty list categories
 =======
+=======
+>>>>>>> 48530d8fff26daa0c9fe09be501cf298a5bda86c
                 ✔ Home @done (04/04/2021, 6:21:47 pm)
                 ✔ Schedule @done (04/04/2021, 6:21:50 pm)
                 ✔ Browse @done (04/04/2021, 6:21:56 pm)
@@ -73,6 +83,7 @@ Things to do:
                 ☐ Color for active
                 ☐ Update Icons
             ☐ Blank page for empty list categories
+<<<<<<< HEAD
         ☐ Page transition animations
 >>>>>>> test
         ☐ Animated image placeholder when loading image
@@ -80,8 +91,23 @@ Things to do:
         ☐ Lottie animated splash screen
         ☐ Screen for non-OAuthed users
         ☐ Tab bar opacity
+=======
+            ☐ Page transition animations
+            ☐ Animated image placeholder when loading image
+            ☐ Static splash screen
+            ☐ Lottie animated splash screen
+            ☐ Screen for non-OAuthed users
+            ☐ Tab bar opacity
+        ListStatusPopup:
+            ☐ Animated transition
+            ☐ Button highlighting
+
+>>>>>>> 48530d8fff26daa0c9fe09be501cf298a5bda86c
     Future plans:
         ☐ Use Jikan API for details and stuff like producer search
         ☐ Add manga list integration
         ☐ Offline list updating
         ☐ Handle http requests when device is offline (do nothing)
+
+    Current Issues:
+        ☐ Tab doesn't refresh after updating list (might need custom tab controller)

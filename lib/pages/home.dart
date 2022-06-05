@@ -1,45 +1,31 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:miru/services/anime_list_request.dart';
-import 'package:miru/services/anime_search_request.dart';
-import 'package:miru/services/anime_details_request.dart';
-import 'package:miru/services/delete_anime_request.dart';
-import 'package:miru/services/mal_client.dart';
-import 'package:miru/widgets/ColoredTabBar.dart';
-import 'package:miru/widgets/ListContainer.dart';
+import 'package:miru/services/global_controller.dart';
+// import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:miru/models/mal_client.dart';
+import 'package:miru/widgets/colored_tab_bar.dart';
+import 'package:miru/widgets/list_container.dart';
 
 class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  Map result;
-  Map animeMap;
-  MALClient client;
-  bool netConnected = false;
+  MALClient _client = Get.find<GlobalController>().client.value;
+  Map _getArgs = Get.arguments;
+  late List<ListContainer> _tabContents =
+      getTabContents(_client.clientAnimeList);
+  late bool _netConnected = _getArgs["connStatus"];
 
-  MALClient assignClient() => result["client"];
-
-  Map setupAnimeMap() => result["anime_map"];
-
-  Future<void> searchAnime(String query,
-      {String limit, String offset, String fields}) async {
-    print(await this.client.animeSearch(AnimeSearchRequest(
-        query: query, limit: limit, offset: offset, fields: fields)));
-  }
-
-  Future<void> getAnimeDetails(String animeID, {String fields}) async {
-    print(await this.client.getAnimeDetails(
-        AnimeDetailsRequest(animeID: animeID, fields: fields)));
-  }
-
-  Future<void> deleteAnime(String animeID) async {
-    await this.client.deleteAnime(DeleteAnimeRequest(animeID: animeID));
-  }
-
+  /// Creates tabs for TabBar.
+  ///
   List<Widget> createTabs() {
     List<String> tabNames = [
       "Currently Watching",
@@ -50,31 +36,44 @@ class _HomeState extends State<Home> {
     ];
     List<Widget> menuTabs = [];
     for (int i = 0; i < 5; i++) {
-      menuTabs.add(SizedBox(height: 30, child: Tab(child: Text(tabNames[i]))));
+      menuTabs.add(
+        SizedBox(
+          height: 30,
+          child: Tab(
+            child: Text(tabNames[i]),
+          ),
+        ),
+      );
     }
     return menuTabs;
   }
 
-  Future<void> refreshList() async {
-    Map result = await this.client.getAnimeList(AnimeListRequest());
-    bool checkConn = await DataConnectionChecker().hasConnection;
-    // print(result);
-    // print(result["data"].runtimeType);
-    setState(() {
-      this.animeMap = result;
-      this.netConnected = checkConn;
-    });
+  /// Initializes contents defined by [tabMap] for tabs in TabBar.
+  ///
+  List<ListContainer> getTabContents(Map tabMap) {
+    List<String> tabNames = [
+      "watching",
+      "plan_to_watch",
+      "completed",
+      "on_hold",
+      "dropped"
+    ];
+    List<ListContainer> tabContents = [];
+    for (String tabName in tabNames) {
+      tabContents.add(
+        ListContainer(
+          listType: tabName,
+          connStatus: _netConnected,
+        ),
+      );
+    }
+    return tabContents;
   }
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
-    this.result = Get.arguments;
-    this.client = this.assignClient();
-    this.animeMap = this.setupAnimeMap();
-    this.netConnected = result["connStatus"];
-    this.refreshList();
     super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   }
 
   @override
@@ -82,69 +81,77 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
+        drawer: Drawer(
+          backgroundColor: Color.fromARGB(240, 0, 0, 0),
+          child: Column(
+            children: <Widget>[
+              Text("This is the sidebar."),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextButton.icon(
+                      onPressed: () async {
+                        Directory directory =
+                            await getApplicationDocumentsDirectory();
+                        File("${directory.path}/miruTokens.json").deleteSync();
+                        Get.offNamed("/");
+                      },
+                      icon: Icon(
+                        Icons.logout_rounded,
+                      ),
+                      label: Text("Logout"),
+                      style: TextButton.styleFrom(
+                        textStyle: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
         backgroundColor: Colors.black,
         appBar: AppBar(
           bottom: ColoredTabBar(
-            color: Colors.grey[900],
+            color: Colors.grey[900]!,
             tabBar: TabBar(
               isScrollable: true,
-              tabs: this.createTabs(),
+              tabs: createTabs(),
             ),
           ),
           flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
-          leading: IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {},
+          leading: Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
+            ),
           ),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.search), onPressed: () {})
+            Padding(
+              padding: const EdgeInsets.only(top: 22.0),
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  Get.toNamed("/search");
+                },
+              ),
+            ),
           ],
         ),
         body: TabBarView(
-          children: <RefreshIndicator>[
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["watching"],
-                  client: this.client,
-                  listType: "watching",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["plan_to_watch"],
-                  client: this.client,
-                  listType: "plan_to_watch",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["completed"],
-                  client: this.client,
-                  listType: "completed",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["on_hold"],
-                  client: this.client,
-                  listType: "on_hold",
-                  connStatus: this.netConnected),
-            ),
-            RefreshIndicator(
-              onRefresh: () => this.refreshList(),
-              child: ListContainer(
-                  animeList: this.animeMap["dropped"],
-                  client: this.client,
-                  listType: "dropped",
-                  connStatus: this.netConnected),
-            ),
-            // Center(
-            //     child: Text("Dropped", style: TextStyle(color: Colors.white))),
-          ],
+          children: _tabContents,
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

@@ -1,13 +1,17 @@
-import 'package:data_connection_checker/data_connection_checker.dart';
+// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:miru/services/mal_client.dart';
+import 'package:miru/models/anime.dart';
+import 'package:miru/pages/home.dart';
+import 'package:miru/models/mal_client.dart';
+import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/token_verifier.dart';
-// import 'package:miru/services/anime_list_request.dart';
+import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:miru/constants.dart' as Constants show limitOfListItems;
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:path_provider/path_provider.dart';
 
 class Loading extends StatefulWidget {
   @override
@@ -15,32 +19,85 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  MALClient client = MALClient();
+  // late MALClient _client = MALClient();
+  final _controller = Get.put(GlobalController());
+  late MALClient _client = _controller.client.value;
+  late RxList<Anime> _globalAnimeList = _controller.globalAnimeList;
 
-  Future<Map> getLocalList() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    File file = File("${directory.path}/miruList.json").existsSync()
-        ? File("${directory.path}/miruList.json")
-        : await File("${directory.path}/miruList.json").create();
-    dynamic animeMap = file.readAsStringSync().isNotEmpty
-        ? json.decode(file.readAsStringSync())
-        : [];
-    print(animeMap.runtimeType);
-    return animeMap;
+  // Legacy function, saving lists locally may be a future feature
+  //
+  // Future<Map> getLocalList() async {
+  //   Directory directory = await getApplicationDocumentsDirectory();
+  //   File file = File("${directory.path}/miruList.json").existsSync()
+  //       ? File("${directory.path}/miruList.json")
+  //       : await File("${directory.path}/miruList.json").create();
+  //   dynamic animeMap = file.readAsStringSync().isNotEmpty
+  //       ? json.decode(file.readAsStringSync())
+  //       : Map();
+  //   print(animeMap.runtimeType);
+  //   return animeMap;
+  // }
+
+  /// Initializes the user's anime list.
+  ///
+  Future<Map<String, dynamic>> initializeAnimeList(_limit) async {
+    Map<String, dynamic> newMap = Map();
+    final Map<String, dynamic> result = await _client.getAnimeList(
+      AnimeListRequest(limit: _limit),
+    );
+    for (String item in result.keys) {
+      if (item != "paging" && item != "status_code") {
+        _globalAnimeList.addAll(result[item]);
+      }
+    }
+    try {
+      while (result["paging"]["next"] != null) {
+        newMap = await _client.getAnimeList(
+          AnimeListRequest(
+            limit: _limit,
+            url: Uri.parse(result["paging"]["next"]),
+          ),
+        );
+        for (String item in newMap.keys) {
+          if (item != "paging" && item != "status_code") {
+            result[item].addAll(newMap[item]);
+            _globalAnimeList.addAll(newMap[item]);
+          }
+        }
+        result["paging"]["next"] = newMap["paging"]!["next"];
+      }
+    } catch (e) {
+      print(e);
+    }
+    return result;
   }
 
-  Future<bool> testConnection() async {
-    return await DataConnectionChecker().hasConnection;
-  }
+  /// Checks if user has internet connection.
+  ///
+  // Future<bool> testConnection() async {
+  //   return await DataConnectionChecker().hasConnection;
+  // }
 
+  /// Verify internet connectivity, token validity, and initialization of anime list.
+  ///
   void setupMALConnection() async {
-    bool connStatus = await testConnection();
-    await TokenVerifier.verifyTokens(this.client);
-    Get.offNamed("/home", arguments: {
-      "anime_map": await this.getLocalList(),
-      "client": this.client,
-      "connStatus": connStatus
-    });
+    /**
+     * Uncomment the deleteSync lines to remove locally-stored tokens.
+     */
+    // Directory directory = await getApplicationDocumentsDirectory();
+    // File("${directory.path}/miruList.json").deleteSync();
+    // File("${directory.path}/miruTokens.json").deleteSync();
+    // bool connStatus = await testConnection();
+    await TokenVerifier.verifyTokens(_client);
+    Map<String, dynamic> result =
+        await initializeAnimeList(Constants.limitOfListItems);
+    _client.clientAnimeList = result.obs;
+
+    Get.off(
+      () => Home(),
+      // TODO: EDIT LATER
+      arguments: {"connStatus": true},
+    );
   }
 
   @override
@@ -52,9 +109,12 @@ class _LoadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SpinKitThreeBounce(
-          color: Colors.black87,
+      body: Container(
+        color: Colors.black87,
+        child: Center(
+          child: SpinKitThreeBounce(
+            color: Colors.white60,
+          ),
         ),
       ),
     );

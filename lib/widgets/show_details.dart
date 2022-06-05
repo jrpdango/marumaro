@@ -7,7 +7,11 @@ class ShowDetails extends StatefulWidget {
   final String airingStatus;
 
   const ShowDetails(
-      {Key key, this.title, this.progress, this.score, this.airingStatus})
+      {Key? key,
+      required this.title,
+      required this.progress,
+      required this.score,
+      required this.airingStatus})
       : super(key: key);
 
   @override
