@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
+import 'package:miru/services/dialog_creator.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -92,11 +93,25 @@ class _HomeState extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: TextButton.icon(
-                      onPressed: () async {
-                        Directory directory =
-                            await getApplicationDocumentsDirectory();
-                        File("${directory.path}/miruTokens.json").deleteSync();
-                        Get.offNamed("/");
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DialogCreator.showLogoutDialog(
+                              () async {
+                                Directory directory =
+                                    await getApplicationDocumentsDirectory();
+                                File("${directory.path}/miruTokens.json")
+                                    .deleteSync();
+                                Get.offNamed("/");
+                              },
+                              () {
+                                Get.back();
+                              },
+                            );
+                          },
+                          barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
+                        );
                       },
                       icon: Icon(
                         Icons.logout_rounded,
