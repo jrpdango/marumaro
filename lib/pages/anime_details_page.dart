@@ -19,7 +19,6 @@ class AnimeDetailsPage extends StatefulWidget {
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   MALClient _client = Get.find<GlobalController>().client.value;
-  OverlayEntry? _loadingOverlay;
   final Function _callback = Get.arguments["callback"];
   final Anime _anime = Get.arguments["anime"];
   bool _netConnected = Get.arguments["connStatus"];
@@ -71,14 +70,14 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       _anime.userEpisodesWatched = int.parse(_chosenEpsWatched);
 
       _callback(_anime);
-      _loadingOverlay!.remove();
+      // Remove loading overlay
+      Get.back();
     }
   }
 
   /// Shows an overlaying widget depending on the given [type].
   ///
   void showOverlay(BuildContext context, String type) {
-    OverlayState? overlayState = Overlay.of(context);
     OverlayEntry? overlayEntry;
     final GestureDetector closer = GestureDetector(
       onTap: () {
@@ -92,16 +91,27 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     );
 
     switch (type) {
+      case 'status':
+        Get.dialog(
+          ListStatusPopup(
+            callback: (val) => setState(() => _detailChanged = val),
+            stringChoice: (choice) =>
+                setState(() => _chosenListStatus = choice),
+            closeOverlayCallback: () => Get.back(),
+          ),
+          barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
+        );
+        break;
       case "episodes":
-        overlayEntry = createPopupOverlay(
-          closer,
+        Get.dialog(
           EpisodesWatchedPopup(
             callback: (val) => setState(() => _detailChanged = val),
             numEpsChoice: (choice) =>
                 setState(() => _chosenEpsWatched = choice),
             totalEps: _anime.totalEpisodes,
-            closeOverlayCallback: () => overlayEntry!.remove(),
+            closeOverlayCallback: () => Get.back(),
           ),
+          barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
         );
         break;
       case "score":
@@ -116,19 +126,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         );
         break;
       case "loading":
-        overlayEntry = OverlayEntry(
-          builder: (context) => Stack(
-            children: <Widget>[
-              Container(
-                color: Color.fromRGBO(38, 38, 38, 0.8),
-                height: _deviceSize.height,
-                width: _deviceSize.width,
-              ),
-              LoadingPopup(),
-            ],
-          ),
+        Get.dialog(
+          LoadingPopup(),
         );
-        _loadingOverlay = overlayEntry;
         break;
       default:
         overlayEntry = createPopupOverlay(
@@ -142,8 +142,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         );
         break;
     }
-
-    overlayState!.insert(overlayEntry);
   }
 
   /// Creates a [List] of [Widget]s that displays details for the currently selected anime.
@@ -286,15 +284,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 child: Container(
                   child: InkWell(
                     onTap: () {
-                      Get.dialog(
-                        ListStatusPopup(
-                          callback: (val) =>
-                              setState(() => _detailChanged = val),
-                          stringChoice: (choice) =>
-                              setState(() => _chosenListStatus = choice),
-                          closeOverlayCallback: () => Get.back(),
-                        ),
-                      );
+                      showOverlay(context, 'status');
                     },
                     child: Column(
                       children: <Widget>[
