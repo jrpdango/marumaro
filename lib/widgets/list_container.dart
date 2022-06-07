@@ -85,8 +85,6 @@ class _ListContainerState extends State<ListContainer> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       onTap: () {
                         String _oldStatus = _animeList[index].userStatus;
-                        int _oldEpisodesWatched =
-                            _animeList[index].userEpisodesWatched;
 
                         Get.toNamed(
                           "/animeDetailsPage",
@@ -106,7 +104,7 @@ class _ListContainerState extends State<ListContainer> {
                                 _oldStatus = val.userStatus;
                               }
 
-                              setState(() {});
+                              _animeList.refresh();
                             },
                           },
                         );
