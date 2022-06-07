@@ -106,8 +106,7 @@ class _ListContainerState extends State<ListContainer> {
                                 _oldStatus = val.userStatus;
                               }
 
-                              if (_oldEpisodesWatched !=
-                                  val.userEpisodesWatched) setState(() {});
+                              setState(() {});
                             },
                           },
                         );

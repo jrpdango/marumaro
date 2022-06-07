@@ -102,7 +102,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
         );
         break;
-      case "episodes":
+      case 'episodes':
         Get.dialog(
           EpisodesWatchedPopup(
             callback: (val) => setState(() => _detailChanged = val),
@@ -114,31 +114,20 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
         );
         break;
-      case "score":
-        overlayEntry = createPopupOverlay(
-          closer,
+      case 'score':
+        Get.dialog(
           ScorePopup(
             callback: (val) => setState(() => _detailChanged = val),
             scoreChoice: (choice) => setState(() => _chosenScore = choice),
             initialScore: int.parse(_chosenScore),
-            closeOverlayCallback: () => overlayEntry!.remove(),
+            closeOverlayCallback: () => Get.back(),
           ),
+          barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
         );
         break;
-      case "loading":
+      case 'loading':
         Get.dialog(
           LoadingPopup(),
-        );
-        break;
-      default:
-        overlayEntry = createPopupOverlay(
-          closer,
-          ListStatusPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            stringChoice: (choice) =>
-                setState(() => _chosenListStatus = choice),
-            closeOverlayCallback: () => overlayEntry!.remove(),
-          ),
         );
         break;
     }
