@@ -139,13 +139,19 @@ class _HomeState extends State<Home> {
               tabs: createTabs(),
             ),
           ),
-          flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
+          flexibleSpace: Image.asset(
+            "assets/city.jpg",
+            fit: BoxFit.cover,
+            alignment: Alignment(0, -0.4),
+          ),
           leading: Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Builder(
               builder: (context) {
                 return IconButton(
-                  icon: Icon(Icons.menu),
+                  icon: Icon(
+                    Icons.menu,
+                  ),
                   onPressed: () {
                     Scaffold.of(context).openDrawer();
                   },
@@ -157,7 +163,9 @@ class _HomeState extends State<Home> {
             Padding(
               padding: const EdgeInsets.only(top: 22.0),
               child: IconButton(
-                icon: Icon(Icons.search),
+                icon: Icon(
+                  Icons.search,
+                ),
                 onPressed: () {
                   Get.toNamed("/search");
                 },

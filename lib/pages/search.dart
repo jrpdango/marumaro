@@ -39,7 +39,11 @@ class _SearchState extends State<Search> {
       backgroundColor: Color.fromARGB(240, 0, 0, 0),
       appBar: AppBar(
         toolbarHeight: 72.0,
-        flexibleSpace: Image.asset("assets/lofigirl.jpg", fit: BoxFit.cover),
+        flexibleSpace: Image.asset(
+          "assets/city.jpg",
+          fit: BoxFit.cover,
+          alignment: Alignment(0, -0.4),
+        ),
         leading: Padding(
           padding: const EdgeInsets.only(top: 10.0),
           child: Builder(
