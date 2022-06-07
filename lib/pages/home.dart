@@ -93,24 +93,6 @@ class _HomeState extends State<Home> {
                     padding: const EdgeInsets.all(20.0),
                     child: TextButton.icon(
                       onPressed: () {
-                        // showDialog(
-                        //   context: context,
-                        //   builder: (BuildContext context) {
-                        //     return DialogCreator.showLogoutDialog(
-                        //       () async {
-                        //         Directory directory =
-                        //             await getApplicationDocumentsDirectory();
-                        //         File("${directory.path}/miruTokens.json")
-                        //             .deleteSync();
-                        //         Get.offNamed("/");
-                        //       },
-                        //       () {
-                        //         Get.back();
-                        //       },
-                        //     );
-                        //   },
-                        //   barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
-                        // );
                         Get.dialog(
                           AlertDialog(
                             title: Text('Are you sure you want to logout?'),

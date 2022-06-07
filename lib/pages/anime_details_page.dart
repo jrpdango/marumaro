@@ -92,17 +92,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     );
 
     switch (type) {
-      case "status":
-        overlayEntry = createPopupOverlay(
-          closer,
-          ListStatusPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            stringChoice: (choice) =>
-                setState(() => _chosenListStatus = choice),
-            closeOverlayCallback: () => overlayEntry!.remove(),
-          ),
-        );
-        break;
       case "episodes":
         overlayEntry = createPopupOverlay(
           closer,
@@ -297,7 +286,15 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                 child: Container(
                   child: InkWell(
                     onTap: () {
-                      showOverlay(context, "status");
+                      Get.dialog(
+                        ListStatusPopup(
+                          callback: (val) =>
+                              setState(() => _detailChanged = val),
+                          stringChoice: (choice) =>
+                              setState(() => _chosenListStatus = choice),
+                          closeOverlayCallback: () => Get.back(),
+                        ),
+                      );
                     },
                     child: Column(
                       children: <Widget>[
