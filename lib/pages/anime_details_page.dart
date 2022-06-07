@@ -30,19 +30,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
   final Size _deviceSize = Get.arguments["deviceSize"];
 
-  /// Generates an [OverlayEntry] with the given [popup].
-  ///
-  OverlayEntry createPopupOverlay(closer, popup) {
-    return OverlayEntry(
-      builder: (context) => Stack(
-        children: <Widget>[
-          closer,
-          popup,
-        ],
-      ),
-    );
-  }
-
   /// Defines behavior for updating list through API.
   ///
   void updateItem() async {
@@ -78,18 +65,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   /// Shows an overlaying widget depending on the given [type].
   ///
   void showOverlay(BuildContext context, String type) {
-    OverlayEntry? overlayEntry;
-    final GestureDetector closer = GestureDetector(
-      onTap: () {
-        overlayEntry!.remove();
-      },
-      child: Container(
-        color: Color.fromRGBO(38, 38, 38, 0.8),
-        height: _deviceSize.height,
-        width: _deviceSize.width,
-      ),
-    );
-
     switch (type) {
       case 'status':
         Get.dialog(
