@@ -42,7 +42,7 @@ class _SearchState extends State<Search> {
         flexibleSpace: Image.asset(
           "assets/city.jpg",
           fit: BoxFit.cover,
-          alignment: Alignment(0, -0.4),
+          alignment: Alignment(0, -0.5),
         ),
         leading: Padding(
           padding: const EdgeInsets.only(top: 10.0),

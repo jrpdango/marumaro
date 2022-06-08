@@ -17,7 +17,7 @@ void main() {
         '/': (context) => Loading(),
         '/home': (context) => Home(),
         '/malweb': (context) => MALWebView(),
-        // TODO: maybe rename this to anime_detailsz
+        // TODO: maybe rename this to anime_details
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
         '/search': (context) => Search(),
         '/login': (context) => Login(),

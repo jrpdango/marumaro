@@ -3,13 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:miru/widgets/anime_list.dart';
+import 'package:miru/widgets/browse.dart';
+import 'package:miru/widgets/more.dart';
+import 'package:miru/widgets/profile.dart';
 import 'package:miru/services/global_controller.dart';
+import 'package:miru/widgets/schedule.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
-import 'package:miru/widgets/custom_tabbarview_scroll_physics.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -21,10 +25,25 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   MALClient _client = Get.find<GlobalController>().client.value;
   Map _getArgs = Get.arguments;
+  Rx<int> _tabIndex = 0.obs;
   late List<ListContainer> _tabContents =
       getTabContents(_client.clientAnimeList);
   late bool _netConnected = _getArgs["connStatus"];
   late TabController _tabController;
+
+  bool _hasTabBar = true;
+  bool _hasSearch = true;
+
+  late List<Widget> tabs = [
+    AnimeList(
+      tabController: _tabController,
+      tabContents: _tabContents,
+    ),
+    Schedule(),
+    Browse(),
+    Profile(),
+    More(),
+  ];
 
   /// Creates tabs for TabBar.
   ///
@@ -141,19 +160,28 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       backgroundColor: Colors.black,
       appBar: AppBar(
-        bottom: ColoredTabBar(
-          color: Colors.grey[900]!,
-          tabBar: TabBar(
-            controller: _tabController,
-            isScrollable: true,
-            tabs: createTabs(),
-          ),
-        ),
-        flexibleSpace: Image.asset(
-          "assets/city.jpg",
-          fit: BoxFit.cover,
-          alignment: Alignment(0, -0.4),
-        ),
+        toolbarHeight: _hasTabBar ? null : 80.0,
+        bottom: _hasTabBar
+            ? ColoredTabBar(
+                color: Colors.grey[900]!,
+                tabBar: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabs: createTabs(),
+                ),
+              )
+            : null,
+        flexibleSpace: _hasTabBar
+            ? Image.asset(
+                "assets/city.jpg",
+                fit: BoxFit.cover,
+                alignment: Alignment(0, -0.4),
+              )
+            : Image.asset(
+                "assets/city.jpg",
+                fit: BoxFit.cover,
+                alignment: Alignment(0, -0.5),
+              ),
         leading: Padding(
           padding: const EdgeInsets.only(top: 20.0),
           child: Builder(
@@ -169,26 +197,42 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             },
           ),
         ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 22.0),
-            child: IconButton(
-              icon: Icon(
-                Icons.search,
-              ),
-              onPressed: () {
-                Get.toNamed("/search");
-              },
-            ),
-          ),
-        ],
+        actions: _hasSearch
+            ? <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 22.0),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.search,
+                    ),
+                    onPressed: () {
+                      Get.toNamed("/search");
+                    },
+                  ),
+                ),
+              ]
+            : <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 22.0),
+                ),
+              ],
       ),
-      body: TabBarView(
-        physics: CustomTabBarViewScrollPhysics(),
-        controller: _tabController,
-        children: _tabContents,
-      ),
+      body: tabs[_tabIndex.value],
       bottomNavigationBar: BottomNavigationBar(
+        onTap: (index) {
+          _tabIndex.value = index;
+          if (index != 0) {
+            setState(() {
+              _hasTabBar = false;
+              _hasSearch = false;
+            });
+          } else {
+            setState(() {
+              _hasTabBar = true;
+              _hasSearch = true;
+            });
+          }
+        },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
