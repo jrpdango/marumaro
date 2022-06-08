@@ -5,6 +5,7 @@ import 'package:miru/pages/home.dart';
 import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/login.dart';
 import 'package:miru/pages/mal_web_view.dart';
+// import 'package:miru/pages/profile_page.dart';
 import 'package:miru/pages/search.dart';
 
 void main() {
@@ -13,12 +14,13 @@ void main() {
       debugShowCheckedModeBanner: false,
       initialRoute: "/",
       routes: {
-        "/": (context) => Loading(),
-        "/home": (context) => Home(),
-        "/malweb": (context) => MALWebView(),
-        "/animeDetailsPage": (context) => AnimeDetailsPage(),
-        "/search": (context) => Search(),
-        "/login": (context) => Login(),
+        '/': (context) => Loading(),
+        '/home': (context) => Home(),
+        '/malweb': (context) => MALWebView(),
+        // TODO: maybe rename this to anime_detailsz
+        '/animeDetailsPage': (context) => AnimeDetailsPage(),
+        '/search': (context) => Search(),
+        '/login': (context) => Login(),
       },
     ),
   );
