@@ -4,8 +4,12 @@ import 'dart:convert';
 
 class UserDataRequest {
   final String mode;
+  final bool isFull;
 
-  const UserDataRequest({required this.mode});
+  const UserDataRequest({
+    required this.mode,
+    this.isFull = false,
+  });
 
   Future<Map> createRequest(MALClient client) async {
     Uri url;
@@ -19,8 +23,8 @@ class UserDataRequest {
     } else {
       url = Uri(
         scheme: "https",
-        host: "api.myanimelist.net",
-        path: "v2/users/@me",
+        host: "api.jikan.moe",
+        path: "v4/users/${client.username}/${isFull ? 'full' : ''}",
       );
     }
 

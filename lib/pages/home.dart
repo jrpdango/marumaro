@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:miru/services/user_data_request.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/more.dart';
@@ -29,6 +31,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       getTabContents(_client.clientAnimeList);
   late bool _netConnected = _getArgs["connStatus"];
   late TabController _tabController;
+  NetworkImage? _userImage;
 
   bool _hasTabBar = true;
   bool _hasSearch = true;
@@ -89,6 +92,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return tabContents;
   }
 
+  Future<NetworkImage?> getUserImage() async {
+    return NetworkImage(
+      (await _client.getUserData(UserDataRequest(mode: 'Jikan')))['data']
+          ['images']['jpg']['image_url'],
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -106,7 +116,51 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         backgroundColor: Color.fromARGB(240, 0, 0, 0),
         child: Column(
           children: <Widget>[
-            Text("This is the sidebar."),
+            GestureDetector(
+              onTap: () => Get.toNamed('/profile'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0, vertical: 20.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(300.0),
+                      child: FutureBuilder(
+                        future: getUserImage(),
+                        builder: (
+                          BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot,
+                        ) {
+                          if (snapshot.hasData) {
+                            return Image(
+                              fit: BoxFit.cover,
+                              image: snapshot.data,
+                              height: 55.0,
+                              width: 55.0,
+                            );
+                          } else
+                            return SpinKitCircle(
+                              color: Colors.white,
+                            );
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Text(
+                      _client.username ?? 'Loading name...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
