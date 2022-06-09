@@ -9,6 +9,7 @@ import 'package:miru/services/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
+import 'package:miru/services/user_data_request.dart';
 // import 'dart:convert';
 // import 'dart:io';
 // import 'package:path_provider/path_provider.dart';
@@ -92,6 +93,8 @@ class _LoadingState extends State<Loading> {
     Map<String, dynamic> result =
         await initializeAnimeList(Constants.limitOfListItems);
     _client.clientAnimeList = result.obs;
+    _client.username =
+        (await _client.getUserData(UserDataRequest(mode: 'MAL')))['name'];
 
     Get.off(
       () => Home(),

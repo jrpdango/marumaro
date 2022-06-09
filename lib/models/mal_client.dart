@@ -24,6 +24,7 @@ class MALClient {
       OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
   late Token token;
   late RxMap<String, dynamic> clientAnimeList;
+  String? username;
 
   String getAuthURL() {
     String url;
@@ -57,8 +58,8 @@ class MALClient {
     print("Refresh token: ${this.token.refreshToken}");
   }
 
-  Future<Map> getUserData() async {
-    return UserDataRequest.createRequest(this);
+  Future<Map> getUserData(UserDataRequest userDataRequest) async {
+    return await userDataRequest.createRequest(this);
   }
 
   Future<Map<String, dynamic>> getAnimeList(

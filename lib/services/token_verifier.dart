@@ -1,5 +1,6 @@
 import 'package:miru/models/token.dart';
 import 'package:miru/models/mal_client.dart';
+import 'package:miru/services/user_data_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:get/get.dart';
 import 'dart:io';
@@ -30,7 +31,7 @@ class TokenVerifier {
 
   static Future<Map> checkValidAccessToken(
       MALClient client, Token token) async {
-    Map checker = await client.getUserData();
+    Map checker = await client.getUserData(UserDataRequest(mode: 'MAL'));
     return checker;
   }
 

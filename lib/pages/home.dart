@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/more.dart';
-import 'package:miru/widgets/profile.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/schedule.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
@@ -41,7 +40,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     ),
     Schedule(),
     Browse(),
-    Profile(),
     More(),
   ];
 
@@ -246,10 +244,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               icon: Icon(Icons.compass_calibration_rounded),
               backgroundColor: Colors.black87,
               label: "Browse"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              backgroundColor: Colors.black87,
-              label: "Profile"),
           BottomNavigationBarItem(
               icon: Icon(Icons.more),
               backgroundColor: Colors.black87,

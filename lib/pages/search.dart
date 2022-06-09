@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/services/global_controller.dart';
+import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
 
 class Search extends StatefulWidget {
@@ -37,27 +38,7 @@ class _SearchState extends State<Search> {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(240, 0, 0, 0),
-      appBar: AppBar(
-        toolbarHeight: 72.0,
-        flexibleSpace: Image.asset(
-          "assets/city.jpg",
-          fit: BoxFit.cover,
-          alignment: Alignment(0, -0.5),
-        ),
-        leading: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Builder(
-            builder: (context) {
-              return IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Get.back();
-                },
-              );
-            },
-          ),
-        ),
-      ),
+      appBar: BackAppBar(),
       body: Column(
         children: <Widget>[
           Container(

@@ -3,13 +3,29 @@ import 'package:http/http.dart';
 import 'dart:convert';
 
 class UserDataRequest {
-  static Future<Map> createRequest(MALClient client) async {
-    Uri url = Uri(
-      scheme: "https",
-      host: "api.myanimelist.net",
-      path: "v2/users/@me",
-    );
-    // String url = 'https://api.myanimelist.net/v2/users/@me';
+  final String mode;
+
+  const UserDataRequest({required this.mode});
+
+  Future<Map> createRequest(MALClient client) async {
+    Uri url;
+
+    if (mode == 'MAL') {
+      url = Uri(
+        scheme: "https",
+        host: "api.myanimelist.net",
+        path: "v2/users/@me",
+      );
+    } else {
+      url = Uri(
+        scheme: "https",
+        host: "api.myanimelist.net",
+        path: "v2/users/@me",
+      );
+    }
+
+    // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
+    // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
     try {
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
