@@ -25,7 +25,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   bool _detailChanged = false;
   late Rx<String> _chosenListStatus =
       TextCleaner.unjsonify(_anime.userStatus).obs;
-  late String _chosenScore = "${_anime.userScore}";
+  late Rx<int> _chosenScore = _anime.userScore.obs;
   late String _chosenEpsWatched = "${_anime.userEpisodesWatched}";
   late Future<Map<String, dynamic>> _animeDetails = getAnimeDetails();
 
@@ -39,7 +39,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           UpdateListRequest(
             animeID: _anime.id,
             status: TextCleaner.jsonify(_chosenListStatus.value),
-            score: _chosenScore,
+            score: _chosenScore.value.toString(),
             episodesWatched: _chosenEpsWatched,
           ),
         ) ==
@@ -54,7 +54,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
       // Locally set status/score/epsWatched before callback
       _anime.userStatus = TextCleaner.jsonify(_chosenListStatus.value);
-      _anime.userScore = int.parse(_chosenScore);
+      _anime.userScore = _chosenScore.value;
       _anime.userEpisodesWatched = int.parse(_chosenEpsWatched);
 
       _callback(_anime);
@@ -70,13 +70,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       case 'status':
         Get.dialog(
           ListStatusPopup(
-            existingChoice: _chosenListStatus,
-            callback: (val) {
+            statusChoice: _chosenListStatus,
+            detailChangedCallback: (val) {
               setState(() => _detailChanged = val);
-              print(_chosenListStatus.value);
             },
-            // stringChoice: (choice) =>
-            //     setState(() => _chosenListStatus = choice),
             closeOverlayCallback: () => Get.back(),
           ),
           barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
@@ -97,9 +94,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       case 'score':
         Get.dialog(
           ScorePopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            scoreChoice: (choice) => setState(() => _chosenScore = choice),
-            initialScore: int.parse(_chosenScore),
+            detailChangedCallback: (val) =>
+                setState(() => _detailChanged = val),
+            // scoreChoice: (choice) => setState(() => _chosenScore = choice),
+            scoreChoice: _chosenScore,
             closeOverlayCallback: () => Get.back(),
           ),
           barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
