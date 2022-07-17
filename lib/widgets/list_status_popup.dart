@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ListStatusPopup extends StatefulWidget {
-  final String existingChoice;
+  final Rx<String> existingChoice;
   final Function callback;
-  final Function stringChoice;
   final Function closeOverlayCallback;
 
   const ListStatusPopup(
       {required this.existingChoice,
       required this.callback,
-      required this.stringChoice,
       required this.closeOverlayCallback});
   @override
   _ListStatusPopupState createState() => _ListStatusPopupState();
@@ -26,16 +25,19 @@ class _ListStatusPopupState extends State<ListStatusPopup> {
     ];
     List<Widget> optionList = [];
     for (String element in listStatus) {
-      optionList.add(Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 40.0),
-        child: TextButton(
+      optionList.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 40.0),
+          child: TextButton(
             onPressed: () {
-              if (element != widget.existingChoice) widget.callback(true);
-              widget.stringChoice(element);
+              if (element != widget.existingChoice.value) widget.callback(true);
+              widget.existingChoice.value = element;
               widget.closeOverlayCallback();
             },
-            child: Text(element)),
-      ));
+            child: Text(element),
+          ),
+        ),
+      );
     }
     return optionList;
   }

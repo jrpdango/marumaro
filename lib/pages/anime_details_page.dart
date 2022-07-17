@@ -23,7 +23,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   final Anime _anime = Get.arguments["anime"];
   bool _netConnected = Get.arguments["connStatus"];
   bool _detailChanged = false;
-  late String _chosenListStatus = _anime.userStatus;
+  late Rx<String> _chosenListStatus =
+      TextCleaner.unjsonify(_anime.userStatus).obs;
   late String _chosenScore = "${_anime.userScore}";
   late String _chosenEpsWatched = "${_anime.userEpisodesWatched}";
   late Future<Map<String, dynamic>> _animeDetails = getAnimeDetails();
@@ -37,7 +38,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     if (await _client.updateList(
           UpdateListRequest(
             animeID: _anime.id,
-            status: TextCleaner.jsonify(_chosenListStatus),
+            status: TextCleaner.jsonify(_chosenListStatus.value),
             score: _chosenScore,
             episodesWatched: _chosenEpsWatched,
           ),
@@ -52,7 +53,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       );
 
       // Locally set status/score/epsWatched before callback
-      _anime.userStatus = TextCleaner.jsonify(_chosenListStatus);
+      _anime.userStatus = TextCleaner.jsonify(_chosenListStatus.value);
       _anime.userScore = int.parse(_chosenScore);
       _anime.userEpisodesWatched = int.parse(_chosenEpsWatched);
 
@@ -69,10 +70,13 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       case 'status':
         Get.dialog(
           ListStatusPopup(
-            existingChoice: TextCleaner.unjsonify(_anime.userStatus),
-            callback: (val) => setState(() => _detailChanged = val),
-            stringChoice: (choice) =>
-                setState(() => _chosenListStatus = choice),
+            existingChoice: _chosenListStatus,
+            callback: (val) {
+              setState(() => _detailChanged = val);
+              print(_chosenListStatus.value);
+            },
+            // stringChoice: (choice) =>
+            //     setState(() => _chosenListStatus = choice),
             closeOverlayCallback: () => Get.back(),
           ),
           barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
@@ -258,7 +262,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          TextCleaner.unjsonify(_chosenListStatus),
+                          TextCleaner.unjsonify(_chosenListStatus.value),
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
