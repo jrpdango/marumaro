@@ -121,49 +121,71 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         backgroundColor: Color.fromARGB(240, 0, 0, 0),
         child: Column(
           children: <Widget>[
-            GestureDetector(
-              onTap: () => Get.toNamed('/profile'),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 20.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(300.0),
-                      child: FutureBuilder(
-                        future: getUserImage(),
-                        builder: (
-                          BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot,
-                        ) {
-                          if (snapshot.hasData) {
-                            return Image(
-                              fit: BoxFit.cover,
-                              image: snapshot.data,
-                              height: 55.0,
-                              width: 55.0,
-                            );
-                          } else
-                            return SpinKitCircle(
+            Container(
+              padding: EdgeInsets.all(5.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7.0),
+                ),
+                color: Colors.grey[900],
+                child: InkWell(
+                  borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  onTap: () => Get.toNamed('/profile'),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 20.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(300.0),
+                          child: FutureBuilder(
+                            future: getUserImage(),
+                            builder: (
+                              BuildContext context,
+                              AsyncSnapshot<dynamic> snapshot,
+                            ) {
+                              if (snapshot.hasData) {
+                                return Image(
+                                  fit: BoxFit.cover,
+                                  image: snapshot.data,
+                                  height: 55.0,
+                                  width: 55.0,
+                                );
+                              } else
+                                return Container(
+                                  height: 55.0,
+                                  width: 55.0,
+                                  child: SpinKitCircle(
+                                    color: Colors.white,
+                                  ),
+                                );
+                            },
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.portrait,
                               color: Colors.white,
-                            );
-                        },
+                            ),
+                            Text(
+                              _client.username ?? 'Loading name...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Text(
-                      _client.username ?? 'Loading name...',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             Expanded(
