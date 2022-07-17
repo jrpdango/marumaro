@@ -93,10 +93,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Future<NetworkImage?> getUserImage() async {
-    return NetworkImage(
-      (await _client.getUserData(UserDataRequest(mode: 'Jikan')))['data']
-          ['images']['jpg']['image_url'],
-    );
+    try {
+      _userImage = NetworkImage(
+        (await _client.getUserData(UserDataRequest(mode: 'Jikan')))['data']
+            ['images']['jpg']['image_url'],
+      );
+      return _userImage;
+    } catch (e) {
+      return _userImage ?? null;
+    }
   }
 
   @override
