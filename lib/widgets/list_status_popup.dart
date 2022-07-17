@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ListStatusPopup extends StatefulWidget {
+  final String existingChoice;
   final Function callback;
   final Function stringChoice;
   final Function closeOverlayCallback;
 
   const ListStatusPopup(
-      {required this.callback,
+      {required this.existingChoice,
+      required this.callback,
       required this.stringChoice,
       required this.closeOverlayCallback});
   @override
@@ -28,7 +30,7 @@ class _ListStatusPopupState extends State<ListStatusPopup> {
         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 40.0),
         child: TextButton(
             onPressed: () {
-              widget.callback(true);
+              if (element != widget.existingChoice) widget.callback(true);
               widget.stringChoice(element);
               widget.closeOverlayCallback();
             },

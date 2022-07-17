@@ -69,6 +69,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       case 'status':
         Get.dialog(
           ListStatusPopup(
+            existingChoice: TextCleaner.unjsonify(_anime.userStatus),
             callback: (val) => setState(() => _detailChanged = val),
             stringChoice: (choice) =>
                 setState(() => _chosenListStatus = choice),
@@ -257,7 +258,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                           color: Colors.white,
                         ),
                         Text(
-                          _chosenListStatus,
+                          TextCleaner.unjsonify(_chosenListStatus),
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
