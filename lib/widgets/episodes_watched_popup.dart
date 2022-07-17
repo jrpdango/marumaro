@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class EpisodesWatchedPopup extends StatefulWidget {
   final Function closeOverlayCallback;
   final Function callback;
-  final Function numEpsChoice;
+  final Rx<int> numEpsChoice;
   final int totalEps;
 
   const EpisodesWatchedPopup(
@@ -21,8 +22,14 @@ class EpisodesWatchedPopup extends StatefulWidget {
 
 class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
   final TextEditingController _controller = TextEditingController();
-  bool epsChanged = false;
-  String currentEps = "";
+  int _currentEps = 0;
+  bool _isValidEpisodeCount = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,33 +51,40 @@ class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
                 onChanged: (String value) {
-                  if (value != widget.totalEps.toString() && value != "") {
-                    setState(() {
-                      epsChanged = true;
-                    });
-                    currentEps = value;
+                  if (value == "") value = "${widget.numEpsChoice.value}";
+                  if ((int.parse(value) <= widget.totalEps ||
+                      widget.totalEps == 0)) {
+                    _isValidEpisodeCount = true;
+                    _currentEps = int.parse(value);
                   } else {
-                    setState(() {
-                      epsChanged = false;
-                    });
-                    return;
+                    _isValidEpisodeCount = false;
                   }
                 },
               ),
             ),
-            epsChanged
-                ? TextButton(
-                    onPressed: () {
-                      widget.callback(true);
-                      widget.numEpsChoice(currentEps);
-                      widget.closeOverlayCallback();
-                    },
-                    child: Text("Done"),
-                  )
-                : SizedBox(
-                    height: 0,
-                    width: 0,
-                  )
+            TextButton(
+              onPressed: () {
+                if (_controller.text == "")
+                  _currentEps = widget.numEpsChoice.value;
+                if (_isValidEpisodeCount ||
+                    _currentEps == widget.numEpsChoice.value) {
+                  if (_currentEps != widget.numEpsChoice.value) {
+                    widget.callback(true);
+                    widget.numEpsChoice.value = _currentEps;
+                  }
+                  widget.closeOverlayCallback();
+                } else if (widget.totalEps > 0) {
+                  Get.snackbar(
+                    "Uh oh!",
+                    "This show only has ${widget.totalEps} episodes.",
+                    snackPosition: SnackPosition.BOTTOM,
+                    colorText: Colors.white,
+                    duration: Duration(seconds: 2),
+                  );
+                }
+              },
+              child: Text("Done"),
+            ),
           ],
         ),
       ),

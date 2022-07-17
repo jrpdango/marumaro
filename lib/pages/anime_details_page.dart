@@ -26,7 +26,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   late Rx<String> _chosenListStatus =
       TextCleaner.unjsonify(_anime.userStatus).obs;
   late Rx<int> _chosenScore = _anime.userScore.obs;
-  late String _chosenEpsWatched = "${_anime.userEpisodesWatched}";
+  late Rx<int> _chosenEpsWatched = _anime.userEpisodesWatched.obs;
   late Future<Map<String, dynamic>> _animeDetails = getAnimeDetails();
 
   final Size _deviceSize = Get.arguments["deviceSize"];
@@ -40,7 +40,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             animeID: _anime.id,
             status: TextCleaner.jsonify(_chosenListStatus.value),
             score: _chosenScore.value.toString(),
-            episodesWatched: _chosenEpsWatched,
+            episodesWatched: _chosenEpsWatched.toString(),
           ),
         ) ==
         "200") {
@@ -55,7 +55,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       // Locally set status/score/epsWatched before callback
       _anime.userStatus = TextCleaner.jsonify(_chosenListStatus.value);
       _anime.userScore = _chosenScore.value;
-      _anime.userEpisodesWatched = int.parse(_chosenEpsWatched);
+      _anime.userEpisodesWatched = _chosenEpsWatched.value;
 
       _callback(_anime);
       // Remove loading overlay
@@ -83,8 +83,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         Get.dialog(
           EpisodesWatchedPopup(
             callback: (val) => setState(() => _detailChanged = val),
-            numEpsChoice: (choice) =>
-                setState(() => _chosenEpsWatched = choice),
+            numEpsChoice: _chosenEpsWatched,
             totalEps: _anime.totalEpisodes,
             closeOverlayCallback: () => Get.back(),
           ),
@@ -96,7 +95,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           ScorePopup(
             detailChangedCallback: (val) =>
                 setState(() => _detailChanged = val),
-            // scoreChoice: (choice) => setState(() => _chosenScore = choice),
             scoreChoice: _chosenScore,
             closeOverlayCallback: () => Get.back(),
           ),
