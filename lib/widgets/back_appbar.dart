@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -23,6 +24,7 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
             return IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
+                SystemChrome.restoreSystemUIOverlays();
                 Get.back();
               },
             );
