@@ -3,12 +3,10 @@ import 'package:get/get.dart';
 
 class MainAppBar extends StatelessWidget {
   final bool hasSearch;
-  final TabController? tabController;
 
   const MainAppBar({
     Key? key,
     required this.hasSearch,
-    this.tabController,
   }) : super(key: key);
 
   @override

@@ -106,7 +106,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         preferredSize: Size.fromHeight(90.0),
         child: MainAppBar(
           hasSearch: _hasSearch,
-          tabController: _tabController,
         ),
       ),
       body: Column(
@@ -128,10 +127,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         onTap: (index) {
           _tabIndex.value = index;
           switch (index) {
+            // Home
             case 0:
               _hasTabBar = true;
               _hasSearch = true;
               break;
+            // Browse
             case 2:
               _hasTabBar = false;
               _hasSearch = true;
