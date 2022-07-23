@@ -12,6 +12,7 @@ import 'package:miru/services/update_list_request.dart';
 import 'package:miru/services/oauth_request.dart';
 import 'package:miru/services/pkce_code_gen.dart';
 import 'package:miru/services/user_data_request.dart';
+import 'package:flutter/material.dart' show NetworkImage;
 
 class MALClient {
   static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
@@ -25,6 +26,7 @@ class MALClient {
   late Token token;
   late RxMap<String, dynamic> clientAnimeList;
   String? username;
+  NetworkImage? userImage;
 
   String getAuthURL() {
     String url;
