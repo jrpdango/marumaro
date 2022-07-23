@@ -13,10 +13,12 @@ class AnimeList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TabBarView(
-      physics: CustomTabBarViewScrollPhysics(),
-      controller: tabController,
-      children: tabContents,
+    return Expanded(
+      child: TabBarView(
+        physics: CustomTabBarViewScrollPhysics(),
+        controller: tabController,
+        children: tabContents,
+      ),
     );
   }
 }

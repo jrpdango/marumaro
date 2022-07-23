@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/browse.dart';
+import 'package:miru/widgets/colored_tab_bar.dart';
+import 'package:miru/widgets/main_appbar.dart';
 import 'package:miru/widgets/main_drawer.dart';
 import 'package:miru/widgets/more.dart';
 import 'package:miru/services/global_controller.dart';
@@ -9,7 +11,6 @@ import 'package:miru/widgets/schedule.dart';
 // import 'package:data_connection_checker/data_connection_checker.dart';
 
 import 'package:miru/models/mal_client.dart';
-import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
 
 class Home extends StatefulWidget {
@@ -101,79 +102,45 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       drawer: MainDrawer(),
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        toolbarHeight: _hasTabBar ? null : 80.0,
-        bottom: _hasTabBar
-            ? ColoredTabBar(
-                color: Colors.grey[900]!,
-                tabBar: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  tabs: createTabs(),
-                ),
-              )
-            : null,
-        flexibleSpace: _hasTabBar
-            ? Image.asset(
-                "assets/city.jpg",
-                fit: BoxFit.cover,
-                alignment: Alignment(0, -0.4),
-              )
-            : Image.asset(
-                "assets/city.jpg",
-                fit: BoxFit.cover,
-                alignment: Alignment(0, -0.5),
-              ),
-        leading: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
-          child: Builder(
-            builder: (context) {
-              return IconButton(
-                icon: Icon(
-                  Icons.menu,
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              );
-            },
-          ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90.0),
+        child: MainAppBar(
+          hasSearch: _hasSearch,
+          tabController: _tabController,
         ),
-        actions: _hasSearch
-            ? <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 22.0),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.search,
-                    ),
-                    onPressed: () {
-                      Get.toNamed("/search");
-                    },
-                  ),
-                ),
-              ]
-            : <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 22.0),
-                ),
-              ],
       ),
-      body: tabs[_tabIndex.value],
+      body: Column(
+        children: [
+          _hasTabBar
+              ? ColoredTabBar(
+                  color: Colors.grey[900]!,
+                  tabBar: TabBar(
+                    controller: _tabController,
+                    isScrollable: true,
+                    tabs: createTabs(),
+                  ),
+                )
+              : SizedBox(),
+          tabs[_tabIndex.value],
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {
           _tabIndex.value = index;
-          if (index != 0) {
-            setState(() {
-              _hasTabBar = false;
-              _hasSearch = false;
-            });
-          } else {
-            setState(() {
+          switch (index) {
+            case 0:
               _hasTabBar = true;
               _hasSearch = true;
-            });
+              break;
+            case 2:
+              _hasTabBar = false;
+              _hasSearch = true;
+              break;
+            default:
+              _hasTabBar = false;
+              _hasSearch = false;
           }
+          setState(() {});
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
