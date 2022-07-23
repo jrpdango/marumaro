@@ -24,7 +24,6 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
             return IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                SystemChrome.restoreSystemUIOverlays();
                 Get.back();
               },
             );

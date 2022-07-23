@@ -73,7 +73,6 @@ class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
                     widget.numEpsChoice.value = _currentEps;
                   }
                   widget.closeOverlayCallback();
-                  SystemChrome.restoreSystemUIOverlays();
                 } else if (widget.totalEps > 0) {
                   Get.snackbar(
                     "Uh oh!",
