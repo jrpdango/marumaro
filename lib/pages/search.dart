@@ -44,6 +44,7 @@ class _SearchState extends State<Search> {
           Container(
             padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
             child: TextField(
+              textInputAction: TextInputAction.search,
               onChanged: (q) {
                 search(q);
               },
