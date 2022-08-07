@@ -31,7 +31,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   bool _hasTabBar = true;
-  SearchType? _searchType = null;
+  SearchType? _searchType;
 
   late List<Widget> tabs = [
     AnimeList(

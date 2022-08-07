@@ -12,6 +12,17 @@ class MainAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? _searchPath;
+    switch (searchType) {
+      case SearchType.local:
+        _searchPath = "/searchLocal";
+        break;
+      case SearchType.online:
+        _searchPath = "/searchOnline";
+        break;
+      default:
+        break;
+    }
     return AppBar(
       toolbarHeight: 80.0,
       flexibleSpace: Image.asset(
@@ -34,7 +45,7 @@ class MainAppBar extends StatelessWidget {
           },
         ),
       ),
-      actions: searchType == SearchType.local
+      actions: searchType != null
           ? <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
@@ -43,7 +54,7 @@ class MainAppBar extends StatelessWidget {
                     Icons.search,
                   ),
                   onPressed: () {
-                    Get.toNamed("/searchLocal");
+                    Get.toNamed(_searchPath!);
                   },
                 ),
               ),
