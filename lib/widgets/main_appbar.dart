@@ -42,7 +42,7 @@ class MainAppBar extends StatelessWidget {
                     Icons.search,
                   ),
                   onPressed: () {
-                    Get.toNamed("/search");
+                    Get.toNamed("/searchLocal");
                   },
                 ),
               ),
