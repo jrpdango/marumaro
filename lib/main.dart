@@ -6,7 +6,7 @@ import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/login.dart';
 import 'package:miru/pages/mal_web_view.dart';
 import 'package:miru/pages/profile.dart';
-import 'package:miru/pages/search_local.dart';
+import 'package:miru/pages/search_local_anime.dart';
 import 'package:flutter/services.dart';
 
 void main() {
@@ -27,7 +27,7 @@ void main() {
         '/malweb': (context) => MALWebView(),
         // TODO: maybe rename this to anime_details
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
-        '/searchLocal': (context) => SearchLocal(),
+        '/searchLocalAnime': (context) => SearchLocal(),
         '/login': (context) => Login(),
         '/profile': (context) => Profile(),
       },

@@ -15,10 +15,10 @@ class MainAppBar extends StatelessWidget {
     String? _searchPath;
     switch (searchType) {
       case SearchType.local:
-        _searchPath = "/searchLocal";
+        _searchPath = "/searchLocalAnime";
         break;
       case SearchType.online:
-        _searchPath = "/searchOnline";
+        _searchPath = "/searchOnlineAnime";
         break;
       default:
         break;
