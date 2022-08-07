@@ -140,6 +140,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             default:
               _hasTabBar = false;
               _hasSearch = false;
+              break;
           }
           setState(() {});
         },
