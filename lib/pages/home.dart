@@ -12,6 +12,7 @@ import 'package:miru/widgets/schedule.dart';
 
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/list_container.dart';
+import 'package:miru/enums/SearchType.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   bool _hasTabBar = true;
-  bool _hasSearch = true;
+  SearchType? _searchType = null;
 
   late List<Widget> tabs = [
     AnimeList(
@@ -105,7 +106,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(90.0),
         child: MainAppBar(
-          hasSearch: _hasSearch,
+          searchType: _searchType,
         ),
       ),
       body: Column(
@@ -130,16 +131,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             // Home
             case 0:
               _hasTabBar = true;
-              _hasSearch = true;
+              _searchType = SearchType.local;
               break;
             // Browse
             case 2:
               _hasTabBar = false;
-              _hasSearch = true;
+              _searchType = SearchType.online;
               break;
             default:
               _hasTabBar = false;
-              _hasSearch = false;
+              _searchType = null;
               break;
           }
           setState(() {});

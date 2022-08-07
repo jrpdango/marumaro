@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/enums/SearchType.dart';
 
 class MainAppBar extends StatelessWidget {
-  final bool hasSearch;
+  final SearchType? searchType;
 
   const MainAppBar({
     Key? key,
-    required this.hasSearch,
+    this.searchType,
   }) : super(key: key);
 
   @override
@@ -33,7 +34,7 @@ class MainAppBar extends StatelessWidget {
           },
         ),
       ),
-      actions: hasSearch
+      actions: searchType == SearchType.local
           ? <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 22.0),
