@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
@@ -13,41 +14,46 @@ class SearchOnlineAnime extends StatefulWidget {
 }
 
 class _SearchLocalState extends State<SearchOnlineAnime> {
-  GlobalController _controller = Get.find<GlobalController>();
+  GlobalController _globalController = Get.find<GlobalController>();
+  final TextEditingController _textController = TextEditingController();
   RxList<Anime> results = <Anime>[].obs;
 
-  void search(String query) {
+  @override
+  void dispose() {
+    _globalController.dispose();
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void search(String query) async {
     results.clear();
     if (query == "") {
-      results.addAll(_controller.globalAnimeList);
+      // results.addAll(_globalController.globalAnimeList);
       return;
     }
 
-    _controller.globalAnimeList.forEach(
-      (element) {
-        if (element.title.toLowerCase().contains(query)) {
-          results.add(element);
-        }
-      },
-    );
+    Map testResponse = await _globalController.client.value
+        .animeSearch(AnimeSearchRequest(query: query));
+    print(testResponse);
   }
 
   @override
   Widget build(BuildContext context) {
-    results.addAll(_controller.globalAnimeList);
+    // results.addAll(_globalController.globalAnimeList);
 
     return Scaffold(
       backgroundColor: Color.fromARGB(240, 0, 0, 0),
       appBar: BackAppBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => search(_textController.text),
+      ),
       body: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
             child: TextField(
+              controller: _textController,
               textInputAction: TextInputAction.search,
-              onChanged: (q) {
-                search(q);
-              },
               style: TextStyle(
                 color: Colors.white70,
               ),

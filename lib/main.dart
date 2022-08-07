@@ -8,6 +8,7 @@ import 'package:miru/pages/mal_web_view.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search_local_anime.dart';
 import 'package:flutter/services.dart';
+import 'package:miru/pages/search_online_anime.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ void main() {
         // TODO: maybe rename this to anime_details
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
         '/searchLocalAnime': (context) => SearchLocalAnime(),
+        '/searchOnlineAnime': (context) => SearchOnlineAnime(),
         '/login': (context) => Login(),
         '/profile': (context) => Profile(),
       },
