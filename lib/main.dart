@@ -27,7 +27,7 @@ void main() {
         '/malweb': (context) => MALWebView(),
         // TODO: maybe rename this to anime_details
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
-        '/searchLocalAnime': (context) => SearchLocal(),
+        '/searchLocalAnime': (context) => SearchLocalAnime(),
         '/login': (context) => Login(),
         '/profile': (context) => Profile(),
       },

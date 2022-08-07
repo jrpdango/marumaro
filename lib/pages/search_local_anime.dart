@@ -5,14 +5,14 @@ import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
 
-class SearchLocal extends StatefulWidget {
-  const SearchLocal({Key? key}) : super(key: key);
+class SearchLocalAnime extends StatefulWidget {
+  const SearchLocalAnime({Key? key}) : super(key: key);
 
   @override
   _SearchLocalState createState() => _SearchLocalState();
 }
 
-class _SearchLocalState extends State<SearchLocal> {
+class _SearchLocalState extends State<SearchLocalAnime> {
   GlobalController _controller = Get.find<GlobalController>();
   RxList<Anime> results = <Anime>[].obs;
 
