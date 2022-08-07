@@ -17,30 +17,20 @@ class AnimeSearchRequest {
 
   Uri setParams(Uri url) {
     Map<String, dynamic> parameters = {
+      "q": query,
       if (fields != null) "fields": fields!,
       if (offset != null) "offset": offset!.toString(),
       "limit": limit.toString()
     };
     url = url.replace(queryParameters: parameters);
     return url;
-
-    // this.query = this.query == null ? "" : "?q=${this.query}";
-    // this.limit = this.limit == null ? "" : "&limit=${this.limit}";
-    // this.offset = this.offset == null ? "" : "&offset=${this.offset}";
-    // this.fields = this.fields == null ? "" : "&fields=${this.fields}";
   }
 
   Future<Map> createRequest(MALClient client) async {
     try {
-      Uri url = Uri(
-          scheme: "https",
-          host: "api.myanimelist.net",
-          path: "v2/anime${this.query}");
+      Uri url =
+          Uri(scheme: "https", host: "api.myanimelist.net", path: "v2/anime");
       url = setParams(url);
-      // String url = "https://api.myanimelist.net/v2/anime${this.query}" +
-      //     this.limit +
-      //     this.offset +
-      //     this.fields;
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map respMap = Map();
