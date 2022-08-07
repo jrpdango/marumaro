@@ -24,9 +24,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   bool _netConnected = Get.arguments["connStatus"];
   bool _detailChanged = false;
   late Rx<String> _chosenListStatus =
-      TextCleaner.unjsonify(_anime.userStatus).obs;
-  late Rx<int> _chosenScore = _anime.userScore.obs;
-  late Rx<int> _chosenEpsWatched = _anime.userEpisodesWatched.obs;
+      TextCleaner.unjsonify(_anime.userStatus!).obs;
+  late Rx<int> _chosenScore = _anime.userScore!.obs;
+  late Rx<int> _chosenEpsWatched = _anime.userEpisodesWatched!.obs;
   late Future<Map<String, dynamic>> _animeDetails = getAnimeDetails();
 
   final Size _deviceSize = Get.arguments["deviceSize"];

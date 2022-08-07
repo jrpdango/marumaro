@@ -35,6 +35,22 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
     Map testResponse = await _globalController.client.value
         .animeSearch(AnimeSearchRequest(query: query));
     print(testResponse);
+    for (Map anime in testResponse['data']) {
+      results.add(
+        Anime(
+            id: anime['node']['id'],
+            title: anime['node']['title'],
+            picture: Uri.parse(anime['node']['main_picture']?['medium'] ?? ""),
+            totalEpisodes: anime['node']['num_episodes'],
+            showStatus: anime['node']['status'],
+            userStatus: anime['node']['my_list_status']?['status'] ?? null,
+            userEpisodesWatched: anime['node']['my_list_status']
+                    ?['num_episodes_watched'] ??
+                null,
+            userScore: anime['node']['my_list_status']?['score'] ?? null),
+      );
+    }
+    // results.addAll(testResponse['data']);
   }
 
   @override

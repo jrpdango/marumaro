@@ -84,7 +84,7 @@ class _ListContainerState extends State<ListContainer> {
                     child: InkWell(
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       onTap: () {
-                        String _oldStatus = _animeList[index].userStatus;
+                        String _oldStatus = _animeList[index].userStatus!;
 
                         Get.toNamed(
                           "/animeDetailsPage",
@@ -101,7 +101,7 @@ class _ListContainerState extends State<ListContainer> {
                                     .removeAt(index);
                                 _client.clientAnimeList[val.userStatus]
                                     .insert(0, val);
-                                _oldStatus = val.userStatus;
+                                _oldStatus = val.userStatus!;
                               }
 
                               _animeList.refresh();

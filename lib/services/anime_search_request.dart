@@ -6,19 +6,19 @@ class AnimeSearchRequest {
   final String query;
   final int limit;
   final int? offset;
-  final String? fields;
+  final String fields;
 
   AnimeSearchRequest({
     required this.query,
     this.limit = 100,
     this.offset,
-    this.fields,
+    this.fields = "num_episodes,status,my_list_status",
   });
 
   Uri setParams(Uri url) {
     Map<String, dynamic> parameters = {
       "q": query,
-      if (fields != null) "fields": fields!,
+      "fields": fields,
       if (offset != null) "offset": offset!.toString(),
       "limit": limit.toString()
     };
