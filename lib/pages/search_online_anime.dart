@@ -32,10 +32,9 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
       return;
     }
 
-    Map testResponse = await _globalController.client.value
+    Map response = await _globalController.client.value
         .animeSearch(AnimeSearchRequest(query: query));
-    print(testResponse);
-    for (Map anime in testResponse['data']) {
+    for (Map anime in response['data']) {
       results.add(
         Anime(
             id: anime['node']['id'],
@@ -50,13 +49,10 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
             userScore: anime['node']['my_list_status']?['score'] ?? null),
       );
     }
-    // results.addAll(testResponse['data']);
   }
 
   @override
   Widget build(BuildContext context) {
-    // results.addAll(_globalController.globalAnimeList);
-
     return Scaffold(
       backgroundColor: Color.fromARGB(240, 0, 0, 0),
       appBar: BackAppBar(),
