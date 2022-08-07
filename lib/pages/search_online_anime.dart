@@ -20,7 +20,7 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
 
   @override
   void dispose() {
-    _globalController.dispose();
+    // _globalController already disposes itself, so just dispose the other controller
     _textController.dispose();
     super.dispose();
   }
