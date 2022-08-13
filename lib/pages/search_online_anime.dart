@@ -43,10 +43,9 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
             totalEpisodes: anime['node']['num_episodes'],
             showStatus: anime['node']['status'],
             userStatus: anime['node']['my_list_status']?['status'] ?? null,
-            userEpisodesWatched: anime['node']['my_list_status']
-                    ?['num_episodes_watched'] ??
-                null,
-            userScore: anime['node']['my_list_status']?['score'] ?? null),
+            userEpisodesWatched:
+                anime['node']['my_list_status']?['num_episodes_watched'] ?? 0,
+            userScore: anime['node']['my_list_status']?['score'] ?? 0),
       );
     }
   }
