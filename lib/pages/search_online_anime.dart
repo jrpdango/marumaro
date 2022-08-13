@@ -5,6 +5,7 @@ import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
+import 'package:miru/widgets/main_drawer.dart';
 
 class SearchOnlineAnime extends StatefulWidget {
   const SearchOnlineAnime({Key? key}) : super(key: key);
@@ -54,7 +55,22 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(240, 0, 0, 0),
-      appBar: BackAppBar(),
+      appBar: BackAppBar(
+        actions: [
+          Builder(
+            builder: (context) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 10.0, right: 5.0),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.filter_list_rounded),
+                ),
+              );
+            },
+          )
+        ],
+      ),
+      endDrawer: MainDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => search(_textController.text),
       ),

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const BackAppBar({Key? key}) : super(key: key);
+  final List<Widget>? actions;
+
+  BackAppBar({
+    this.actions,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Size get preferredSize => Size.fromHeight(72.0);
@@ -11,6 +15,7 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      actions: this.actions,
       toolbarHeight: 72.0,
       flexibleSpace: Image.asset(
         "assets/city.jpg",
