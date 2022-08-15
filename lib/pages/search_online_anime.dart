@@ -4,8 +4,8 @@ import 'package:miru/models/anime.dart';
 import 'package:miru/services/anime_search_request.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/back_appbar.dart';
+import 'package:miru/widgets/filter_drawer.dart';
 import 'package:miru/widgets/list_container.dart';
-import 'package:miru/widgets/main_drawer.dart';
 
 class SearchOnlineAnime extends StatefulWidget {
   const SearchOnlineAnime({Key? key}) : super(key: key);
@@ -74,7 +74,7 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
           )
         ],
       ),
-      endDrawer: MainDrawer(),
+      endDrawer: FilterDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => search(_textController.text),
       ),

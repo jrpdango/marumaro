@@ -28,8 +28,16 @@ class AnimeSearchRequest {
 
   Future<Map> createRequest(MALClient client) async {
     try {
-      Uri url =
-          Uri(scheme: "https", host: "api.myanimelist.net", path: "v2/anime");
+      // Uri url = Uri(
+      //   scheme: "https",
+      //   host: "api.jikan.moe",
+      //   path: "v4/anime",
+      // );
+      Uri url = Uri(
+        scheme: "https",
+        host: "api.myanimelist.net",
+        path: "v2/anime",
+      );
       url = setParams(url);
       Response response = await client.userClient.get(url,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
