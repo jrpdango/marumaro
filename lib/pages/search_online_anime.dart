@@ -61,10 +61,14 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
             builder: (context) {
               return Padding(
                 padding: const EdgeInsets.only(top: 10.0, right: 5.0),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.filter_list_rounded),
-                ),
+                child: Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: Icon(Icons.filter_list_rounded),
+                  );
+                }),
               );
             },
           )
