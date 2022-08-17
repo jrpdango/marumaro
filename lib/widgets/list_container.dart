@@ -31,16 +31,12 @@ class _ListContainerState extends State<ListContainer> {
   Future<void> refreshList(_limit) async {
     Map newMap = Map();
     // bool hasConnection = await DataConnectionChecker().hasConnection;
-    Map result = await _client.getAnimeList(
-      AnimeListRequest(limit: _limit),
-    );
+    Map result = await AnimeListRequest(limit: _limit).createRequest();
     while (result["paging"]["next"] != null) {
-      newMap = await _client.getAnimeList(
-        AnimeListRequest(
-          limit: _limit,
-          uri: Uri.parse(result["paging"]["next"]),
-        ),
-      );
+      newMap = await AnimeListRequest(
+        limit: _limit,
+        uri: Uri.parse(result["paging"]["next"]),
+      ).createRequest();
       for (String item in newMap.keys) {
         if (item != "paging" && item != "status_code") {
           result[item].addAll(newMap[item]);

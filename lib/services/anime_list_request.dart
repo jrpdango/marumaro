@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
-import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart' as http;
+import 'package:miru/services/global_controller.dart';
 import 'dart:convert';
 
 class AnimeListRequest {
+  final _client = Get.put(GlobalController()).client.value;
   final int limit;
   final int? offset;
   final String username;
@@ -62,7 +63,7 @@ class AnimeListRequest {
 
   /// Sends a request to update anime list to MAL servers through API.
   ///
-  Future<Map<String, dynamic>> createRequest(MALClient client) async {
+  Future<Map<String, dynamic>> createRequest() async {
     try {
       if (uri == null) {
         uri = Uri(
@@ -71,8 +72,8 @@ class AnimeListRequest {
             path: "v2/users/${this.username}/animelist");
         uri = setParams(uri!);
       }
-      http.Response response = await client.userClient.get(uri!,
-          headers: {"Authorization": "Bearer ${client.token.accessToken}"});
+      http.Response response = await _client.userClient.get(uri!,
+          headers: {"Authorization": "Bearer ${_client.token.accessToken}"});
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {

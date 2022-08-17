@@ -64,30 +64,6 @@ class MALClient {
     return await userDataRequest.createRequest(this);
   }
 
-  Future<Map<String, dynamic>> getAnimeList(
-      AnimeListRequest animeListRequest) async {
-    /*
-    Returns:
-    {
-      data: [{node: {id, title, main_picture: {medium, large}, num_episodes, mean, status, rank, popularity, source, studios, rating, average_episode_duration, alternative_titles, synopsis, start_date, end_date, genres}, 
-      list_status: {status, score, num_episodes_watched, is_rewatching, updated_at}}
-      for each anime in the list]
-      paging: {next : url to next page}
-      status_code: int
-    }
-    */
-
-    /*
-    New:
-    {
-      <all statuses (watching...plan to watch)>: [list of Anime],
-      paging: {next: url to next page},
-      status_code: int
-    }
-     */
-    return await animeListRequest.createRequest(this);
-  }
-
   Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {
     return await animeSearchRequest.createRequest(this);
   }

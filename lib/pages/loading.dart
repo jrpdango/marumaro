@@ -24,9 +24,8 @@ class _LoadingState extends State<Loading> {
   ///
   Future<Map<String, dynamic>> initializeAnimeList(_limit) async {
     Map<String, dynamic> newMap = Map();
-    final Map<String, dynamic> result = await _client.getAnimeList(
-      AnimeListRequest(limit: _limit),
-    );
+    final Map<String, dynamic> result =
+        await AnimeListRequest(limit: _limit).createRequest();
     for (String item in result.keys) {
       if (item != "paging" && item != "status_code") {
         _globalAnimeList.addAll(result[item]);
@@ -34,12 +33,10 @@ class _LoadingState extends State<Loading> {
     }
     try {
       while (result["paging"]["next"] != null) {
-        newMap = await _client.getAnimeList(
-          AnimeListRequest(
-            limit: _limit,
-            uri: Uri.parse(result["paging"]["next"]),
-          ),
-        );
+        newMap = await AnimeListRequest(
+          limit: _limit,
+          uri: Uri.parse(result["paging"]["next"]),
+        ).createRequest();
         for (String item in newMap.keys) {
           if (item != "paging" && item != "status_code") {
             result[item].addAll(newMap[item]);
