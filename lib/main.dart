@@ -1,9 +1,6 @@
-// Packages
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
-// Pages
 import 'package:miru/pages/anime_details_page.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/pages/loading.dart';
