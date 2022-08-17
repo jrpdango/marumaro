@@ -11,7 +11,7 @@ class AnimeListRequest {
   final String? status;
   final String sort;
   final String fields;
-  Uri? url;
+  Uri? uri;
 
   AnimeListRequest(
       {this.status,
@@ -19,11 +19,11 @@ class AnimeListRequest {
       this.limit = 100,
       this.offset,
       this.username = "@me",
-      this.url,
+      this.uri,
       this.fields =
           "list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres"});
 
-  Uri setParams(Uri url) {
+  Uri setParams(Uri uri) {
     Map<String, dynamic> parameters = {
       if (status != null) "status": status!,
       if (offset != null) "offset": offset!.toString(),
@@ -31,8 +31,8 @@ class AnimeListRequest {
       "sort": sort,
       "limit": limit.toString()
     };
-    url = url.replace(queryParameters: parameters);
-    return url;
+    uri = uri.replace(queryParameters: parameters);
+    return uri;
   }
 
   /// Sort a [Map] by status.
@@ -64,14 +64,14 @@ class AnimeListRequest {
   ///
   Future<Map<String, dynamic>> createRequest(MALClient client) async {
     try {
-      if (url == null) {
-        url = Uri(
+      if (uri == null) {
+        uri = Uri(
             scheme: "https",
             host: "api.myanimelist.net",
             path: "v2/users/${this.username}/animelist");
-        url = setParams(url!);
+        uri = setParams(uri!);
       }
-      http.Response response = await client.userClient.get(url!,
+      http.Response response = await client.userClient.get(uri!,
           headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);
