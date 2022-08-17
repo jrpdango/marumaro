@@ -38,7 +38,7 @@ class _ListContainerState extends State<ListContainer> {
       newMap = await _client.getAnimeList(
         AnimeListRequest(
           limit: _limit,
-          url: Uri.parse(result["paging"]["next"]),
+          uri: Uri.parse(result["paging"]["next"]),
         ),
       );
       for (String item in newMap.keys) {
