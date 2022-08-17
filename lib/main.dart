@@ -21,10 +21,10 @@ void main() {
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: "/loading",
+      initialRoute: "/",
       routes: {
-        '/': (context) => Home(),
-        '/loading': (context) => Loading(),
+        '/': (context) => Loading(),
+        '/home': (context) => Home(),
         '/malweb': (context) => MALWebView(),
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
         '/searchLocalAnime': (context) => SearchLocalAnime(),
