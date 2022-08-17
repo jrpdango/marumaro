@@ -1,5 +1,9 @@
+// Packages
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
+// Pages
 import 'package:miru/pages/anime_details_page.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/pages/loading.dart';
@@ -7,7 +11,6 @@ import 'package:miru/pages/login.dart';
 import 'package:miru/pages/mal_web_view.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search_local_anime.dart';
-import 'package:flutter/services.dart';
 import 'package:miru/pages/search_online_anime.dart';
 
 void main() {
@@ -26,7 +29,6 @@ void main() {
         '/': (context) => Loading(),
         '/home': (context) => Home(),
         '/malweb': (context) => MALWebView(),
-        // TODO: maybe rename this to anime_details
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
         '/searchLocalAnime': (context) => SearchLocalAnime(),
         '/searchOnlineAnime': (context) => SearchOnlineAnime(),
