@@ -22,7 +22,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  MALClient _client = Get.find<GlobalController>().client.value;
+  MALClient _client = Get.find<GlobalController>().client;
   Map _getArgs = Get.arguments;
   Rx<int> _tabIndex = 0.obs;
   late List<ListContainer> _tabContents =

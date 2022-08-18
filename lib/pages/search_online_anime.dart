@@ -33,7 +33,7 @@ class _SearchLocalState extends State<SearchOnlineAnime> {
       return;
     }
 
-    Map response = await _globalController.client.value
+    Map response = await _globalController.client
         .animeSearch(AnimeSearchRequest(query: query));
     for (Map anime in response['data']) {
       results.add(

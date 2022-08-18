@@ -17,7 +17,7 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   final _controller = Get.put(GlobalController());
-  late MALClient _client = _controller.client.value;
+  late MALClient _client = _controller.client;
   late RxList<Anime> _globalAnimeList = _controller.globalAnimeList;
 
   /// Initializes the user's anime list.

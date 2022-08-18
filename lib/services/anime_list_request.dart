@@ -5,7 +5,7 @@ import 'package:miru/services/global_controller.dart';
 import 'dart:convert';
 
 class AnimeListRequest {
-  final _client = Get.put(GlobalController()).client.value;
+  final _client = Get.put(GlobalController()).client;
   final int limit;
   final int? offset;
   final String username;

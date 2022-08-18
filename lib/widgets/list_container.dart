@@ -23,7 +23,7 @@ class ListContainer extends StatefulWidget {
 }
 
 class _ListContainerState extends State<ListContainer> {
-  MALClient _client = Get.find<GlobalController>().client.value;
+  MALClient _client = Get.find<GlobalController>().client;
   late RxList<Anime> _animeList =
       widget.animeList ?? _client.clientAnimeList[widget.listType];
   late bool? netConnected = true;

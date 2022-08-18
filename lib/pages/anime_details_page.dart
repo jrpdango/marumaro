@@ -18,7 +18,7 @@ class AnimeDetailsPage extends StatefulWidget {
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
-  MALClient _client = Get.find<GlobalController>().client.value;
+  MALClient _client = Get.find<GlobalController>().client;
   final Function _callback = Get.arguments["callback"];
   final Anime _anime = Get.arguments["anime"];
   bool _netConnected = Get.arguments["connStatus"];

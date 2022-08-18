@@ -17,7 +17,7 @@ class MainDrawer extends StatefulWidget {
 }
 
 class _MainDrawerState extends State<MainDrawer> {
-  MALClient _client = Get.find<GlobalController>().client.value;
+  MALClient _client = Get.find<GlobalController>().client;
 
   Future<NetworkImage?> getUserImage() async {
     if (_client.userImage != null) return _client.userImage;
