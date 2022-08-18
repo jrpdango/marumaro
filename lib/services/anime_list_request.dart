@@ -24,6 +24,8 @@ class AnimeListRequest {
       this.fields =
           'list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres'});
 
+  /// Sets parameters to the URI.
+  ///
   Uri setParams(Uri uri) {
     Map<String, dynamic> parameters = {
       if (status != null) 'status': status!,
@@ -35,7 +37,7 @@ class AnimeListRequest {
     return uri.replace(queryParameters: parameters);
   }
 
-  /// Sort a [Map] by status.
+  /// Sorts a [Map] by status.
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
     Map<String, dynamic> animeMap = Map();
