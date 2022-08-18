@@ -16,21 +16,21 @@ class AnimeListRequest {
 
   AnimeListRequest(
       {this.status,
-      this.sort = "list_updated_at",
+      this.sort = 'list_updated_at',
       this.limit = 100,
       this.offset,
-      this.username = "@me",
+      this.username = '@me',
       this.uri,
       this.fields =
-          "list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres"});
+          'list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres'});
 
   Uri setParams(Uri uri) {
     Map<String, dynamic> parameters = {
-      if (status != null) "status": status!,
-      if (offset != null) "offset": offset!.toString(),
-      "fields": fields,
-      "sort": sort,
-      "limit": limit.toString()
+      if (status != null) 'status': status!,
+      if (offset != null) 'offset': offset!.toString(),
+      'fields': fields,
+      'sort': sort,
+      'limit': limit.toString()
     };
     return uri.replace(queryParameters: parameters);
   }
@@ -39,24 +39,24 @@ class AnimeListRequest {
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
     Map<String, dynamic> animeMap = Map();
-    animeMap["watching"] = <Anime>[].obs;
-    animeMap["completed"] = <Anime>[].obs;
-    animeMap["plan_to_watch"] = <Anime>[].obs;
-    animeMap["on_hold"] = <Anime>[].obs;
-    animeMap["dropped"] = <Anime>[].obs;
-    for (Map element in rawMap["data"]) {
-      animeMap[element["list_status"]["status"]]!.add(Anime(
-        id: element["node"]["id"],
-        title: element["node"]["title"],
-        picture: Uri.parse(element["node"]["main_picture"]["medium"]),
-        totalEpisodes: element["node"]["num_episodes"],
-        showStatus: element["node"]["status"],
-        userStatus: element["list_status"]["status"],
-        userEpisodesWatched: element["list_status"]["num_episodes_watched"],
-        userScore: element["list_status"]["score"],
+    animeMap['watching'] = <Anime>[].obs;
+    animeMap['completed'] = <Anime>[].obs;
+    animeMap['plan_to_watch'] = <Anime>[].obs;
+    animeMap['on_hold'] = <Anime>[].obs;
+    animeMap['dropped'] = <Anime>[].obs;
+    for (Map element in rawMap['data']) {
+      animeMap[element['list_status']['status']]!.add(Anime(
+        id: element['node']['id'],
+        title: element['node']['title'],
+        picture: Uri.parse(element['node']['main_picture']['medium']),
+        totalEpisodes: element['node']['num_episodes'],
+        showStatus: element['node']['status'],
+        userStatus: element['list_status']['status'],
+        userEpisodesWatched: element['list_status']['num_episodes_watched'],
+        userScore: element['list_status']['score'],
       ));
     }
-    animeMap["paging"] = rawMap["paging"];
+    animeMap['paging'] = rawMap['paging'];
     return animeMap;
   }
 
@@ -66,25 +66,25 @@ class AnimeListRequest {
     try {
       if (uri == null) {
         uri = Uri(
-            scheme: "https",
-            host: "api.myanimelist.net",
-            path: "v2/users/${this.username}/animelist");
+            scheme: 'https',
+            host: 'api.myanimelist.net',
+            path: 'v2/users/${this.username}/animelist');
         uri = setParams(uri!);
       }
       http.Response response = await _client.userClient.get(uri!,
-          headers: {"Authorization": "Bearer ${_client.token.accessToken}"});
+          headers: {'Authorization': 'Bearer ${_client.token.accessToken}'});
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {
-        print("List retrieved successfully!");
+        print('List retrieved successfully!');
         respMap = sortMap(respMap);
       } else {
         print(
-            "List retrieval request sent, but something went wrong. Status code: ${response.statusCode}");
+            'List retrieval request sent, but something went wrong. Status code: ${response.statusCode}');
       }
       return respMap;
     } catch (exception) {
-      print("Oops! Something went wrong. Anime_List_Request $exception");
+      print('Oops! Something went wrong. Anime_List_Request $exception');
       return Map();
     }
   }
