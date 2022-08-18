@@ -23,11 +23,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   MALClient _client = Get.find<GlobalController>().client;
-  Map _getArgs = Get.arguments;
+  // Map _getArgs = Get.arguments;
   Rx<int> _tabIndex = 0.obs;
   late List<ListContainer> _tabContents =
       getTabContents(_client.clientAnimeList);
-  late bool _netConnected = _getArgs["connStatus"];
+  // late bool _netConnected = _getArgs["connStatus"];
   late TabController _tabController;
 
   bool _hasTabBar = true;
@@ -82,7 +82,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       tabContents.add(
         ListContainer(
           listType: tabName,
-          connStatus: _netConnected,
         ),
       );
     }

@@ -65,11 +65,7 @@ class _LoadingState extends State<Loading> {
     _controller.client.username = (await _controller.client
         .getUserData(UserDataRequest(mode: 'MAL')))['name'];
 
-    Get.off(
-      () => Home(),
-      // TODO: EDIT LATER
-      arguments: {"connStatus": true},
-    );
+    Get.offNamed('/home');
   }
 
   @override
