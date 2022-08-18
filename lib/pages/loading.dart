@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:miru/pages/home.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
