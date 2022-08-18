@@ -61,8 +61,8 @@ class _LoadingState extends State<Loading> {
     Map<String, dynamic> result =
         await initializeAnimeList(Constants.limitOfListItems);
     _controller.client.clientAnimeList = result.obs;
-    _controller.client.username = (await _controller.client
-        .getUserData(UserDataRequest(mode: 'MAL')))['name'];
+    _controller.client.username =
+        (await (UserDataRequest(mode: 'MAL')).createRequest())['name'];
 
     Get.offNamed('/home');
   }

@@ -60,10 +60,6 @@ class MALClient {
     print("Refresh token: ${this.token.refreshToken}");
   }
 
-  Future<Map> getUserData(UserDataRequest userDataRequest) async {
-    return await userDataRequest.createRequest(this);
-  }
-
   Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {
     return await animeSearchRequest.createRequest(this);
   }

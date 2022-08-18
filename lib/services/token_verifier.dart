@@ -31,7 +31,7 @@ class TokenVerifier {
 
   static Future<Map> checkValidAccessToken(
       MALClient client, Token token) async {
-    Map checker = await client.getUserData(UserDataRequest(mode: 'MAL'));
+    Map checker = await (UserDataRequest(mode: 'MAL').createRequest());
     return checker;
   }
 

@@ -24,7 +24,7 @@ class _MainDrawerState extends State<MainDrawer> {
 
     try {
       _client.userImage = NetworkImage(
-        (await _client.getUserData(UserDataRequest(mode: 'Jikan')))['data']
+        (await (UserDataRequest(mode: 'Jikan').createRequest()))['data']
             ['images']['jpg']['image_url'],
       );
       return _client.userImage;

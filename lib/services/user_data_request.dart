@@ -1,5 +1,6 @@
-import 'package:miru/models/mal_client.dart';
-import 'package:http/http.dart';
+import 'package:get/get.dart';
+import 'package:miru/services/global_controller.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UserDataRequest {
@@ -11,7 +12,8 @@ class UserDataRequest {
     this.isFull = false,
   });
 
-  Future<Map> createRequest(MALClient client) async {
+  Future<Map> createRequest() async {
+    final _client = Get.put(GlobalController()).client;
     Uri url;
 
     if (mode == 'MAL') {
@@ -24,15 +26,15 @@ class UserDataRequest {
       url = Uri(
         scheme: "https",
         host: "api.jikan.moe",
-        path: "v4/users/${client.username}/${isFull ? 'full' : ''}",
+        path: "v4/users/${_client.username}/${isFull ? 'full' : ''}",
       );
     }
 
     // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
     try {
-      Response response = await client.userClient.get(url,
-          headers: {"Authorization": "Bearer ${client.token.accessToken}"});
+      http.Response response = await _client.userClient.get(url,
+          headers: {"Authorization": "Bearer ${_client.token.accessToken}"});
       Map respMap = Map();
       if (response.statusCode == 200) {
         //respMap gives a json response of keys {id, name, birthday, location, joined_at}
