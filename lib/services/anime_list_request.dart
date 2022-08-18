@@ -77,12 +77,11 @@ class AnimeListRequest {
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {
         print('List retrieved successfully!');
-        respMap = sortMap(respMap);
       } else {
         print(
             'List retrieval request sent, but something went wrong. Status code: ${response.statusCode}');
       }
-      return respMap;
+      return sortMap(respMap);
     } catch (exception) {
       print('Oops! Something went wrong. Anime_List_Request $exception');
       return Map();
