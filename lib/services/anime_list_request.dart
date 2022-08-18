@@ -32,8 +32,7 @@ class AnimeListRequest {
       "sort": sort,
       "limit": limit.toString()
     };
-    uri = uri.replace(queryParameters: parameters);
-    return uri;
+    return uri.replace(queryParameters: parameters);
   }
 
   /// Sort a [Map] by status.
