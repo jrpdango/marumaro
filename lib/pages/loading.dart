@@ -23,23 +23,23 @@ class _LoadingState extends State<Loading> {
     final Map<String, dynamic> result =
         await AnimeListRequest(limit: _limit).createRequest();
     for (String item in result.keys) {
-      if (item != "paging" && item != "status_code") {
+      if (item != 'paging' && item != 'status_code') {
         _controller.globalAnimeList.addAll(result[item]);
       }
     }
     try {
-      while (result["paging"]["next"] != null) {
+      while (result['paging']['next'] != null) {
         newMap = await AnimeListRequest(
           limit: _limit,
-          uri: Uri.parse(result["paging"]["next"]),
+          uri: Uri.parse(result['paging']['next']),
         ).createRequest();
         for (String item in newMap.keys) {
-          if (item != "paging" && item != "status_code") {
+          if (item != 'paging' && item != 'status_code') {
             result[item].addAll(newMap[item]);
             _controller.globalAnimeList.addAll(newMap[item]);
           }
         }
-        result["paging"]["next"] = newMap["paging"]!["next"];
+        result['paging']['next'] = newMap['paging']!['next'];
       }
     } catch (e) {
       print(e);
@@ -54,8 +54,8 @@ class _LoadingState extends State<Loading> {
      * Uncomment the deleteSync lines to remove locally-stored tokens.
      */
     // Directory directory = await getApplicationDocumentsDirectory();
-    // File("${directory.path}/miruList.json").deleteSync();
-    // File("${directory.path}/miruTokens.json").deleteSync();
+    // File('${directory.path}/miruList.json').deleteSync();
+    // File('${directory.path}/miruTokens.json').deleteSync();
 
     await TokenVerifier.verifyTokens(_controller.client);
     Map<String, dynamic> result =
