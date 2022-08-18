@@ -14,16 +14,16 @@ class UserDataRequest {
 
   Future<Map> createRequest() async {
     final _client = Get.put(GlobalController()).client;
-    Uri url;
+    Uri uri;
 
     if (mode == 'MAL') {
-      url = Uri(
+      uri = Uri(
         scheme: "https",
         host: "api.myanimelist.net",
         path: "v2/users/@me",
       );
     } else {
-      url = Uri(
+      uri = Uri(
         scheme: "https",
         host: "api.jikan.moe",
         path: "v4/users/${_client.username}/${isFull ? 'full' : ''}",
@@ -33,7 +33,7 @@ class UserDataRequest {
     // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
     try {
-      http.Response response = await _client.userClient.get(url,
+      http.Response response = await _client.userClient.get(uri,
           headers: {"Authorization": "Bearer ${_client.token.accessToken}"});
       Map respMap = Map();
       if (response.statusCode == 200) {
