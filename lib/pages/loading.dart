@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/pages/home.dart';
-import 'package:miru/models/anime.dart';
-import 'package:miru/models/mal_client.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
@@ -16,9 +14,8 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
+  // Initialize controller for access to globals.
   final _controller = Get.put(GlobalController());
-  late MALClient _client = _controller.client;
-  late RxList<Anime> _globalAnimeList = _controller.globalAnimeList;
 
   /// Initializes the user's anime list.
   ///
@@ -28,7 +25,7 @@ class _LoadingState extends State<Loading> {
         await AnimeListRequest(limit: _limit).createRequest();
     for (String item in result.keys) {
       if (item != "paging" && item != "status_code") {
-        _globalAnimeList.addAll(result[item]);
+        _controller.globalAnimeList.addAll(result[item]);
       }
     }
     try {
@@ -40,7 +37,7 @@ class _LoadingState extends State<Loading> {
         for (String item in newMap.keys) {
           if (item != "paging" && item != "status_code") {
             result[item].addAll(newMap[item]);
-            _globalAnimeList.addAll(newMap[item]);
+            _controller.globalAnimeList.addAll(newMap[item]);
           }
         }
         result["paging"]["next"] = newMap["paging"]!["next"];
@@ -51,7 +48,7 @@ class _LoadingState extends State<Loading> {
     return result;
   }
 
-  /// Verify internet connectivity, token validity, and initialization of anime list.
+  /// Verify token validity and initialization of anime list.
   ///
   void setupMALConnection() async {
     /**
@@ -61,12 +58,12 @@ class _LoadingState extends State<Loading> {
     // File("${directory.path}/miruList.json").deleteSync();
     // File("${directory.path}/miruTokens.json").deleteSync();
 
-    await TokenVerifier.verifyTokens(_client);
+    await TokenVerifier.verifyTokens(_controller.client);
     Map<String, dynamic> result =
         await initializeAnimeList(Constants.limitOfListItems);
-    _client.clientAnimeList = result.obs;
-    _client.username =
-        (await _client.getUserData(UserDataRequest(mode: 'MAL')))['name'];
+    _controller.client.clientAnimeList = result.obs;
+    _controller.client.username = (await _controller.client
+        .getUserData(UserDataRequest(mode: 'MAL')))['name'];
 
     Get.off(
       () => Home(),
