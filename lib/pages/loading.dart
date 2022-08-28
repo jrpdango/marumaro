@@ -20,7 +20,7 @@ class _LoadingState extends State<Loading> {
   /// Initializes the user's anime list.
   ///
   Future<Map<String, dynamic>> _initializeAnimeList(limit) async {
-    Map<String, dynamic> newMap = {};
+    Map<String, dynamic> newMap = <String, dynamic>{};
 
     final Map<String, dynamic> result =
         await AnimeListRequest(limit: limit).createRequest();
@@ -31,6 +31,8 @@ class _LoadingState extends State<Loading> {
       }
     }
 
+    /// If there are pages after the initially-retrieved list, make extra
+    /// requests to get those until there no longer are any extra pages.
     try {
       while (result['paging']['next'] != null) {
         newMap = await AnimeListRequest(
