@@ -11,8 +11,10 @@ import 'package:miru/services/user_data_request.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
 
 class Loading extends StatefulWidget {
+  const Loading({Key? key}) : super(key: key);
+
   @override
-  _LoadingState createState() => _LoadingState();
+  State<Loading> createState() => _LoadingState();
 }
 
 class _LoadingState extends State<Loading> {
@@ -21,11 +23,11 @@ class _LoadingState extends State<Loading> {
 
   /// Initializes the user's anime list.
   ///
-  Future<Map<String, dynamic>> initializeAnimeList(_limit) async {
+  Future<Map<String, dynamic>> initializeAnimeList(limit) async {
     Map<String, dynamic> newMap = Map();
 
     final Map<String, dynamic> result =
-        await AnimeListRequest(limit: _limit).createRequest();
+        await AnimeListRequest(limit: limit).createRequest();
 
     for (String item in result.keys) {
       if (item != 'paging' && item != 'status_code') {
@@ -36,7 +38,7 @@ class _LoadingState extends State<Loading> {
     try {
       while (result['paging']['next'] != null) {
         newMap = await AnimeListRequest(
-          limit: _limit,
+          limit: limit,
           uri: Uri.parse(result['paging']['next']),
         ).createRequest();
 
