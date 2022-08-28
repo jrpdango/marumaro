@@ -10,10 +10,10 @@ class Login extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(15.0),
-          child: Card(
+          padding: const EdgeInsets.all(15.0),
+          child: const Card(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 "Hello, and welcome to miru! To get started, tap the button below to log in your MyAnimeList account.",
                 style: TextStyle(),
@@ -26,8 +26,8 @@ class Login extends StatelessWidget {
           onPressed: () {
             Get.back();
           },
-          icon: Icon(Icons.login_rounded),
-          label: Text("Login to MyAnimeList"),
+          icon: const Icon(Icons.login_rounded),
+          label: const Text("Login to MyAnimeList"),
         ),
       ],
     );
