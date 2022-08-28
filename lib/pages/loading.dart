@@ -60,7 +60,7 @@ class _LoadingState extends State<Loading> {
   ///
   void _setupMALConnection({required bool deleteTokens}) async {
     if (deleteTokens) _deleteLocalTokens();
-    await TokenVerifier.verifyTokens(_controller.client);
+    await TokenVerifier().verifyTokens();
 
     Map<String, dynamic> result =
         await _initializeAnimeList(constants.limitOfListItems);
@@ -84,7 +84,7 @@ class _LoadingState extends State<Loading> {
   @override
   void initState() {
     super.initState();
-    _setupMALConnection(deleteTokens: false);
+    _setupMALConnection(deleteTokens: true);
   }
 
   @override
