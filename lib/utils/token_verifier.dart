@@ -20,8 +20,9 @@ class TokenVerifier {
         fileContent["access_token"] != "invalid_token") {
       // File is not empty or 'invalid_token'. Check if access token is valid
       client.token = Token(
-          accessToken: fileContent["access_token"],
-          refreshToken: fileContent["refresh_token"]);
+        accessToken: fileContent["access_token"],
+        refreshToken: fileContent["refresh_token"],
+      );
       print("Tokens found on file. Assigning to client.");
     } else {
       print("No valid tokens found on file. Attempting to get new tokens.");
