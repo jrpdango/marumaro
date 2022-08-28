@@ -35,13 +35,10 @@ class UserDataRequest {
     try {
       http.Response response = await _client.userClient.get(uri,
           headers: {"Authorization": "Bearer ${_client.token.accessToken}"});
-      Map respMap = Map();
+      Map<String, dynamic> respMap = <String, dynamic>{};
       if (response.statusCode == 200) {
         //respMap gives a json response of keys {id, name, birthday, location, joined_at}
         respMap = json.decode(response.body);
-        respMap["status_code"] = 200;
-      } else {
-        respMap["status_code"] = response.statusCode;
       }
       return respMap;
     } catch (exception) {

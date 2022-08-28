@@ -7,7 +7,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/utils/global_controller.dart';
 import 'package:miru/utils/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
-import 'package:miru/services/user_data_request.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
 
 class Loading extends StatefulWidget {
@@ -23,7 +22,7 @@ class _LoadingState extends State<Loading> {
 
   /// Initializes the user's anime list.
   ///
-  Future<Map<String, dynamic>> initializeAnimeList(limit) async {
+  Future<Map<String, dynamic>> _initializeAnimeList(limit) async {
     Map<String, dynamic> newMap = {};
 
     final Map<String, dynamic> result =
@@ -59,21 +58,19 @@ class _LoadingState extends State<Loading> {
 
   /// Verify token validity and initialization of anime list.
   ///
-  void setupMALConnection({required bool deleteTokens}) async {
+  void _setupMALConnection({required bool deleteTokens}) async {
     if (deleteTokens) _deleteLocalTokens();
     await TokenVerifier.verifyTokens(_controller.client);
 
     Map<String, dynamic> result =
-        await initializeAnimeList(constants.limitOfListItems);
+        await _initializeAnimeList(constants.limitOfListItems);
 
     _controller.client.clientAnimeList = result.obs;
-
-    // _controller.client.username =
-    //     (await (UserDataRequest(mode: 'MAL')).createRequest())['name'];
 
     _controller.client.username =
         (await _controller.client.userDataRequest())['name'];
 
+    // TODO: Add home page
     // Get.offNamed('/home');
   }
 
@@ -87,7 +84,7 @@ class _LoadingState extends State<Loading> {
   @override
   void initState() {
     super.initState();
-    setupMALConnection(deleteTokens: false);
+    _setupMALConnection(deleteTokens: false);
   }
 
   @override
@@ -95,7 +92,7 @@ class _LoadingState extends State<Loading> {
     return Scaffold(
       body: Container(
         color: Colors.black87,
-        child: Center(
+        child: const Center(
           child: SpinKitThreeBounce(
             color: Colors.white60,
           ),
