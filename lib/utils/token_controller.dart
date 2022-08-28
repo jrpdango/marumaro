@@ -10,12 +10,11 @@ import 'dart:convert';
 class TokenController {
   final MALClient _client = Get.put(GlobalController()).client;
 
-  Future<void> _getTokens() async {
-    _client.token =
-        await _client.oAuthRequest.generateTokens(_client.accessCode);
+  Future<void> getTokens() async {
+    this.token = await oAuthRequest.generateTokens(this, this.accessCode);
     print("DEBUG: Tokens received:");
-    print("Access token: ${_client.token.accessToken}");
-    print("Refresh token: ${_client.token.refreshToken}");
+    print("Access token: ${this.token.accessToken}");
+    print("Refresh token: ${this.token.refreshToken}");
   }
 
   Future<void> assignTokenFromFile() async {
@@ -48,7 +47,6 @@ class TokenController {
     return (await _client.userDataRequest()).isNotEmpty;
   }
 
-  // TODO: Rename to getNewTokens
   Future<void> oAuthNewTokens() async {
     await Get.toNamed("/login");
     print("No valid tokens. Gotta auth and get new ones.");
@@ -60,10 +58,9 @@ class TokenController {
       },
     );
     Uri params = result["accessCode"];
-    // TODO: Probably move this elsewhere
     // Access code from URL parameter
     _client.accessCode = params.queryParameters["code"]!;
-    await _getTokens();
+    await _client.getTokens();
     await _client.writeTokensToFile();
   }
 

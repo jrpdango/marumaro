@@ -1,4 +1,3 @@
-// TODO: Rename to TokenPair
 class Token {
   final String accessToken;
   final String refreshToken;
