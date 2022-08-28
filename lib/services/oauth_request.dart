@@ -1,3 +1,4 @@
+import 'package:miru/globals.dart';
 import 'package:miru/utils/mal_client.dart';
 import 'package:http/http.dart';
 import 'package:miru/models/token.dart';
@@ -5,6 +6,7 @@ import 'dart:convert';
 
 class OAuthRequest {
   final String codeChallenge;
+  // final _client = Globals.client;
 
   OAuthRequest({required this.codeChallenge});
 
@@ -23,7 +25,7 @@ class OAuthRequest {
       "code_verifier": this.codeChallenge,
       "grant_type": "authorization_code"
     };
-    Response response = await client.userClient.post(url, body: data);
+    Response response = await Globals.client.userClient.post(url, body: data);
     Map responseMap = json.decode(response.body);
     Token token = Token(
         accessToken: responseMap["access_token"],

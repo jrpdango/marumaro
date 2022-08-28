@@ -1,13 +1,14 @@
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:http/http.dart' as http;
-import 'package:miru/utils/global_controller.dart';
+// import 'package:miru/utils/global_controller.dart';
+import 'package:miru/globals.dart';
 import 'dart:convert';
 
 import 'package:miru/utils/mal_client.dart';
 
 class AnimeListRequest {
-  final MALClient _client = Get.find<GlobalController>().client;
+  // final MALClient _client = Get.find<GlobalController>().client;
   final int limit;
   final int? offset;
   final String username;
@@ -75,8 +76,10 @@ class AnimeListRequest {
             path: 'v2/users/${this.username}/animelist');
         uri = setParams(uri!);
       }
-      http.Response response = await _client.userClient.get(uri!,
-          headers: {'Authorization': 'Bearer ${_client.token.accessToken}'});
+      http.Response response = await Globals.client.userClient.get(uri!,
+          headers: {
+            'Authorization': 'Bearer ${Globals.client.token.accessToken}'
+          });
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {

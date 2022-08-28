@@ -2,14 +2,12 @@ import 'package:miru/models/token.dart';
 import 'package:miru/utils/mal_client.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:miru/utils/global_controller.dart';
+import 'package:miru/globals.dart';
 import 'package:get/get.dart';
 import 'dart:io';
 import 'dart:convert';
 
 class TokenController {
-  final MALClient _client = Get.find<GlobalController>().client;
-
   Future<void> assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
@@ -25,7 +23,7 @@ class TokenController {
     if (fileContent.isNotEmpty &&
         fileContent["access_token"] != "invalid_token") {
       // File is not empty or 'invalid_token'. Check if access token is valid
-      _client.token = Token(
+      Globals.client.token = Token(
         accessToken: fileContent["access_token"],
         refreshToken: fileContent["refresh_token"],
       );
@@ -37,13 +35,13 @@ class TokenController {
   }
 
   Future<bool> checkValidAccessToken() async {
-    return (await _client.userDataRequest()).isNotEmpty;
+    return (await Globals.client.userDataRequest()).isNotEmpty;
   }
 
   Future<void> oAuthNewTokens() async {
     await Get.toNamed("/login");
     print("No valid tokens. Gotta auth and get new ones.");
-    String url = _client.getAuthURL();
+    String url = Globals.client.getAuthURL();
     dynamic result = await Get.toNamed(
       "/mal_web_view",
       arguments: <String, String>{
@@ -52,9 +50,9 @@ class TokenController {
     );
     Uri params = result["accessCode"];
     // Access code from URL parameter
-    _client.accessCode = params.queryParameters["code"]!;
-    await _client.getTokens();
-    await _client.writeTokensToFile();
+    Globals.client.accessCode = params.queryParameters["code"]!;
+    await Globals.client.getTokens();
+    await Globals.client.writeTokensToFile();
   }
 
   Future<void> verifyTokens() async {
@@ -65,16 +63,16 @@ class TokenController {
       print("Access code in file is valid, ez calls (line 38)");
     } else {
       print("Access code in file is not valid, gonna refresh (line 41)");
-      await _client.refreshTokens();
+      await Globals.client.refreshTokens();
       // Attempt to refresh tokens
-      if (_client.token.accessToken == "invalid_token") {
+      if (Globals.client.token.accessToken == "invalid_token") {
         print(
             "Refresh code in file isn't valid, need to get new tokens (line 45)");
         await oAuthNewTokens();
       } else {
         print("Refresh code in file is valid, ez refresh (line 61)");
         // Tokens are refreshed, access token is now valid, write to file
-        _client.writeTokensToFile();
+        Globals.client.writeTokensToFile();
       }
     }
   }

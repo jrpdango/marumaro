@@ -4,8 +4,8 @@ import 'package:path_provider/path_provider.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:miru/utils/global_controller.dart';
-import 'package:miru/utils/token_controller.dart';
+import 'package:miru/globals.dart';
+import 'package:miru/controllers/token_controller.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
 
@@ -17,9 +17,6 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  // Initialize controller for access to globals.
-  final GlobalController _controller = Get.find<GlobalController>();
-
   /// Initializes the user's anime list.
   ///
   Future<Map<String, dynamic>> _initializeAnimeList(limit) async {
@@ -30,7 +27,7 @@ class _LoadingState extends State<Loading> {
 
     for (String item in result.keys) {
       if (item != 'paging' && item != 'status_code') {
-        _controller.globalAnimeList.addAll(result[item]);
+        Globals.globalAnimeList.addAll(result[item]);
       }
     }
 
@@ -44,7 +41,7 @@ class _LoadingState extends State<Loading> {
         for (String item in newMap.keys) {
           if (item != 'paging' && item != 'status_code') {
             result[item].addAll(newMap[item]);
-            _controller.globalAnimeList.addAll(newMap[item]);
+            Globals.globalAnimeList.addAll(newMap[item]);
           }
         }
 
@@ -65,10 +62,9 @@ class _LoadingState extends State<Loading> {
     Map<String, dynamic> result =
         await _initializeAnimeList(constants.limitOfListItems);
 
-    _controller.client.clientAnimeList = result.obs;
+    Globals.client.clientAnimeList = result.obs;
 
-    _controller.client.username =
-        (await _controller.client.userDataRequest())['name'];
+    Globals.client.username = (await Globals.client.userDataRequest())['name'];
 
     // TODO: Add home page
     // Get.offNamed('/home');
