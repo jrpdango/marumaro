@@ -20,7 +20,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => Loading(),
+        '/': (context) => const Loading(),
         '/login': (context) => const Login(),
         '/mal_web_view': (context) => MALWebView(),
       },
