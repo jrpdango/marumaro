@@ -13,9 +13,9 @@ class TokenVerifier {
     File file = File("${directory.path}/miruTokens.json").existsSync()
         ? File("${directory.path}/miruTokens.json")
         : await File("${directory.path}/miruTokens.json").create();
-    dynamic fileContent = file.readAsStringSync().isNotEmpty
+    Map<String, dynamic> fileContent = file.readAsStringSync().isNotEmpty
         ? json.decode(file.readAsStringSync())
-        : file.readAsStringSync();
+        : <String, dynamic>{};
     if (fileContent.isNotEmpty &&
         fileContent["access_token"] != "invalid_token") {
       // File is not empty or 'invalid_token'. Check if access token is valid
