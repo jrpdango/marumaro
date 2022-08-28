@@ -13,6 +13,13 @@ class TokenController {
     print("Refresh token: ${Globals.client.token.refreshToken}");
   }
 
+  Future<void> refreshTokens() async {
+    Globals.client.token = await Globals.client.oAuthRequest.refreshTokens();
+    print("DEBUG: Tokens refreshed:");
+    print("Access token: ${Globals.client.token.accessToken}");
+    print("Refresh token: ${Globals.client.token.refreshToken}");
+  }
+
   Future<void> assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
@@ -68,7 +75,7 @@ class TokenController {
       print("Access code in file is valid, ez calls (line 38)");
     } else {
       print("Access code in file is not valid, gonna refresh (line 41)");
-      await Globals.client.refreshTokens();
+      await refreshTokens();
       // Attempt to refresh tokens
       if (Globals.client.token.accessToken == "invalid_token") {
         print(

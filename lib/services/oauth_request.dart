@@ -35,15 +35,15 @@ class OAuthRequest {
     return token;
   }
 
-  Future<Token> refreshTokens(MALClient client, Token token) async {
+  Future<Token> refreshTokens() async {
     Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");
     // String url = "https://myanimelist.net/v1/oauth2/token";
     Map<String, String> data = {
       "client_id": MALClient.CLIENTID,
       "grant_type": "refresh_token",
-      "refresh_token": token.refreshToken
+      "refresh_token": Globals.client.token.refreshToken
     };
-    Response response = await client.userClient.post(url, body: data);
+    Response response = await Globals.client.userClient.post(url, body: data);
     Map? responseMap;
     Token refreshedToken;
     if (response.statusCode == 200) {

@@ -55,12 +55,12 @@ class MALClient {
   //   print("Refresh token: ${this.token.refreshToken}");
   // }
 
-  Future<void> refreshTokens() async {
-    this.token = await oAuthRequest.refreshTokens(this, this.token);
-    print("DEBUG: Tokens refreshed:");
-    print("Access token: ${this.token.accessToken}");
-    print("Refresh token: ${this.token.refreshToken}");
-  }
+  // Future<void> refreshTokens() async {
+  //   this.token = await oAuthRequest.refreshTokens(this, this.token);
+  //   print("DEBUG: Tokens refreshed:");
+  //   print("Access token: ${this.token.accessToken}");
+  //   print("Refresh token: ${this.token.refreshToken}");
+  // }
 
   // Method to write tokens to device
   Future<File> writeTokensToFile() async {
