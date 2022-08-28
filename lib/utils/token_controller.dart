@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'dart:io';
 import 'dart:convert';
 
-class TokenVerifier {
+class TokenController {
   final _client = Get.put(GlobalController()).client;
 
   Future<void> assignTokenFromFile() async {
