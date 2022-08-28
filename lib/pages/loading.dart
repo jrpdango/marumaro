@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/utils/global_controller.dart';
-import 'package:miru/utils/token_verifier.dart';
+import 'package:miru/utils/token_controller.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
 
@@ -84,7 +84,7 @@ class _LoadingState extends State<Loading> {
   @override
   void initState() {
     super.initState();
-    _setupMALConnection(deleteTokens: true);
+    _setupMALConnection(deleteTokens: false);
   }
 
   @override
