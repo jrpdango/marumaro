@@ -41,42 +41,6 @@ class MALClient {
     return url;
   }
 
-  // TODO - maybe replace checkValidAccessToken in token_verifier
-  // Future<bool> hasValidAccessToken() async {
-  //   Map checker = await this.getUserData();
-  //   if (checker["status_code"] == 200) return true;
-  //   return false;
-  // }
-
-  // Future<void> getTokens() async {
-  //   this.token = await oAuthRequest.generateTokens(this, this.accessCode);
-  //   print("DEBUG: Tokens received:");
-  //   print("Access token: ${this.token.accessToken}");
-  //   print("Refresh token: ${this.token.refreshToken}");
-  // }
-
-  // Future<void> refreshTokens() async {
-  //   this.token = await oAuthRequest.refreshTokens(this, this.token);
-  //   print("DEBUG: Tokens refreshed:");
-  //   print("Access token: ${this.token.accessToken}");
-  //   print("Refresh token: ${this.token.refreshToken}");
-  // }
-
-  // // Method to write tokens to device
-  // Future<File> writeTokensToFile() async {
-  //   Directory directory = await getApplicationDocumentsDirectory();
-  //   File file = File("${directory.path}/miruTokens.json");
-  //   String data = json.encode({
-  //     "access_token": token.accessToken,
-  //     "refresh_token": token.refreshToken
-  //   });
-  //   if (file.readAsStringSync().isNotEmpty) {
-  //     await File("${directory.path}/miruTokens.json").delete();
-  //     file = await File("${directory.path}/miruTokens.json").create();
-  //   }
-  //   return await file.writeAsString(data);
-  // }
-
   // Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {
   //   return await animeSearchRequest.createRequest(this);
   // }
