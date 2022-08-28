@@ -13,7 +13,7 @@ class UserDataRequest {
   });
 
   Future<Map> createRequest() async {
-    final _client = Get.put(GlobalController()).client;
+    final client = Get.put(GlobalController()).client;
     Uri uri;
 
     if (mode == 'MAL') {
@@ -26,15 +26,15 @@ class UserDataRequest {
       uri = Uri(
         scheme: "https",
         host: "api.jikan.moe",
-        path: "v4/users/${_client.username}/${isFull ? 'full' : ''}",
+        path: "v4/users/${client.username}/${isFull ? 'full' : ''}",
       );
     }
 
     // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
     try {
-      http.Response response = await _client.userClient.get(uri,
-          headers: {"Authorization": "Bearer ${_client.token.accessToken}"});
+      http.Response response = await client.userClient.get(uri,
+          headers: {"Authorization": "Bearer ${client.token.accessToken}"});
       Map<String, dynamic> respMap = <String, dynamic>{};
       if (response.statusCode == 200) {
         //respMap gives a json response of keys {id, name, birthday, location, joined_at}
