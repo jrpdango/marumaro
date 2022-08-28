@@ -40,7 +40,7 @@ class TokenVerifier {
     print("No valid tokens. Gotta auth and get new ones.");
     String url = client.getAuthURL();
     dynamic result = await Get.toNamed(
-      "/malweb",
+      "/mal_web_view",
       arguments: <String, String>{
         "url": url,
       },
