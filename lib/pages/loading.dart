@@ -24,7 +24,7 @@ class _LoadingState extends State<Loading> {
   /// Initializes the user's anime list.
   ///
   Future<Map<String, dynamic>> initializeAnimeList(limit) async {
-    Map<String, dynamic> newMap = Map();
+    Map<String, dynamic> newMap = {};
 
     final Map<String, dynamic> result =
         await AnimeListRequest(limit: limit).createRequest();
