@@ -5,11 +5,11 @@ import 'dart:convert';
 
 class UserDataRequest {
   final String mode;
-  final bool isFull;
+  final bool isFullImage;
 
   const UserDataRequest({
     required this.mode,
-    this.isFull = false,
+    this.isFullImage = false,
   });
 
   Future<Map> createRequest() async {
@@ -26,7 +26,7 @@ class UserDataRequest {
       uri = Uri(
         scheme: "https",
         host: "api.jikan.moe",
-        path: "v4/users/${client.username}/${isFull ? 'full' : ''}",
+        path: "v4/users/${client.username}/${isFullImage ? 'full' : ''}",
       );
     }
 
