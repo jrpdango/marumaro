@@ -17,7 +17,9 @@ import 'package:miru/services/user_data_request.dart';
 import 'package:flutter/material.dart' show NetworkImage;
 
 class MALClient {
-  static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
+  final String clientId = "b6cd1c6e3172ade1142272d4c288bdf2";
+  // TODO: Probably move assigning of AccessCode
+  // AccessCode received from oAuthNewTokens method in token_controller
   late String accessCode;
   final HttpClient httpClient = new HttpClient()
     ..badCertificateCallback =
@@ -34,7 +36,7 @@ class MALClient {
     String url;
     try {
       // Receive URL with PKCE challenge
-      url = oAuthRequest.createRequest(this);
+      url = oAuthRequest.createRequest();
     } catch (e) {
       url = "Something happened here";
     }
@@ -49,10 +51,10 @@ class MALClient {
   // }
 
   Future<void> refreshTokens() async {
-    this.token = await oAuthRequest.refreshTokens(this, this.token);
+    token = await oAuthRequest.refreshTokens(token);
     print("DEBUG: Tokens refreshed:");
-    print("Access token: ${this.token.accessToken}");
-    print("Refresh token: ${this.token.refreshToken}");
+    print("Access token: ${token.accessToken}");
+    print("Refresh token: ${token.refreshToken}");
   }
 
   // Method to write tokens to device
