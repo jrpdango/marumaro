@@ -10,13 +10,6 @@ import 'dart:convert';
 class TokenController {
   final _client = Get.put(GlobalController()).client;
 
-  Future<void> getTokens() async {
-    this.token = await oAuthRequest.generateTokens(this, this.accessCode);
-    print("DEBUG: Tokens received:");
-    print("Access token: ${this.token.accessToken}");
-    print("Refresh token: ${this.token.refreshToken}");
-  }
-
   Future<void> assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
