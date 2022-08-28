@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 // -------------- PAGES ------------------
 import 'package:miru/pages/loading.dart';
+import 'package:miru/pages/login.dart';
 import 'package:miru/pages/mal_web_view.dart';
 
 void main() {
@@ -20,6 +21,7 @@ void main() {
       initialRoute: '/',
       routes: {
         '/': (context) => Loading(),
+        '/login': (context) => const Login(),
         '/mal_web_view': (context) => MALWebView(),
       },
     ),
