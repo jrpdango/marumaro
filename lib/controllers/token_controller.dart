@@ -1,6 +1,4 @@
 import 'package:miru/models/token.dart';
-import 'package:miru/utils/mal_client.dart';
-import 'package:miru/services/user_data_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/globals.dart';
 import 'package:get/get.dart';
@@ -8,6 +6,14 @@ import 'dart:io';
 import 'dart:convert';
 
 class TokenController {
+  Future<void> getTokens() async {
+    Globals.client.token = await Globals.client.oAuthRequest
+        .generateTokens(Globals.client, Globals.client.accessCode);
+    print("DEBUG: Tokens received:");
+    print("Access token: ${Globals.client.token.accessToken}");
+    print("Refresh token: ${Globals.client.token.refreshToken}");
+  }
+
   Future<void> assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
@@ -51,7 +57,7 @@ class TokenController {
     Uri params = result["accessCode"];
     // Access code from URL parameter
     Globals.client.accessCode = params.queryParameters["code"]!;
-    await Globals.client.getTokens();
+    await getTokens();
     await Globals.client.writeTokensToFile();
   }
 
