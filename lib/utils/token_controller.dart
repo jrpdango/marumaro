@@ -1,5 +1,5 @@
 import 'package:miru/models/token.dart';
-import 'package:miru/utils/mal_client.dart' show MALClient;
+import 'package:miru/utils/mal_client.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/utils/global_controller.dart';
@@ -8,7 +8,7 @@ import 'dart:io';
 import 'dart:convert';
 
 class TokenController {
-  final MALClient _client = Get.put(GlobalController()).client;
+  final _client = Get.put(GlobalController()).client;
 
   Future<void> getTokens() async {
     this.token = await oAuthRequest.generateTokens(this, this.accessCode);
