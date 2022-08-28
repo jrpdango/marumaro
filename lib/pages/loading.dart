@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/utils/global_controller.dart';
-import 'package:miru/services/token_verifier.dart';
+import 'package:miru/utils/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:miru/constants.dart' as Constants show limitOfListItems;
