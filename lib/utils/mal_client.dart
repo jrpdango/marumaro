@@ -11,7 +11,7 @@ import 'package:miru/models/token.dart';
 // import 'package:miru/services/update_list_request.dart';
 import 'package:miru/services/oauth_request.dart';
 import 'package:miru/utils/pkce_code_generator.dart';
-// import 'package:miru/services/user_data_request.dart';
+import 'package:miru/services/user_data_request.dart';
 import 'package:flutter/material.dart' show NetworkImage;
 
 class MALClient {
@@ -79,6 +79,10 @@ class MALClient {
   //   String response = await deleteAnimeRequest.createRequest(this);
   //   print(response);
   // }
+
+  Future<Map> userDataRequest() {
+    return const UserDataRequest(mode: 'MAL').createRequest();
+  }
 
   void logout() {
     this.userClient.close();

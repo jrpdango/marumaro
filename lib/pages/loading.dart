@@ -68,10 +68,13 @@ class _LoadingState extends State<Loading> {
 
     _controller.client.clientAnimeList = result.obs;
 
-    _controller.client.username =
-        (await (UserDataRequest(mode: 'MAL')).createRequest())['name'];
+    // _controller.client.username =
+    //     (await (UserDataRequest(mode: 'MAL')).createRequest())['name'];
 
-    Get.offNamed('/home');
+    _controller.client.username =
+        (await _controller.client.userDataRequest())['name'];
+
+    // Get.offNamed('/home');
   }
 
   /// Deletes locally-stored tokens.
