@@ -7,8 +7,7 @@ import 'dart:convert';
 
 class TokenController {
   Future<void> getTokens() async {
-    Globals.client.token = await Globals.client.oAuthRequest
-        .generateTokens(Globals.client, Globals.client.accessCode);
+    Globals.client.token = await Globals.client.oAuthRequest.generateTokens();
     print("DEBUG: Tokens received:");
     print("Access token: ${Globals.client.token.accessToken}");
     print("Refresh token: ${Globals.client.token.refreshToken}");

@@ -16,12 +16,12 @@ class OAuthRequest {
     return url;
   }
 
-  Future<Token> generateTokens(MALClient client, String code) async {
+  Future<Token> generateTokens() async {
     Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");
     // String url = "https://myanimelist.net/v1/oauth2/token";
     Map<String, String> data = {
       "client_id": MALClient.CLIENTID,
-      "code": code,
+      "code": Globals.client.accessCode,
       "code_verifier": this.codeChallenge,
       "grant_type": "authorization_code"
     };

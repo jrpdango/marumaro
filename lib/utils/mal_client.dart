@@ -48,12 +48,12 @@ class MALClient {
   //   return false;
   // }
 
-  Future<void> getTokens() async {
-    this.token = await oAuthRequest.generateTokens(this, this.accessCode);
-    print("DEBUG: Tokens received:");
-    print("Access token: ${this.token.accessToken}");
-    print("Refresh token: ${this.token.refreshToken}");
-  }
+  // Future<void> getTokens() async {
+  //   this.token = await oAuthRequest.generateTokens(this, this.accessCode);
+  //   print("DEBUG: Tokens received:");
+  //   print("Access token: ${this.token.accessToken}");
+  //   print("Refresh token: ${this.token.refreshToken}");
+  // }
 
   Future<void> refreshTokens() async {
     this.token = await oAuthRequest.refreshTokens(this, this.token);
