@@ -1,5 +1,5 @@
 import 'package:miru/models/token.dart';
-import 'package:miru/models/mal_client.dart';
+import 'package:miru/utils/mal_client.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:get/get.dart';
