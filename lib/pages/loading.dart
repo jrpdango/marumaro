@@ -50,7 +50,7 @@ class _LoadingState extends State<Loading> {
         result['paging']['next'] = newMap['paging']!['next'];
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
     return result;
   }
