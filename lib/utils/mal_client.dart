@@ -62,20 +62,20 @@ class MALClient {
   //   print("Refresh token: ${this.token.refreshToken}");
   // }
 
-  // Method to write tokens to device
-  Future<File> writeTokensToFile() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    File file = File("${directory.path}/miruTokens.json");
-    String data = json.encode({
-      "access_token": token.accessToken,
-      "refresh_token": token.refreshToken
-    });
-    if (file.readAsStringSync().isNotEmpty) {
-      await File("${directory.path}/miruTokens.json").delete();
-      file = await File("${directory.path}/miruTokens.json").create();
-    }
-    return await file.writeAsString(data);
-  }
+  // // Method to write tokens to device
+  // Future<File> writeTokensToFile() async {
+  //   Directory directory = await getApplicationDocumentsDirectory();
+  //   File file = File("${directory.path}/miruTokens.json");
+  //   String data = json.encode({
+  //     "access_token": token.accessToken,
+  //     "refresh_token": token.refreshToken
+  //   });
+  //   if (file.readAsStringSync().isNotEmpty) {
+  //     await File("${directory.path}/miruTokens.json").delete();
+  //     file = await File("${directory.path}/miruTokens.json").create();
+  //   }
+  //   return await file.writeAsString(data);
+  // }
 
   // Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {
   //   return await animeSearchRequest.createRequest(this);

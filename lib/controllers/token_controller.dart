@@ -20,6 +20,21 @@ class TokenController {
     print("Refresh token: ${Globals.client.token.refreshToken}");
   }
 
+  // Method to write tokens to device
+  Future<File> writeTokensToFile() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    File file = File("${directory.path}/miruTokens.json");
+    String data = json.encode({
+      "access_token": Globals.client.token.accessToken,
+      "refresh_token": Globals.client.token.refreshToken
+    });
+    if (file.readAsStringSync().isNotEmpty) {
+      await File("${directory.path}/miruTokens.json").delete();
+      file = await File("${directory.path}/miruTokens.json").create();
+    }
+    return await file.writeAsString(data);
+  }
+
   Future<void> assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
@@ -64,7 +79,7 @@ class TokenController {
     // Access code from URL parameter
     Globals.client.accessCode = params.queryParameters["code"]!;
     await getTokens();
-    await Globals.client.writeTokensToFile();
+    await writeTokensToFile();
   }
 
   Future<void> verifyTokens() async {
@@ -84,7 +99,7 @@ class TokenController {
       } else {
         print("Refresh code in file is valid, ez refresh (line 61)");
         // Tokens are refreshed, access token is now valid, write to file
-        Globals.client.writeTokensToFile();
+        writeTokensToFile();
       }
     }
   }
