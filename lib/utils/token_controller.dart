@@ -8,7 +8,7 @@ import 'dart:io';
 import 'dart:convert';
 
 class TokenController {
-  final _client = Get.put(GlobalController()).client;
+  final MALClient _client = Get.find<GlobalController>().client;
 
   Future<void> assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();

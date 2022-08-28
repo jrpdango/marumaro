@@ -18,7 +18,7 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   // Initialize controller for access to globals.
-  final _controller = Get.put(GlobalController());
+  final GlobalController _controller = Get.find<GlobalController>();
 
   /// Initializes the user's anime list.
   ///

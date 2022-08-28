@@ -3,6 +3,8 @@ import 'package:miru/utils/global_controller.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:miru/utils/mal_client.dart';
+
 class UserDataRequest {
   final String mode;
   final bool isFullImage;
@@ -13,7 +15,7 @@ class UserDataRequest {
   });
 
   Future<Map<String, dynamic>> createRequest() async {
-    final client = Get.put(GlobalController()).client;
+    final MALClient client = Get.find<GlobalController>().client;
     Uri uri;
 
     if (mode == 'MAL') {

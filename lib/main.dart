@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:miru/main_binding.dart';
 
 // -------------- PAGES ------------------
 import 'package:miru/pages/loading.dart';
@@ -14,6 +15,7 @@ void main() {
     await Future.delayed(const Duration(seconds: 1));
     SystemChrome.restoreSystemUIOverlays();
   });
+  MainBinding().dependencies();
 
   runApp(
     GetMaterialApp(
