@@ -12,7 +12,7 @@ class UserDataRequest {
     this.isFullImage = false,
   });
 
-  Future<Map> createRequest() async {
+  Future<Map<String, dynamic>> createRequest() async {
     final client = Get.put(GlobalController()).client;
     Uri uri;
 

@@ -36,9 +36,8 @@ class TokenVerifier {
     }
   }
 
-  Future<Map> checkValidAccessToken(MALClient client, Token token) async {
-    Map checker = await (UserDataRequest(mode: 'MAL').createRequest());
-    return checker;
+  Future<bool> checkValidAccessToken() async {
+    return (await _client.userDataRequest()).isNotEmpty;
   }
 
   Future<void> oAuthNewTokens() async {
@@ -60,13 +59,10 @@ class TokenVerifier {
 
   Future<void> verifyTokens() async {
     await assignTokenFromFile();
-    Map checkResult = await checkValidAccessToken(_client, _client.token);
-    if (checkResult["status_code"] == 200) {
+    bool isAccessTokenValid = await checkValidAccessToken();
+    if (isAccessTokenValid) {
       // Access token is valid, client can make calls
       print("Access code in file is valid, ez calls (line 38)");
-    } else if (checkResult["status_code"] == "invalid_code") {
-      print(
-          "Device is offline. Showing list stored in file. Status code: ${checkResult["status_code"]}");
     } else {
       print("Access code in file is not valid, gonna refresh (line 41)");
       await _client.refreshTokens();
