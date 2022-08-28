@@ -8,7 +8,7 @@ import 'package:miru/utils/global_controller.dart';
 import 'package:miru/utils/token_verifier.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/user_data_request.dart';
-import 'package:miru/constants.dart' as Constants show limitOfListItems;
+import 'package:miru/constants.dart' as constants show limitOfListItems;
 
 class Loading extends StatefulWidget {
   const Loading({Key? key}) : super(key: key);
@@ -64,7 +64,7 @@ class _LoadingState extends State<Loading> {
     await TokenVerifier.verifyTokens(_controller.client);
 
     Map<String, dynamic> result =
-        await initializeAnimeList(Constants.limitOfListItems);
+        await initializeAnimeList(constants.limitOfListItems);
 
     _controller.client.clientAnimeList = result.obs;
 
