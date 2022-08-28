@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 // -------------- PAGES ------------------
 import 'package:miru/pages/loading.dart';
+import 'package:miru/pages/mal_web_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,9 +17,10 @@ void main() {
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: "/",
+      initialRoute: '/',
       routes: {
         '/': (context) => Loading(),
+        '/mal_web_view': (context) => MALWebView(),
       },
     ),
   );
