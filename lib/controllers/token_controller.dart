@@ -6,7 +6,7 @@ import 'dart:io';
 import 'dart:convert';
 
 class TokenController {
-  Future<void> getTokens() async {
+  Future<void> _getTokens() async {
     Globals.client.token = await Globals.client.oAuthRequest.generateTokens();
     print("DEBUG: Tokens received:");
     print("Access token: ${Globals.client.token.accessToken}");
@@ -78,7 +78,7 @@ class TokenController {
     Uri params = result["accessCode"];
     // Access code from URL parameter
     Globals.client.accessCode = params.queryParameters["code"]!;
-    await getTokens();
+    await _getTokens();
     await writeTokensToFile();
   }
 
