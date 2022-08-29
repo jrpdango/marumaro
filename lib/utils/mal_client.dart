@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:miru/services/token_generate_request.dart';
+import 'package:miru/utils/oauth_url_generator.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:get/get.dart';
@@ -12,7 +13,6 @@ import 'package:http/io_client.dart';
 // import 'package:miru/services/delete_anime_request.dart';
 import 'package:miru/models/token.dart';
 // import 'package:miru/services/update_list_request.dart';
-import 'package:miru/services/oauth_request.dart';
 import 'package:miru/utils/pkce_code_generator.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:flutter/material.dart' show NetworkImage;
@@ -31,12 +31,12 @@ class MALClient {
   NetworkImage? userImage;
 
   String getAuthURL() {
-    final OAuthRequest oAuthRequest =
-        OAuthRequest(codeChallenge: codeChallenge);
+    final OAuthURLGenerator oAuthURLGenerator =
+        OAuthURLGenerator(codeChallenge: codeChallenge);
     String url;
     try {
       // Receive URL with PKCE challenge
-      url = oAuthRequest.send();
+      url = oAuthURLGenerator.generate();
     } catch (e) {
       url = "Something happened here";
     }
