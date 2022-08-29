@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:miru/models/token.dart';
+import 'package:miru/services/token_generate_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/globals.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,7 @@ import 'dart:convert';
 
 class TokenController {
   Future<void> _getTokens() async {
-    Globals.client.token = await Globals.client.generateTokens();
+    Globals.client.token = await const TokenGenerateRequest().send();
     debugPrint("DEBUG: Tokens received:");
     debugPrint("Access token: ${Globals.client.token.accessToken}");
     debugPrint("Refresh token: ${Globals.client.token.refreshToken}");

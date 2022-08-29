@@ -43,10 +43,6 @@ class MALClient {
     return url;
   }
 
-  Future<Token> generateTokens() async {
-    return (await const TokenGenerateRequest().send());
-  }
-
   // Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {
   //   return await animeSearchRequest.createRequest(this);
   // }
