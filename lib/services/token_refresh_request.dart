@@ -21,7 +21,11 @@ class TokenRefreshRequest {
     TokenPair refreshedTokenPair;
 
     try {
-      Response response = await Globals.client.userClient.post(url, body: data);
+      Response response = await Globals.client.userClient.post(
+        url,
+        body: data,
+      );
+
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = json.decode(response.body);
         refreshedTokenPair = TokenPair(
@@ -35,10 +39,14 @@ class TokenRefreshRequest {
           'Something went wrong with requesting for a token refresh: Status ${response.statusCode}',
         );
       }
+
       return refreshedTokenPair;
     } catch (e) {
       refreshedTokenPair = TokenPair(
-          accessToken: "invalid_token", refreshToken: "invalid_token");
+        accessToken: "invalid_token",
+        refreshToken: "invalid_token",
+      );
+
       debugPrint('Something went wrong. $e');
     }
 
