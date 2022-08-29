@@ -43,7 +43,7 @@ class UserDataRequest {
           });
       Map<String, dynamic> respMap = <String, dynamic>{};
       if (response.statusCode == 200) {
-        //respMap gives a json response of keys {id, name, birthday, location, joined_at}
+        //respMap gives a json response of keys {id, name, birthday, location, joined_at}`
         respMap = json.decode(response.body);
       }
       return respMap;
