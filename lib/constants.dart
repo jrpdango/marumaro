@@ -1,3 +1,4 @@
+/// Limit of how many list items can be retrieved in one call.
 const int limitOfListItems = 300;
 
 /// MAL API URL for generating or refreshing token pairs.
