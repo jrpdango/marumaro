@@ -72,7 +72,7 @@ class TokenController {
   Future<void> oAuthNewTokens() async {
     await Get.toNamed("/login");
     debugPrint("No valid tokens. Gotta auth and get new ones.");
-    String url = Globals.client.getAuthURL();
+    String url = Globals.client.generateAuthURL();
     dynamic result = await Get.toNamed(
       "/mal_web_view",
       arguments: <String, String>{

@@ -30,17 +30,11 @@ class MALClient {
   String? username;
   NetworkImage? userImage;
 
-  String getAuthURL() {
+  String generateAuthURL() {
     final OAuthURLGenerator oAuthURLGenerator =
         OAuthURLGenerator(codeChallenge: codeChallenge);
-    String url;
-    try {
-      // Receive URL with PKCE challenge
-      url = oAuthURLGenerator.generate();
-    } catch (e) {
-      url = "Something happened here";
-    }
-    return url;
+    // Return URL with PKCE challenge
+    return oAuthURLGenerator.generate();
   }
 
   // Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {
