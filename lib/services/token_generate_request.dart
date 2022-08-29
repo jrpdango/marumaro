@@ -25,11 +25,11 @@ class TokenGenerateRequest {
     };
     Response response = await Globals.client.userClient.post(url, body: data);
     Map responseMap = json.decode(response.body);
-    TokenPair token = TokenPair(
+    TokenPair tokenPair = TokenPair(
         accessToken: responseMap["access_token"],
         refreshToken: responseMap["refresh_token"]);
     debugPrint("Status Code for token generation: ${response.statusCode}");
     debugPrint(responseMap.toString());
-    return token;
+    return tokenPair;
   }
 }

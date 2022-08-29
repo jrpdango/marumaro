@@ -78,7 +78,7 @@ class AnimeListRequest {
       }
       http.Response response = await Globals.client.userClient.get(uri!,
           headers: {
-            'Authorization': 'Bearer ${Globals.client.token.accessToken}'
+            'Authorization': 'Bearer ${Globals.client.tokenPair.accessToken}'
           });
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);

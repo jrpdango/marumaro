@@ -39,7 +39,7 @@ class UserDataRequest {
     try {
       http.Response response = await Globals.client.userClient.get(uri,
           headers: {
-            "Authorization": "Bearer ${Globals.client.token.accessToken}"
+            "Authorization": "Bearer ${Globals.client.tokenPair.accessToken}"
           });
       Map<String, dynamic> respMap = <String, dynamic>{};
       if (response.statusCode == 200) {

@@ -16,22 +16,22 @@ class TokenRefreshRequest {
     Map<String, String> data = {
       "client_id": MALClient.clientId,
       "grant_type": "refresh_token",
-      "refresh_token": Globals.client.token.refreshToken
+      "refresh_token": Globals.client.tokenPair.refreshToken
     };
     Response response = await Globals.client.userClient.post(url, body: data);
     Map? responseMap;
-    TokenPair refreshedToken;
+    TokenPair refreshedTokenPair;
     if (response.statusCode == 200) {
       responseMap = json.decode(response.body);
-      refreshedToken = TokenPair(
+      refreshedTokenPair = TokenPair(
           accessToken: responseMap!["access_token"],
           refreshToken: responseMap["refresh_token"]);
     } else {
-      refreshedToken = TokenPair(
+      refreshedTokenPair = TokenPair(
           accessToken: "invalid_token", refreshToken: "invalid_token");
     }
     debugPrint("Status Code for token refresh: ${response.statusCode}");
     debugPrint(responseMap.toString());
-    return refreshedToken;
+    return refreshedTokenPair;
   }
 }

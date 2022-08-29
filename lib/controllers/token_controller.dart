@@ -12,18 +12,18 @@ class TokenController {
   String? _accessCode;
 
   Future<void> _getTokens() async {
-    Globals.client.token =
+    Globals.client.tokenPair =
         await TokenGenerateRequest(accessCode: _accessCode).send();
     debugPrint("DEBUG: Tokens received:");
-    debugPrint("Access token: ${Globals.client.token.accessToken}");
-    debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
+    debugPrint("Access token: ${Globals.client.tokenPair.accessToken}");
+    debugPrint("Refresh token: ${Globals.client.tokenPair.refreshToken}");
   }
 
   Future<void> _refreshTokens() async {
-    Globals.client.token = await const TokenRefreshRequest().send();
+    Globals.client.tokenPair = await const TokenRefreshRequest().send();
     debugPrint("DEBUG: Tokens refreshed:");
-    debugPrint("Access token: ${Globals.client.token.accessToken}");
-    debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
+    debugPrint("Access token: ${Globals.client.tokenPair.accessToken}");
+    debugPrint("Refresh token: ${Globals.client.tokenPair.refreshToken}");
   }
 
   // Method to write tokens to device
@@ -31,8 +31,8 @@ class TokenController {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File("${directory.path}/miruTokens.json");
     String data = json.encode({
-      "access_token": Globals.client.token.accessToken,
-      "refresh_token": Globals.client.token.refreshToken
+      "access_token": Globals.client.tokenPair.accessToken,
+      "refresh_token": Globals.client.tokenPair.refreshToken
     });
     if (file.readAsStringSync().isNotEmpty) {
       await File("${directory.path}/miruTokens.json").delete();
@@ -56,7 +56,7 @@ class TokenController {
     if (fileContent.isNotEmpty &&
         fileContent["access_token"] != "invalid_token") {
       // File is not empty or 'invalid_token'. Check if access token is valid
-      Globals.client.token = TokenPair(
+      Globals.client.tokenPair = TokenPair(
         accessToken: fileContent["access_token"],
         refreshToken: fileContent["refresh_token"],
       );
@@ -88,7 +88,7 @@ class TokenController {
       debugPrint("Access code in file is not valid, gonna refresh (line 41)");
       await _refreshTokens();
       // Attempt to refresh tokens
-      if (Globals.client.token.accessToken == "invalid_token") {
+      if (Globals.client.tokenPair.accessToken == "invalid_token") {
         debugPrint(
             "Refresh code in file isn't valid, need to get new tokens (line 45)");
         await oAuthNewTokens();
