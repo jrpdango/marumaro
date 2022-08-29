@@ -18,24 +18,6 @@ class OAuthRequest {
   }
 
   // TODO: Create a separate service for this and refresh
-  Future<Token> generateTokens() async {
-    Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");
-    // String url = "https://myanimelist.net/v1/oauth2/token";
-    Map<String, String> data = {
-      "client_id": MALClient.CLIENTID,
-      "code": Globals.client.accessCode,
-      "code_verifier": this.codeChallenge,
-      "grant_type": "authorization_code"
-    };
-    Response response = await Globals.client.userClient.post(url, body: data);
-    Map responseMap = json.decode(response.body);
-    Token token = Token(
-        accessToken: responseMap["access_token"],
-        refreshToken: responseMap["refresh_token"]);
-    print("Status Code for token generation: ${response.statusCode}");
-    print(responseMap);
-    return token;
-  }
 
   Future<Token> refreshTokens() async {
     Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:miru/services/token_generate_request.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:get/get.dart';
@@ -18,19 +19,20 @@ import 'package:flutter/material.dart' show NetworkImage;
 
 class MALClient {
   static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
+  final String codeChallenge = CodeGenerator.genPKCEcode();
   late String accessCode;
   final HttpClient httpClient = new HttpClient()
     ..badCertificateCallback =
         ((X509Certificate cert, String host, int port) => true);
   late Client userClient = IOClient(httpClient);
-  final OAuthRequest oAuthRequest =
-      OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
   late Token token;
   late RxMap<String, dynamic> clientAnimeList;
   String? username;
   NetworkImage? userImage;
 
   String getAuthURL() {
+    final OAuthRequest oAuthRequest =
+        OAuthRequest(codeChallenge: codeChallenge);
     String url;
     try {
       // Receive URL with PKCE challenge
@@ -39,6 +41,10 @@ class MALClient {
       url = "Something happened here";
     }
     return url;
+  }
+
+  Future<Token> generateTokens() async {
+    return (await const TokenGenerateRequest().send());
   }
 
   // Future<Map> animeSearch(AnimeSearchRequest animeSearchRequest) async {

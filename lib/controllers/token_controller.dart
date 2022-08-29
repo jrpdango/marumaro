@@ -8,18 +8,18 @@ import 'dart:convert';
 
 class TokenController {
   Future<void> _getTokens() async {
-    Globals.client.token = await Globals.client.oAuthRequest.generateTokens();
+    Globals.client.token = await Globals.client.generateTokens();
     debugPrint("DEBUG: Tokens received:");
     debugPrint("Access token: ${Globals.client.token.accessToken}");
     debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
   }
 
-  Future<void> _refreshTokens() async {
-    Globals.client.token = await Globals.client.oAuthRequest.refreshTokens();
-    debugPrint("DEBUG: Tokens refreshed:");
-    debugPrint("Access token: ${Globals.client.token.accessToken}");
-    debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
-  }
+  // Future<void> _refreshTokens() async {
+  //   Globals.client.token = await Globals.client.oAuthRequest.refreshTokens();
+  //   debugPrint("DEBUG: Tokens refreshed:");
+  //   debugPrint("Access token: ${Globals.client.token.accessToken}");
+  //   debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
+  // }
 
   // Method to write tokens to device
   Future<File> _writeTokensToFile() async {
@@ -92,7 +92,7 @@ class TokenController {
       debugPrint("Access code in file is valid, ez calls (line 38)");
     } else {
       debugPrint("Access code in file is not valid, gonna refresh (line 41)");
-      await _refreshTokens();
+      // await _refreshTokens();
       // Attempt to refresh tokens
       if (Globals.client.token.accessToken == "invalid_token") {
         debugPrint(
