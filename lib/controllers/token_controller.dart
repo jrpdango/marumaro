@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:miru/models/token.dart';
 import 'package:miru/services/token_generate_request.dart';
+import 'package:miru/services/token_refresh_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/globals.dart';
 import 'package:get/get.dart';
@@ -15,12 +16,12 @@ class TokenController {
     debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
   }
 
-  // Future<void> _refreshTokens() async {
-  //   Globals.client.token = await Globals.client.oAuthRequest.refreshTokens();
-  //   debugPrint("DEBUG: Tokens refreshed:");
-  //   debugPrint("Access token: ${Globals.client.token.accessToken}");
-  //   debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
-  // }
+  Future<void> _refreshTokens() async {
+    Globals.client.token = await const TokenRefreshRequest().send();
+    debugPrint("DEBUG: Tokens refreshed:");
+    debugPrint("Access token: ${Globals.client.token.accessToken}");
+    debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
+  }
 
   // Method to write tokens to device
   Future<File> _writeTokensToFile() async {
@@ -93,7 +94,7 @@ class TokenController {
       debugPrint("Access code in file is valid, ez calls (line 38)");
     } else {
       debugPrint("Access code in file is not valid, gonna refresh (line 41)");
-      // await _refreshTokens();
+      await _refreshTokens();
       // Attempt to refresh tokens
       if (Globals.client.token.accessToken == "invalid_token") {
         debugPrint(
