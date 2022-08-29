@@ -9,13 +9,17 @@ import 'package:miru/utils/mal_client.dart';
 import 'package:miru/constants.dart' as constants;
 
 class TokenGenerateRequest {
-  const TokenGenerateRequest();
+  final String? accessCode;
+
+  const TokenGenerateRequest({
+    this.accessCode,
+  });
 
   Future<Token> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
       "client_id": MALClient.clientId,
-      "code": Globals.client.accessCode,
+      "code": accessCode ?? '',
       "code_verifier": Globals.client.codeChallenge,
       "grant_type": "authorization_code"
     };

@@ -1,16 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:miru/models/token.dart';
+import 'package:miru/services/oauth_request.dart';
 import 'package:miru/services/token_generate_request.dart';
 import 'package:miru/services/token_refresh_request.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/globals.dart';
-import 'package:get/get.dart';
 import 'dart:io';
 import 'dart:convert';
 
 class TokenController {
+  String? _accessCode;
+
   Future<void> _getTokens() async {
-    Globals.client.token = await const TokenGenerateRequest().send();
+    Globals.client.token =
+        await TokenGenerateRequest(accessCode: _accessCode).send();
     debugPrint("DEBUG: Tokens received:");
     debugPrint("Access token: ${Globals.client.token.accessToken}");
     debugPrint("Refresh token: ${Globals.client.token.refreshToken}");
@@ -70,18 +73,7 @@ class TokenController {
   }
 
   Future<void> oAuthNewTokens() async {
-    await Get.toNamed("/login");
-    debugPrint("No valid tokens. Gotta auth and get new ones.");
-    String url = Globals.client.generateAuthURL();
-    dynamic result = await Get.toNamed(
-      "/mal_web_view",
-      arguments: <String, String>{
-        "url": url,
-      },
-    );
-    Uri params = result["accessCode"];
-    // Access code from URL parameter
-    Globals.client.accessCode = params.queryParameters["code"]!;
+    _accessCode = await OAuthRequest().send();
     await _getTokens();
     await _writeTokensToFile();
   }
