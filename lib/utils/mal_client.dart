@@ -36,7 +36,7 @@ class MALClient {
     String url;
     try {
       // Receive URL with PKCE challenge
-      url = oAuthRequest.createRequest(this);
+      url = oAuthRequest.send();
     } catch (e) {
       url = "Something happened here";
     }
