@@ -18,20 +18,30 @@ class TokenRefreshRequest {
       "grant_type": "refresh_token",
       "refresh_token": Globals.client.tokenPair.refreshToken
     };
-    Response response = await Globals.client.userClient.post(url, body: data);
-    Map? responseMap;
     TokenPair refreshedTokenPair;
-    if (response.statusCode == 200) {
-      responseMap = json.decode(response.body);
-      refreshedTokenPair = TokenPair(
-          accessToken: responseMap!["access_token"],
-          refreshToken: responseMap["refresh_token"]);
-    } else {
+
+    try {
+      Response response = await Globals.client.userClient.post(url, body: data);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = json.decode(response.body);
+        refreshedTokenPair = TokenPair(
+          accessToken: responseMap["access_token"] ?? 'invalid_token',
+          refreshToken: responseMap["refresh_token"] ?? 'invalid_token',
+        );
+        debugPrint("Status Code for token refresh: ${response.statusCode}");
+        debugPrint(responseMap.toString());
+      } else {
+        throw Exception(
+          'Something went wrong with requesting for a token refresh: Status ${response.statusCode}',
+        );
+      }
+      return refreshedTokenPair;
+    } catch (e) {
       refreshedTokenPair = TokenPair(
           accessToken: "invalid_token", refreshToken: "invalid_token");
+      debugPrint('Something went wrong. $e');
     }
-    debugPrint("Status Code for token refresh: ${response.statusCode}");
-    debugPrint(responseMap.toString());
+
     return refreshedTokenPair;
   }
 }
