@@ -6,12 +6,13 @@ import 'package:miru/globals.dart';
 import 'package:miru/models/token.dart';
 import 'package:miru/utils/mal_client.dart';
 
+import 'package:miru/constants.dart' as constants;
+
 class TokenGenerateRequest {
   const TokenGenerateRequest();
 
   Future<Token> send() async {
-    Uri url = Uri.parse("https://myanimelist.net/v1/oauth2/token");
-    // String url = "https://myanimelist.net/v1/oauth2/token";
+    Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
       "client_id": MALClient.CLIENTID,
       "code": Globals.client.accessCode,
