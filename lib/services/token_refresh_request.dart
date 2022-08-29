@@ -14,7 +14,7 @@ class TokenRefreshRequest {
   Future<Token> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
-      "client_id": MALClient.CLIENTID,
+      "client_id": MALClient.clientId,
       "grant_type": "refresh_token",
       "refresh_token": Globals.client.token.refreshToken
     };

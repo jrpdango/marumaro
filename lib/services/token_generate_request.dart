@@ -14,7 +14,7 @@ class TokenGenerateRequest {
   Future<Token> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
-      "client_id": MALClient.CLIENTID,
+      "client_id": MALClient.clientId,
       "code": Globals.client.accessCode,
       "code_verifier": Globals.client.codeChallenge,
       "grant_type": "authorization_code"

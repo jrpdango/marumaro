@@ -18,7 +18,7 @@ import 'package:miru/services/user_data_request.dart';
 import 'package:flutter/material.dart' show NetworkImage;
 
 class MALClient {
-  static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
+  static const String clientId = "b6cd1c6e3172ade1142272d4c288bdf2";
   final String codeChallenge = CodeGenerator.genPKCEcode();
   late String accessCode;
   final HttpClient httpClient = new HttpClient()
