@@ -91,7 +91,10 @@ class TokenController {
       if (Globals.client.tokenPair.accessToken == "invalid_token") {
         debugPrint(
             "Refresh code in file isn't valid, need to get new tokens (line 45)");
-        await oAuthNewTokens();
+        // TODO: Clean checking for valid token
+        while (!(await checkValidAccessToken())) {
+          await oAuthNewTokens();
+        }
       } else {
         debugPrint("Refresh code in file is valid, ez refresh (line 61)");
         // Tokens are refreshed, access token is now valid, write to file
