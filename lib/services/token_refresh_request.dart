@@ -29,8 +29,8 @@ class TokenRefreshRequest {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = json.decode(response.body);
         refreshedTokenPair = TokenPair(
-          accessToken: responseMap["access_token"] ?? 'invalid_token',
-          refreshToken: responseMap["refresh_token"] ?? 'invalid_token',
+          accessToken: responseMap["access_token"],
+          refreshToken: responseMap["refresh_token"],
         );
         debugPrint("Status Code for token refresh: ${response.statusCode}");
         debugPrint(responseMap.toString());

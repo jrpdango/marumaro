@@ -23,13 +23,38 @@ class TokenGenerateRequest {
       "code_verifier": Globals.client.codeChallenge,
       "grant_type": "authorization_code"
     };
-    Response response = await Globals.client.userClient.post(url, body: data);
-    Map responseMap = json.decode(response.body);
-    TokenPair tokenPair = TokenPair(
-        accessToken: responseMap["access_token"],
-        refreshToken: responseMap["refresh_token"]);
-    debugPrint("Status Code for token generation: ${response.statusCode}");
-    debugPrint(responseMap.toString());
-    return tokenPair;
+    TokenPair newTokenPair;
+
+    try {
+      Response response = await Globals.client.userClient.post(
+        url,
+        body: data,
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = json.decode(response.body);
+        newTokenPair = TokenPair(
+          accessToken: responseMap["access_token"],
+          refreshToken: responseMap["refresh_token"],
+        );
+        debugPrint("Status Code for token generation: ${response.statusCode}");
+        debugPrint(responseMap.toString());
+      } else {
+        throw Exception(
+          'Something went wrong with requesting for token generation: Status ${response.statusCode}',
+        );
+      }
+
+      return newTokenPair;
+    } catch (e) {
+      newTokenPair = TokenPair(
+        accessToken: "invalid_token",
+        refreshToken: "invalid_token",
+      );
+
+      debugPrint('Something went wrong. $e');
+    }
+
+    return newTokenPair;
   }
 }
