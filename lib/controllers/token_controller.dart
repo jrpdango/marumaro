@@ -56,7 +56,7 @@ class TokenController {
     if (fileContent.isNotEmpty &&
         fileContent["access_token"] != "invalid_token") {
       // File is not empty or 'invalid_token'. Check if access token is valid
-      Globals.client.token = Token(
+      Globals.client.token = TokenPair(
         accessToken: fileContent["access_token"],
         refreshToken: fileContent["refresh_token"],
       );

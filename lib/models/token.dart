@@ -1,8 +1,8 @@
-class Token {
+class TokenPair {
   final String accessToken;
   final String refreshToken;
 
-  Token({
+  TokenPair({
     required this.accessToken,
     required this.refreshToken,
   });

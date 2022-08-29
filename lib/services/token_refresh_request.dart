@@ -11,7 +11,7 @@ import 'package:miru/constants.dart' as constants;
 class TokenRefreshRequest {
   const TokenRefreshRequest();
 
-  Future<Token> send() async {
+  Future<TokenPair> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
       "client_id": MALClient.clientId,
@@ -20,15 +20,15 @@ class TokenRefreshRequest {
     };
     Response response = await Globals.client.userClient.post(url, body: data);
     Map? responseMap;
-    Token refreshedToken;
+    TokenPair refreshedToken;
     if (response.statusCode == 200) {
       responseMap = json.decode(response.body);
-      refreshedToken = Token(
+      refreshedToken = TokenPair(
           accessToken: responseMap!["access_token"],
           refreshToken: responseMap["refresh_token"]);
     } else {
-      refreshedToken =
-          Token(accessToken: "invalid_token", refreshToken: "invalid_token");
+      refreshedToken = TokenPair(
+          accessToken: "invalid_token", refreshToken: "invalid_token");
     }
     debugPrint("Status Code for token refresh: ${response.statusCode}");
     debugPrint(responseMap.toString());

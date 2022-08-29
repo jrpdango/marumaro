@@ -15,7 +15,7 @@ class TokenGenerateRequest {
     this.accessCode,
   });
 
-  Future<Token> send() async {
+  Future<TokenPair> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
       "client_id": MALClient.clientId,
@@ -25,7 +25,7 @@ class TokenGenerateRequest {
     };
     Response response = await Globals.client.userClient.post(url, body: data);
     Map responseMap = json.decode(response.body);
-    Token token = Token(
+    TokenPair token = TokenPair(
         accessToken: responseMap["access_token"],
         refreshToken: responseMap["refresh_token"]);
     debugPrint("Status Code for token generation: ${response.statusCode}");
