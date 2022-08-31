@@ -17,7 +17,7 @@ class BaseGetRequest {
     };
     http.Response response = await Globals.client.userClient.get(
       uri,
-      // headers: headers,
+      headers: headers,
     );
     Map<String, dynamic> responseMap = json.decode(response.body);
     try {
