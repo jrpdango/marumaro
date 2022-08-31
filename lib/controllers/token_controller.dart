@@ -53,22 +53,23 @@ class TokenController {
         ? json.decode(file.readAsStringSync())
         : <String, dynamic>{};
 
-    if (fileContent.isNotEmpty &&
-        fileContent["access_token"] != "invalid_token") {
-      // File is not empty or 'invalid_token'. Check if access token is valid
+    // Assign locally-stored tokens to client if they exist.
+    if (fileContent.isNotEmpty) {
       Globals.client.tokenPair = TokenPair(
         accessToken: fileContent["access_token"],
         refreshToken: fileContent["refresh_token"],
       );
-      debugPrint("Tokens found on file. Assigning to client.");
-    } else {
-      debugPrint(
-          "No valid tokens found on file. Attempting to get new tokens.");
-      await oAuthNewTokens();
+      if (await isValidAccessToken()) {
+        debugPrint("Tokens found on file. Assigning to client.");
+      } else {
+        debugPrint(
+            "No valid tokens found on file. Attempting to get new tokens.");
+        await oAuthNewTokens();
+      }
     }
   }
 
-  Future<bool> checkValidAccessToken() async {
+  Future<bool> isValidAccessToken() async {
     return (await Globals.client.userDataRequest()).isNotEmpty;
   }
 
@@ -80,7 +81,7 @@ class TokenController {
 
   Future<void> verifyTokens() async {
     await assignTokenFromFile();
-    bool isAccessTokenValid = await checkValidAccessToken();
+    bool isAccessTokenValid = await isValidAccessToken();
     if (isAccessTokenValid) {
       // Access token is valid, client can make calls
       debugPrint("Access code in file is valid, ez calls (line 38)");
@@ -92,7 +93,7 @@ class TokenController {
         debugPrint(
             "Refresh code in file isn't valid, need to get new tokens (line 45)");
         // TODO: Clean checking for valid token
-        while (!(await checkValidAccessToken())) {
+        while (!(await isValidAccessToken())) {
           await oAuthNewTokens();
         }
       } else {
