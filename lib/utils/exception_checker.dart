@@ -15,8 +15,7 @@ class ExceptionChecker {
       case 404:
         throw NotFoundException();
       default:
-        print(statusCode);
-        throw Exception();
+        throw Exception('$statusCode Error');
     }
   }
 }

@@ -30,7 +30,8 @@ class BaseGetRequest {
       debugPrint(e.message);
     } catch (e) {
       debugPrint(e.toString());
-      debugPrint(responseMap.toString());
+      debugPrint('Uri: $uri');
+      debugPrint('Response: ${responseMap.toString()}');
     }
     // If an exception is caught, return an empty map
     return <String, dynamic>{};
