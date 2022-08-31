@@ -17,7 +17,7 @@ class BaseGetRequest {
     };
     http.Response response = await Globals.client.userClient.get(
       uri,
-      headers: headers,
+      // headers: headers,
     );
     Map<String, dynamic> responseMap = json.decode(response.body);
     try {
@@ -29,9 +29,9 @@ class BaseGetRequest {
     } on NotFoundException catch (e) {
       debugPrint(e.message);
     } catch (e) {
-      debugPrint(e.toString());
-      debugPrint('Uri: $uri');
-      debugPrint('Response: ${responseMap.toString()}');
+      debugPrint(
+        '${e.toString()} \n Uri: $uri \n Response: ${responseMap.toString()}',
+      );
     }
     // If an exception is caught, return an empty map
     return <String, dynamic>{};
