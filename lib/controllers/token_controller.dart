@@ -56,16 +56,9 @@ class TokenController {
     // Assign locally-stored tokens to client if they exist.
     if (fileContent.isNotEmpty) {
       Globals.client.tokenPair = TokenPair(
-        accessToken: fileContent["access_token"],
+        accessToken: fileContent['access_token'],
         refreshToken: fileContent["refresh_token"],
       );
-      if (await isValidAccessToken()) {
-        debugPrint("Tokens found on file. Assigning to client.");
-      } else {
-        debugPrint(
-            "No valid tokens found on file. Attempting to get new tokens.");
-        await oAuthNewTokens();
-      }
     }
   }
 
@@ -81,23 +74,24 @@ class TokenController {
 
   Future<void> verifyTokens() async {
     await assignTokenFromFile();
-    bool isAccessTokenValid = await isValidAccessToken();
-    if (isAccessTokenValid) {
+    if (await isValidAccessToken()) {
       // Access token is valid, client can make calls
-      debugPrint("Access code in file is valid, ez calls (line 38)");
+      debugPrint("Access code in file is valid, assigned to client.");
     } else {
-      debugPrint("Access code in file is not valid, gonna refresh (line 41)");
+      debugPrint(
+          "Access code in file is not valid, attempting to refresh with refresh token.");
       await _refreshTokens();
       // Attempt to refresh tokens
       if (Globals.client.tokenPair.accessToken == "invalid_token") {
         debugPrint(
-            "Refresh code in file isn't valid, need to get new tokens (line 45)");
+            "Refresh code in file isn't valid, need to get new token pair.");
         // TODO: Clean checking for valid token
         while (!(await isValidAccessToken())) {
           await oAuthNewTokens();
         }
       } else {
-        debugPrint("Refresh code in file is valid, ez refresh (line 61)");
+        debugPrint(
+            "Refresh code in file is valid, tokens have been refreshed.");
         // Tokens are refreshed, access token is now valid, write to file
         _writeTokensToFile();
       }
