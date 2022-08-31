@@ -1,18 +1,17 @@
+import 'package:miru/exceptions/not_found_exception.dart';
 import 'package:miru/exceptions/unauthorized_exception.dart';
 
 class ExceptionChecker {
   const ExceptionChecker();
 
-  static bool check(
-    int statusCode, {
-    String? successMessage = 'Request successful.',
-    String? unauthorizedExceptionMessage = 'Error: user is unauthorized.',
-  }) {
+  static bool check(int statusCode) {
     switch (statusCode) {
       case 200:
         return true;
       case 401:
-        throw const UnauthorizedException();
+        throw UnauthorizedException();
+      case 404:
+        throw NotFoundException();
       default:
     }
     return true;

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:miru/exceptions/not_found_exception.dart';
 import 'package:miru/exceptions/unauthorized_exception.dart';
 import 'package:miru/globals.dart';
 import 'package:http/http.dart' as http;
@@ -24,12 +25,17 @@ class BaseGetRequest {
     );
     Map<String, dynamic> responseMap = json.decode(response.body);
     try {
+      // If status code == 200, return the server's response
       ExceptionChecker.check(response.statusCode);
+      return responseMap;
     } on UnauthorizedException catch (e) {
+      debugPrint(e.message);
+    } on NotFoundException catch (e) {
       debugPrint(e.message);
     } catch (e) {
       debugPrint(e.toString());
     }
-    return <String, dynamic>{'data': <String, dynamic>{}};
+    // If an exception is caught, return an empty map
+    return <String, dynamic>{'data': {}};
   }
 }

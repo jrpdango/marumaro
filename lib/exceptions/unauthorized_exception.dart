@@ -1,4 +1,6 @@
 class UnauthorizedException implements Exception {
   final String? message;
-  const UnauthorizedException({this.message});
+  UnauthorizedException({
+    this.message = '401 Error: user is unauthorized.',
+  });
 }
