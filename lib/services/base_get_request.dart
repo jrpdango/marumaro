@@ -36,6 +36,6 @@ class BaseGetRequest {
       debugPrint(e.toString());
     }
     // If an exception is caught, return an empty map
-    return <String, dynamic>{'data': {}};
+    return <String, dynamic>{};
   }
 }
