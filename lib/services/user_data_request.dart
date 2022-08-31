@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 // import 'package:miru/utils/global_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:miru/globals.dart';
+import 'package:miru/services/base_get_request.dart';
 import 'dart:convert';
 
 import 'package:miru/utils/mal_client.dart';
@@ -36,20 +37,21 @@ class UserDataRequest {
 
     // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
-    try {
-      http.Response response = await Globals.client.userClient.get(uri,
-          headers: {
-            "Authorization": "Bearer ${Globals.client.tokenPair.accessToken}"
-          });
-      Map<String, dynamic> respMap = <String, dynamic>{};
-      if (response.statusCode == 200) {
-        //respMap gives a json response of keys {id, name, birthday, location, joined_at}`
-        respMap = json.decode(response.body);
-      }
-      return respMap;
-    } catch (exception) {
-      print("Oops! Something went wrong. $exception");
-      return {"status_code": "invalid_code"};
-    }
+    // try {
+    //   http.Response response = await Globals.client.userClient.get(uri,
+    //       headers: {
+    //         "Authorization": "Bearer ${Globals.client.tokenPair.accessToken}"
+    //       });
+    //   Map<String, dynamic> respMap = <String, dynamic>{};
+    //   if (response.statusCode == 200) {
+    //     //respMap gives a json response of keys {id, name, birthday, location, joined_at}`
+    //     respMap = json.decode(response.body);
+    //   }
+    //   return respMap;
+    // } catch (exception) {
+    //   print("Oops! Something went wrong. $exception");
+    //   return {"status_code": "invalid_code"};
+    // }
+    return BaseGetRequest.send(uri);
   }
 }

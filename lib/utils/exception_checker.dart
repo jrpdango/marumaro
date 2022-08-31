@@ -7,13 +7,16 @@ class ExceptionChecker {
   static bool check(int statusCode) {
     switch (statusCode) {
       case 200:
+      case 201:
+      case 202:
         return true;
       case 401:
         throw UnauthorizedException();
       case 404:
         throw NotFoundException();
       default:
+        print(statusCode);
+        throw Exception();
     }
-    return true;
   }
 }
