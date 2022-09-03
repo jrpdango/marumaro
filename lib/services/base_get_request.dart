@@ -20,13 +20,23 @@ class BaseGetRequest {
   });
 
   Future<Map<String, dynamic>> send() async {
+    http.Response response;
     headers ??= <String, String>{
       'Authorization': 'Bearer ${Globals.client.tokenPair.accessToken}'
     };
-    http.Response response = await Globals.client.userClient.get(
-      uri,
-      headers: headers,
-    );
+    switch (httpRequestType) {
+      case MiruHttpRequestType.get:
+        response = await Globals.client.userClient.get(
+          uri,
+          headers: headers,
+        );
+        break;
+      default:
+        response = await Globals.client.userClient.get(
+          uri,
+          headers: headers,
+        );
+    }
     Map<String, dynamic> responseMap = json.decode(response.body);
     try {
       // If status code == 200, return the server's response
