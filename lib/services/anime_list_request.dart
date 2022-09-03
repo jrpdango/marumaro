@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,7 @@ class AnimeListRequest {
   /// Sorts a [Map] by status.
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
-    Map<String, dynamic> animeMap = Map();
+    Map<String, dynamic> animeMap = <String, dynamic>{};
     animeMap['watching'] = <Anime>[].obs;
     animeMap['completed'] = <Anime>[].obs;
     animeMap['plan_to_watch'] = <Anime>[].obs;
@@ -69,25 +70,25 @@ class AnimeListRequest {
         uri = Uri(
             scheme: 'https',
             host: 'api.myanimelist.net',
-            path: 'v2/users/${this.username}/animelist');
+            path: 'v2/users/$username/animelist');
         uri = setParams(uri!);
       }
       http.Response response = await Globals.client.userClient.get(uri!,
           headers: {
             'Authorization': 'Bearer ${Globals.client.tokenPair?.accessToken}'
           });
-      Map<String, dynamic> respMap = Map();
+      Map<String, dynamic> respMap = <String, dynamic>{};
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {
-        print('List retrieved successfully!');
+        debugPrint('List retrieved successfully!');
       } else {
-        print(
+        debugPrint(
             'List retrieval request sent, but something went wrong. Status code: ${response.statusCode}');
       }
       return sortMap(respMap);
     } catch (exception) {
-      print('Oops! Something went wrong. Anime_List_Request $exception');
-      return Map();
+      debugPrint('Oops! Something went wrong. Anime_List_Request $exception');
+      return <String, dynamic>{};
     }
   }
 }
