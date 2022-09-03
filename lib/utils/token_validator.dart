@@ -13,15 +13,15 @@ class TokenValidator {
     Globals.client.tokenPair =
         await TokenGenerateRequest(accessCode: accessCode).send();
     debugPrint('DEBUG: Tokens received:');
-    debugPrint('Access token: ${Globals.client.tokenPair.accessToken}');
-    debugPrint('Refresh token: ${Globals.client.tokenPair.refreshToken}');
+    debugPrint('Access token: ${Globals.client.tokenPair?.accessToken}');
+    debugPrint('Refresh token: ${Globals.client.tokenPair?.refreshToken}');
   }
 
   static Future<void> _refreshTokens() async {
     Globals.client.tokenPair = await const TokenRefreshRequest().send();
     debugPrint('DEBUG: Tokens refreshed:');
-    debugPrint('Access token: ${Globals.client.tokenPair.accessToken}');
-    debugPrint('Refresh token: ${Globals.client.tokenPair.refreshToken}');
+    debugPrint('Access token: ${Globals.client.tokenPair?.accessToken}');
+    debugPrint('Refresh token: ${Globals.client.tokenPair?.refreshToken}');
   }
 
   // Method to write tokens to device
@@ -29,8 +29,8 @@ class TokenValidator {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File('${directory.path}/miruTokens.json');
     String data = json.encode({
-      'access_token': Globals.client.tokenPair.accessToken,
-      'refresh_token': Globals.client.tokenPair.refreshToken
+      'access_token': Globals.client.tokenPair?.accessToken,
+      'refresh_token': Globals.client.tokenPair?.refreshToken
     });
     if (file.readAsStringSync().isNotEmpty) {
       await File('${directory.path}/miruTokens.json').delete();
@@ -80,7 +80,7 @@ class TokenValidator {
           'Access code in file is not valid, attempting to refresh with refresh token.');
       // Attempt to refresh tokens
       await _refreshTokens();
-      if (Globals.client.tokenPair.accessToken == 'invalid_token') {
+      if (Globals.client.tokenPair?.accessToken == 'invalid_token') {
         debugPrint(
             'Refresh code in file isn\'t valid, need to get new token pair.');
         // Request for new tokens as long as the current ones aren't valid

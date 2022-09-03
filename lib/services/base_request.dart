@@ -22,7 +22,7 @@ class BaseRequest {
   Future<Map<String, dynamic>> send() async {
     http.Response response;
     headers ??= <String, String>{
-      'Authorization': 'Bearer ${Globals.client.tokenPair.accessToken}'
+      'Authorization': 'Bearer ${Globals.client.tokenPair?.accessToken}'
     };
     switch (httpRequestType) {
       case MiruHttpRequestType.get:

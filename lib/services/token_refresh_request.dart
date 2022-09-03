@@ -13,10 +13,10 @@ class TokenRefreshRequest {
 
   Future<TokenPair> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
-    Map<String, String> data = {
+    Map<String, String?> data = {
       "client_id": MALClient.clientId,
       "grant_type": "refresh_token",
-      "refresh_token": Globals.client.tokenPair.refreshToken
+      "refresh_token": Globals.client.tokenPair?.refreshToken
     };
     TokenPair refreshedTokenPair;
 

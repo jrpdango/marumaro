@@ -21,7 +21,7 @@ class MALClient {
         ((X509Certificate cert, String host, int port) => true);
   final String codeChallenge = CodeGenerator.genPKCEcode();
   final Client userClient = IOClient(_httpClient);
-  late TokenPair tokenPair;
+  TokenPair? tokenPair;
   late RxMap<String, dynamic> clientAnimeList;
   String? username;
   NetworkImage? userImage;
