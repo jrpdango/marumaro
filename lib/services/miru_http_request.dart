@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
 import 'package:miru/globals.dart';
 
-class HttpRequest {
+class MiruHttpRequest {
   static Future<Response> get(Uri uri, {Map<String, String>? headers}) async {
     headers ??= <String, String>{
       'Authorization': 'Bearer ${Globals.client.tokenPair.accessToken}'
