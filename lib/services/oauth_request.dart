@@ -15,6 +15,6 @@ class OAuthRequest {
     );
     Uri params = result["accessCode"];
     // Access code from URL parameter
-    return params.queryParameters["code"]!;
+    return params.queryParameters["code"] ?? '';
   }
 }
