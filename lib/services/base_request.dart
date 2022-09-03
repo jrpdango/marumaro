@@ -8,12 +8,12 @@ import 'package:miru/globals.dart';
 import 'package:http/http.dart' as http;
 import 'package:miru/utils/exception_checker.dart';
 
-class BaseGetRequest {
+class BaseRequest {
   final Uri uri;
   final MiruHttpRequestType httpRequestType;
   Map<String, String>? headers;
 
-  BaseGetRequest({
+  BaseRequest({
     required this.uri,
     required this.httpRequestType,
     this.headers,

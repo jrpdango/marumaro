@@ -1,6 +1,6 @@
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/globals.dart';
-import 'package:miru/services/base_get_request.dart';
+import 'package:miru/services/base_request.dart';
 
 class UserDataRequest {
   final String mode;
@@ -31,7 +31,7 @@ class UserDataRequest {
 
     // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
-    return BaseGetRequest(
+    return BaseRequest(
       uri: uri,
       httpRequestType: MiruHttpRequestType.get,
     ).send();
