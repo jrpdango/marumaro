@@ -9,9 +9,9 @@ import 'dart:io';
 import 'dart:convert';
 
 class TokenValidator {
-  String? _accessCode;
+  static String? _accessCode;
 
-  Future<void> _getTokens() async {
+  static Future<void> _getTokens() async {
     Globals.client.tokenPair =
         await TokenGenerateRequest(accessCode: _accessCode).send();
     debugPrint('DEBUG: Tokens received:');
@@ -19,7 +19,7 @@ class TokenValidator {
     debugPrint('Refresh token: ${Globals.client.tokenPair.refreshToken}');
   }
 
-  Future<void> _refreshTokens() async {
+  static Future<void> _refreshTokens() async {
     Globals.client.tokenPair = await const TokenRefreshRequest().send();
     debugPrint('DEBUG: Tokens refreshed:');
     debugPrint('Access token: ${Globals.client.tokenPair.accessToken}');
@@ -27,7 +27,7 @@ class TokenValidator {
   }
 
   // Method to write tokens to device
-  Future<File> _writeTokensToFile() async {
+  static Future<File> _writeTokensToFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File('${directory.path}/miruTokens.json');
     String data = json.encode({
@@ -41,7 +41,7 @@ class TokenValidator {
     return await file.writeAsString(data);
   }
 
-  Future<void> assignTokenFromFile() async {
+  static Future<void> _assignTokenFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
     // If a file exists, use it. If it doesn't, create one.
@@ -62,19 +62,19 @@ class TokenValidator {
     }
   }
 
-  Future<bool> isValidAccessToken() async {
+  static Future<bool> _isValidAccessToken() async {
     return (await Globals.client.userDataRequest()).isNotEmpty;
   }
 
-  Future<void> oAuthNewTokens() async {
+  static Future<void> _oAuthNewTokens() async {
     _accessCode = await OAuthRequest().send();
     await _getTokens();
     await _writeTokensToFile();
   }
 
-  Future<void> verifyTokens() async {
-    await assignTokenFromFile();
-    if (await isValidAccessToken()) {
+  static Future<void> verifyTokens() async {
+    await _assignTokenFromFile();
+    if (await _isValidAccessToken()) {
       // Access token is valid, client can make calls
       debugPrint('Access code in file is valid, assigned to client.');
     } else {
@@ -86,8 +86,8 @@ class TokenValidator {
         debugPrint(
             'Refresh code in file isn\'t valid, need to get new token pair.');
         // Request for new tokens as long as the current ones aren't valid
-        while (!(await isValidAccessToken())) {
-          await oAuthNewTokens();
+        while (!(await _isValidAccessToken())) {
+          await _oAuthNewTokens();
         }
       } else {
         debugPrint(
