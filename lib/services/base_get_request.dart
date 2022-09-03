@@ -8,10 +8,15 @@ import 'package:http/http.dart' as http;
 import 'package:miru/utils/exception_checker.dart';
 
 class BaseGetRequest {
-  static Future<Map<String, dynamic>> send(
-    Uri uri, {
-    Map<String, String>? headers,
-  }) async {
+  final Uri uri;
+  Map<String, String>? headers;
+
+  BaseGetRequest({
+    required this.uri,
+    this.headers,
+  });
+
+  Future<Map<String, dynamic>> send() async {
     headers ??= <String, String>{
       'Authorization': 'Bearer ${Globals.client.tokenPair.accessToken}'
     };

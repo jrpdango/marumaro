@@ -30,6 +30,6 @@ class UserDataRequest {
 
     // MAL URL: 'https://api.myanimelist.net/v2/users/@me';
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
-    return BaseGetRequest.send(uri);
+    return BaseGetRequest(uri: uri).send();
   }
 }
