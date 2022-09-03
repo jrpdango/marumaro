@@ -54,7 +54,7 @@ class MALClient {
   // }
 
   Future<Map<String, dynamic>> userDataRequest() {
-    return const UserDataRequest(mode: 'MAL').createRequest();
+    return const UserDataRequest(mode: 'MAL').send();
   }
 
   void logout() {

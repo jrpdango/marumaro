@@ -11,7 +11,7 @@ class UserDataRequest {
     this.isFullImage = false,
   });
 
-  Future<Map<String, dynamic>> createRequest() async {
+  Future<Map<String, dynamic>> send() async {
     Uri uri;
 
     if (mode == 'MAL') {
