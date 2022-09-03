@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/globals.dart';
-import 'package:miru/controllers/token_controller.dart';
+import 'package:miru/utils/token_validator.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
 
@@ -59,7 +59,7 @@ class _LoadingState extends State<Loading> {
   ///
   void _setupMALConnection({required bool deleteTokens}) async {
     if (deleteTokens) _deleteLocalTokens();
-    await TokenController().verifyTokens();
+    await TokenValidator().verifyTokens();
 
     Map<String, dynamic> result =
         await _initializeAnimeList(constants.limitOfListItems);

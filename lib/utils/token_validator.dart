@@ -8,7 +8,7 @@ import 'package:miru/globals.dart';
 import 'dart:io';
 import 'dart:convert';
 
-class TokenController {
+class TokenValidator {
   String? _accessCode;
 
   Future<void> _getTokens() async {
