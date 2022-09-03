@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/exceptions/not_found_exception.dart';
 import 'package:miru/exceptions/unauthorized_exception.dart';
 import 'package:miru/globals.dart';
@@ -9,10 +10,12 @@ import 'package:miru/utils/exception_checker.dart';
 
 class BaseGetRequest {
   final Uri uri;
+  final MiruHttpRequestType httpRequestType;
   Map<String, String>? headers;
 
   BaseGetRequest({
     required this.uri,
+    required this.httpRequestType,
     this.headers,
   });
 
