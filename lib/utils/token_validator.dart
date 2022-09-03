@@ -80,19 +80,16 @@ class TokenValidator {
           'Access code in file is not valid, attempting to refresh with refresh token.');
       // Attempt to refresh tokens
       await _refreshTokens();
-      if (Globals.client.tokenPair?.accessToken == 'invalid_token') {
+      // Request for new tokens as long as the current ones aren't valid
+      while (!(await _isValidAccessToken())) {
         debugPrint(
-            'Refresh code in file isn\'t valid, need to get new token pair.');
-        // Request for new tokens as long as the current ones aren't valid
-        while (!(await _isValidAccessToken())) {
-          await _oAuthNewTokens();
-        }
-      } else {
-        debugPrint(
-            'Refresh code in file is valid, tokens have been refreshed.');
-        // Tokens are refreshed, access token is now valid, write to file
-        _writeTokensToFile();
+          'Refresh code in file isn\'t valid, need to get new token pair.',
+        );
+        await _oAuthNewTokens();
       }
+      debugPrint('Refresh code in file is valid, tokens have been refreshed.');
+      // Tokens are refreshed, access token is now valid, write to file
+      _writeTokensToFile();
     }
   }
 }
