@@ -2,9 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/models/anime.dart';
-import 'package:http/http.dart' as http;
-import 'package:miru/globals.dart';
-import 'dart:convert';
 
 import 'package:miru/services/base_request.dart';
 
@@ -68,24 +65,6 @@ class AnimeListRequest {
   /// Sends a request to update anime list to MAL servers through API.
   ///
   Future<Map<String, dynamic>> send() async {
-    // try {
-    //   http.Response response = await Globals.client.userClient.get(uri!,
-    //       headers: {
-    //         'Authorization': 'Bearer ${Globals.client.tokenPair?.accessToken}'
-    //       });
-    //   Map<String, dynamic> respMap = <String, dynamic>{};
-    //   respMap = json.decode(response.body);
-    //   if (response.statusCode == 200) {
-    //     debugPrint('List retrieved successfully!');
-    //   } else {
-    //     debugPrint(
-    //         'List retrieval request sent, but something went wrong. Status code: ${response.statusCode}');
-    //   }
-    //   return sortMap(respMap);
-    // } catch (exception) {
-    //   debugPrint('Oops! Something went wrong. Anime_List_Request $exception');
-    //   return <String, dynamic>{};
-    // }
     if (uri == null) {
       uri = Uri(
           scheme: 'https',
