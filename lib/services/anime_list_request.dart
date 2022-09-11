@@ -93,9 +93,10 @@ class AnimeListRequest {
           path: 'v2/users/$username/animelist');
       uri = setParams(uri!);
     }
-    return BaseRequest(
+    Map<String, dynamic> unsortedResponse = await BaseRequest(
       uri: uri!,
       httpRequestType: MiruHttpRequestType.get,
     ).send();
+    return sortMap(unsortedResponse);
   }
 }
