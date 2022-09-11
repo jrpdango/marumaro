@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/utils/token_validator.dart';
-import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
 
 class Loading extends StatefulWidget {
