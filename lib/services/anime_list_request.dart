@@ -64,7 +64,7 @@ class AnimeListRequest {
 
   /// Sends a request to update anime list to MAL servers through API.
   ///
-  Future<Map<String, dynamic>> createRequest() async {
+  Future<Map<String, dynamic>> send() async {
     try {
       if (uri == null) {
         uri = Uri(

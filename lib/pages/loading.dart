@@ -23,7 +23,7 @@ class _LoadingState extends State<Loading> {
     Map<String, dynamic> newMap = <String, dynamic>{};
 
     final Map<String, dynamic> result =
-        await AnimeListRequest(limit: limit).createRequest();
+        await AnimeListRequest(limit: limit).send();
 
     for (String item in result.keys) {
       if (item != 'paging' && item != 'status_code') {
@@ -38,7 +38,7 @@ class _LoadingState extends State<Loading> {
         newMap = await AnimeListRequest(
           limit: limit,
           uri: Uri.parse(result['paging']['next']),
-        ).createRequest();
+        ).send();
 
         for (String item in newMap.keys) {
           if (item != 'paging' && item != 'status_code') {
