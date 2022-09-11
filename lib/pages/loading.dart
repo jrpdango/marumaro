@@ -24,12 +24,6 @@ class _LoadingState extends State<Loading> {
     final Map<String, dynamic> result =
         await Globals.client.requestAnimeList(limit: limit);
 
-    for (String item in result.keys) {
-      if (item != 'paging' && item != 'status_code') {
-        Globals.globalAnimeList.addAll(result[item]);
-      }
-    }
-
     /// If there are pages after the initially-retrieved list, make extra
     /// requests to get those until there no longer are any extra pages.
     try {
@@ -42,7 +36,6 @@ class _LoadingState extends State<Loading> {
         for (String item in newMap.keys) {
           if (item != 'paging' && item != 'status_code') {
             result[item].addAll(newMap[item]);
-            Globals.globalAnimeList.addAll(newMap[item]);
           }
         }
 
