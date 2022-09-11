@@ -39,10 +39,6 @@ class _LoadingState extends State<Loading> {
           limit: limit,
           uri: Uri.parse(result['paging']['next']),
         );
-        // newMap = await AnimeListRequest(
-        //   limit: limit,
-        //   uri: Uri.parse(result['paging']['next']),
-        // ).send();
 
         for (String item in newMap.keys) {
           if (item != 'paging' && item != 'status_code') {
