@@ -46,8 +46,9 @@ class AnimeListRequest {
     animeMap['plan_to_watch'] = <Anime>[].obs;
     animeMap['on_hold'] = <Anime>[].obs;
     animeMap['dropped'] = <Anime>[].obs;
+    animeMap['all'] = <Anime>[].obs;
     for (Map element in rawMap['data']) {
-      animeMap[element['list_status']['status']]!.add(Anime(
+      Anime currentAnime = Anime(
         id: element['node']['id'],
         title: element['node']['title'],
         picture: Uri.parse(element['node']['main_picture']['medium']),
@@ -56,7 +57,9 @@ class AnimeListRequest {
         userStatus: element['list_status']['status'],
         userEpisodesWatched: element['list_status']['num_episodes_watched'],
         userScore: element['list_status']['score'],
-      ));
+      );
+      animeMap[element['list_status']['status']]?.add(currentAnime);
+      animeMap['all']?.add(currentAnime);
     }
     animeMap['paging'] = rawMap['paging'];
     return animeMap;
