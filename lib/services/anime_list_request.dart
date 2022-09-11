@@ -17,15 +17,15 @@ class AnimeListRequest {
   final String? fields;
   Uri? uri;
 
-  AnimeListRequest(
-      {this.status,
-      this.sort = 'list_updated_at',
-      this.limit = 100,
-      this.offset,
-      this.username = '@me',
-      this.uri,
-      this.fields =
-          'list_status,num_episodes,mean,status,rank,popularity,source,studios,rating,average_episode_duration,alternative_titles,synopsis,start_date,end_date,genres'});
+  AnimeListRequest({
+    this.status,
+    this.sort,
+    this.limit,
+    this.offset,
+    this.username,
+    this.uri,
+    this.fields,
+  });
 
   /// Sets parameters to the URI.
   ///
@@ -97,6 +97,7 @@ class AnimeListRequest {
       uri: uri!,
       httpRequestType: MiruHttpRequestType.get,
     ).send();
+    debugPrint('List retrieved successfully!');
     return sortMap(unsortedResponse);
   }
 }

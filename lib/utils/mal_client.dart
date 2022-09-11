@@ -60,22 +60,25 @@ class MALClient {
 
   Future<Map<String, dynamic>> requestAnimeList({
     String? status,
-    String? sort,
-    int? limit,
+    String? sort = 'list_updated_at',
+    int? limit = 100,
     int? offset,
-    String? username,
+    String? username = '@me',
     Uri? uri,
-    String? fields,
+    String? fields =
+        'list_status,num_episodes,mean,status,rank,popularity,source,'
+            'studios,rating,average_episode_duration,alternative_titles,'
+            'synopsis,start_date,end_date,genres',
   }) {
     return AnimeListRequest(
-            status: status,
-            sort: sort,
-            limit: limit,
-            offset: offset,
-            username: username,
-            uri: uri,
-            fields: fields)
-        .send();
+      status: status,
+      sort: sort,
+      limit: limit,
+      offset: offset,
+      username: username,
+      uri: uri,
+      fields: fields,
+    ).send();
   }
 
   void logout() {

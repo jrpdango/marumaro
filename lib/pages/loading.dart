@@ -23,7 +23,7 @@ class _LoadingState extends State<Loading> {
     Map<String, dynamic> newMap = <String, dynamic>{};
 
     final Map<String, dynamic> result =
-        await AnimeListRequest(limit: limit).send();
+        await Globals.client.requestAnimeList(limit: limit);
 
     for (String item in result.keys) {
       if (item != 'paging' && item != 'status_code') {
@@ -35,10 +35,14 @@ class _LoadingState extends State<Loading> {
     /// requests to get those until there no longer are any extra pages.
     try {
       while (result['paging']['next'] != null) {
-        newMap = await AnimeListRequest(
+        newMap = await Globals.client.requestAnimeList(
           limit: limit,
           uri: Uri.parse(result['paging']['next']),
-        ).send();
+        );
+        // newMap = await AnimeListRequest(
+        //   limit: limit,
+        //   uri: Uri.parse(result['paging']['next']),
+        // ).send();
 
         for (String item in newMap.keys) {
           if (item != 'paging' && item != 'status_code') {
