@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/utils/oauth_url_generator.dart';
 
 import 'package:get/get.dart';
@@ -55,6 +56,26 @@ class MALClient {
 
   Future<Map<String, dynamic>> userDataRequest() {
     return const UserDataRequest(mode: 'MAL').send();
+  }
+
+  Future<Map<String, dynamic>> requestAnimeList({
+    String? status,
+    String? sort,
+    int? limit,
+    int? offset,
+    String? username,
+    Uri? uri,
+    String? fields,
+  }) {
+    return AnimeListRequest(
+            status: status,
+            sort: sort,
+            limit: limit,
+            offset: offset,
+            username: username,
+            uri: uri,
+            fields: fields)
+        .send();
   }
 
   void logout() {

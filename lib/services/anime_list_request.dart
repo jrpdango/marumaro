@@ -9,12 +9,12 @@ import 'dart:convert';
 import 'package:miru/services/base_request.dart';
 
 class AnimeListRequest {
-  final int limit;
+  final int? limit;
   final int? offset;
-  final String username;
+  final String? username;
   final String? status;
-  final String sort;
-  final String fields;
+  final String? sort;
+  final String? fields;
   Uri? uri;
 
   AnimeListRequest(
