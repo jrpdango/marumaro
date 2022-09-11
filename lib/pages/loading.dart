@@ -63,7 +63,7 @@ class _LoadingState extends State<Loading> {
     Map<String, dynamic> result =
         await _initializeAnimeList(constants.limitOfListItems);
 
-    Globals.client.clientAnimeList = result.obs;
+    Globals.client.animeMap = result.obs;
 
     Globals.client.username = (await Globals.client.userDataRequest())['name'];
 
