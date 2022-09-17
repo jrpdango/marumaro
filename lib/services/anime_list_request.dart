@@ -75,7 +75,8 @@ class AnimeListRequest {
           path: 'v2/users/$username/animelist');
       uri = setParams(uri!);
     }
-    Map<String, dynamic> unsortedResponse = await BaseRequest(
+    debugPrint('Made it to anime list request');
+    Map<String, dynamic> response = await BaseRequest(
       uri: uri!,
       httpRequestType: MiruHttpRequestType.get,
     ).send();
@@ -84,23 +85,27 @@ class AnimeListRequest {
     /// If there are pages after the initially-retrieved list, make extra
     /// requests to get those until there no longer are any extra pages.
     try {
-      while (unsortedResponse['paging']['next'] != null) {
-        uri = Uri.parse(unsortedResponse['paging']['next']);
-        Map<String, dynamic> newUnsortedResponse = await send();
+      response = sortMap(response);
+      while (response['paging']['next'] != null) {
+        Map<String, dynamic> newUnsortedResponse = await BaseRequest(
+          uri: Uri.parse(response['paging']['next']),
+          httpRequestType: MiruHttpRequestType.get,
+        ).send();
+        debugPrint('List retrieved successfully!');
+        newUnsortedResponse = sortMap(newUnsortedResponse);
 
         for (String item in newUnsortedResponse.keys) {
           if (item != 'paging' && item != 'status_code') {
-            unsortedResponse[item].addAll(newUnsortedResponse[item]);
+            response[item].addAll(newUnsortedResponse[item]);
           }
         }
 
-        unsortedResponse['paging']['next'] =
-            newUnsortedResponse['paging']['next'];
+        response['paging']['next'] = newUnsortedResponse['paging']['next'];
       }
     } catch (e) {
       debugPrint(e.toString());
     }
 
-    return sortMap(unsortedResponse);
+    return response;
   }
 }

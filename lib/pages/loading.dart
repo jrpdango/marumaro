@@ -19,31 +19,8 @@ class _LoadingState extends State<Loading> {
   /// Initializes the user's anime list.
   ///
   Future<Map<String, dynamic>> _initializeAnimeList(limit) async {
-    Map<String, dynamic> newMap = <String, dynamic>{};
-
     final Map<String, dynamic> result =
         await Globals.client.requestAnimeList(limit: limit);
-
-    /// If there are pages after the initially-retrieved list, make extra
-    /// requests to get those until there no longer are any extra pages.
-    try {
-      while (result['paging']['next'] != null) {
-        newMap = await Globals.client.requestAnimeList(
-          limit: limit,
-          uri: Uri.parse(result['paging']['next']),
-        );
-
-        for (String item in newMap.keys) {
-          if (item != 'paging' && item != 'status_code') {
-            result[item].addAll(newMap[item]);
-          }
-        }
-
-        result['paging']['next'] = newMap['paging']!['next'];
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
     return result;
   }
 
