@@ -16,16 +16,16 @@ class UserDataRequest {
 
     if (mode == 'MAL') {
       uri = Uri(
-        scheme: "https",
-        host: "api.myanimelist.net",
-        path: "v2/users/@me",
+        scheme: 'https',
+        host: 'api.myanimelist.net',
+        path: 'v2/users/@me',
       );
     } else {
       uri = Uri(
-        scheme: "https",
-        host: "api.jikan.moe",
+        scheme: 'https',
+        host: 'api.jikan.moe',
         path:
-            "v4/users/${Globals.client.username}/${isFullImage ? 'full' : ''}",
+            'v4/users/${Globals.client.username}/${isFullImage ? 'full' : ''}',
       );
     }
 
