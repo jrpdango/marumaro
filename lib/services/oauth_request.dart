@@ -8,7 +8,7 @@ import 'package:miru/pages/mal_web_view.dart';
 class OAuthRequest {
   Future<String> send() async {
     await Get.to(() => const Login());
-    debugPrint("No valid tokens. Gotta auth and get new ones.");
+    debugPrint('No valid tokens. Gotta auth and get new ones.');
     String url = Globals.client.generateAuthURL();
     dynamic result = await Get.to(
       () => const MALWebView(),
@@ -16,8 +16,8 @@ class OAuthRequest {
         'url': url,
       },
     );
-    Uri params = result["accessCode"];
+    Uri params = result['accessCode'];
     // Access code from URL parameter
-    return params.queryParameters["code"] ?? '';
+    return params.queryParameters['code'] ?? '';
   }
 }
