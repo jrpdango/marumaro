@@ -21,6 +21,26 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false,
       ),
       body: const AnimeList(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              backgroundColor: Colors.black87,
+              label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today_rounded),
+              backgroundColor: Colors.black87,
+              label: "Schedule"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.compass_calibration_rounded),
+              backgroundColor: Colors.black87,
+              label: "Browse"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.more),
+              backgroundColor: Colors.black87,
+              label: "More"),
+        ],
+      ),
     );
   }
 }
