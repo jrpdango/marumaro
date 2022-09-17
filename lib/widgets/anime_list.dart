@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/custom_tabbarview_scroll_physics.dart';
 
 class AnimeList extends StatefulWidget {
@@ -21,12 +22,18 @@ class _AnimeListState extends State<AnimeList>
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        TabBar(
-          controller: _tabController,
-          tabs: const <Widget>[
-            Tab(child: Text('Currently Watching')),
-            Tab(child: Text('Plan To Watch')),
-          ],
+        SizedBox(
+          height: 35,
+          child: ColoredTabBar(
+            color: Colors.grey[900],
+            tabBar: TabBar(
+              controller: _tabController,
+              tabs: const <Widget>[
+                Tab(child: Text('Currently Watching')),
+                Tab(child: Text('Plan To Watch')),
+              ],
+            ),
+          ),
         ),
         Expanded(
           child: TabBarView(
