@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:miru/models/token.dart';
+import 'package:miru/models/token_pair.dart';
 import 'package:miru/services/oauth_request.dart';
 import 'package:miru/services/token_generate_request.dart';
 import 'package:miru/services/token_refresh_request.dart';

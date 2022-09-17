@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:miru/globals.dart';
-import 'package:miru/models/token.dart';
+import 'package:miru/models/token_pair.dart';
 import 'package:miru/utils/mal_client.dart';
 
 import 'package:miru/constants.dart' as constants;

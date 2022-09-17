@@ -9,7 +9,7 @@ import 'package:http/io_client.dart';
 // import 'package:miru/services/anime_list_request.dart';
 // import 'package:miru/services/anime_search_request.dart';
 // import 'package:miru/services/delete_anime_request.dart';
-import 'package:miru/models/token.dart';
+import 'package:miru/models/token_pair.dart';
 // import 'package:miru/services/update_list_request.dart';
 import 'package:miru/utils/pkce_code_generator.dart';
 import 'package:miru/services/user_data_request.dart';
