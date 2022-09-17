@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 /// This page is for user OAuth and token generation.
 //
 class MALWebView extends StatefulWidget {
+  const MALWebView({Key? key}) : super(key: key);
+
   @override
-  _MALWebViewState createState() => _MALWebViewState();
+  State<MALWebView> createState() => _MALWebViewState();
 }
 
 class _MALWebViewState extends State<MALWebView> {
