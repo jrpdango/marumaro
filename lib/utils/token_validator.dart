@@ -39,7 +39,7 @@ class TokenValidator {
     return await file.writeAsString(data);
   }
 
-  static Future<void> _assignTokenFromFile() async {
+  static Future<void> _assignTokenPairFromFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
 
     // If a file exists, use it. If it doesn't, create one.
@@ -71,7 +71,7 @@ class TokenValidator {
   }
 
   static Future<void> verifyTokens() async {
-    await _assignTokenFromFile();
+    await _assignTokenPairFromFile();
     if (await _isValidAccessToken()) {
       // Access token is valid, client can make calls
       debugPrint('Access code in file is valid, assigned to client.');
