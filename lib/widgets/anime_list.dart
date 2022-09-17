@@ -18,13 +18,11 @@ class _AnimeListState extends State<AnimeList>
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: TabBarView(
-        controller: _tabController,
-        children: const <Widget>[
-          Text('Hello'),
-        ],
-      ),
+    return TabBarView(
+      controller: _tabController,
+      children: const <Widget>[
+        Text('Hello'),
+      ],
     );
   }
 }

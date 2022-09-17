@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/widgets/anime_list.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -16,8 +17,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+      ),
+      body: const AnimeList(),
     );
   }
 }
