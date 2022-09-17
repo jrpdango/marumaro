@@ -15,7 +15,7 @@ class Login extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "Hello, and welcome to miru! To get started, tap the button below to log in your MyAnimeList account.",
+                'Hello, and welcome to miru! To get started, tap the button below to log in your MyAnimeList account.',
                 style: TextStyle(),
                 textAlign: TextAlign.center,
               ),
@@ -27,7 +27,7 @@ class Login extends StatelessWidget {
             Get.back();
           },
           icon: const Icon(Icons.login_rounded),
-          label: const Text("Login to MyAnimeList"),
+          label: const Text('Login to MyAnimeList'),
         ),
       ],
     );
