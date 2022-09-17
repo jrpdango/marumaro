@@ -80,6 +80,27 @@ class AnimeListRequest {
       httpRequestType: MiruHttpRequestType.get,
     ).send();
     debugPrint('List retrieved successfully!');
+
+    /// If there are pages after the initially-retrieved list, make extra
+    /// requests to get those until there no longer are any extra pages.
+    try {
+      while (unsortedResponse['paging']['next'] != null) {
+        uri = Uri.parse(unsortedResponse['paging']['next']);
+        Map<String, dynamic> newUnsortedResponse = await send();
+
+        for (String item in newUnsortedResponse.keys) {
+          if (item != 'paging' && item != 'status_code') {
+            unsortedResponse[item].addAll(newUnsortedResponse[item]);
+          }
+        }
+
+        unsortedResponse['paging']['next'] =
+            newUnsortedResponse['paging']['next'];
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
     return sortMap(unsortedResponse);
   }
 }
