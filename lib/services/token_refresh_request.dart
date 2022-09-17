@@ -14,9 +14,9 @@ class TokenRefreshRequest {
   Future<TokenPair> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String?> data = {
-      "client_id": MALClient.clientId,
-      "grant_type": "refresh_token",
-      "refresh_token": Globals.client.tokenPair?.refreshToken
+      'client_id': MALClient.clientId,
+      'grant_type': 'refresh_token',
+      'refresh_token': Globals.client.tokenPair?.refreshToken
     };
     TokenPair refreshedTokenPair;
 
@@ -29,10 +29,10 @@ class TokenRefreshRequest {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = json.decode(response.body);
         refreshedTokenPair = TokenPair(
-          accessToken: responseMap["access_token"],
-          refreshToken: responseMap["refresh_token"],
+          accessToken: responseMap['access_token'],
+          refreshToken: responseMap['refresh_token'],
         );
-        debugPrint("Status Code for token refresh: ${response.statusCode}");
+        debugPrint('Status Code for token refresh: ${response.statusCode}');
         debugPrint(responseMap.toString());
       } else {
         throw Exception(
@@ -43,8 +43,8 @@ class TokenRefreshRequest {
       return refreshedTokenPair;
     } catch (e) {
       refreshedTokenPair = TokenPair(
-        accessToken: "invalid_token",
-        refreshToken: "invalid_token",
+        accessToken: 'invalid_token',
+        refreshToken: 'invalid_token',
       );
 
       debugPrint('Something went wrong. $e');
