@@ -23,7 +23,7 @@ class _AnimeListState extends State<AnimeList>
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 35,
+          height: 30,
           child: ColoredTabBar(
             color: Colors.grey[900],
             tabBar: TabBar(
