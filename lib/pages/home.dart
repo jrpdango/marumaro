@@ -29,19 +29,19 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
               backgroundColor: Colors.black87,
-              label: "Home"),
+              label: 'Home'),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today_rounded),
               backgroundColor: Colors.black87,
-              label: "Schedule"),
+              label: 'Schedule'),
           BottomNavigationBarItem(
               icon: Icon(Icons.compass_calibration_rounded),
               backgroundColor: Colors.black87,
-              label: "Browse"),
+              label: 'Browse'),
           BottomNavigationBarItem(
               icon: Icon(Icons.more),
               backgroundColor: Colors.black87,
-              label: "More"),
+              label: 'More'),
         ],
       ),
     );
