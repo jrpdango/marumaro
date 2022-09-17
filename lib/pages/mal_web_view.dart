@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-// TODO: Remove this import
-// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
 
