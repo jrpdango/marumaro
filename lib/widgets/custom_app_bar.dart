@@ -20,7 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.menu),
         ),
         flexibleSpace: Image.asset(
-          "assets/city.jpg",
+          'assets/city.jpg',
           fit: BoxFit.cover,
           alignment: const Alignment(0, -0.45),
         ),
