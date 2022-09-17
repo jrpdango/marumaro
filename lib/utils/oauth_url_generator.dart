@@ -7,7 +7,7 @@ class OAuthURLGenerator {
 
   String generate() {
     String url =
-        "https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${MALClient.clientId}&code_challenge=$codeChallenge";
+        'https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${MALClient.clientId}&code_challenge=$codeChallenge';
     return url;
   }
 }
