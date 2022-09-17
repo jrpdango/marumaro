@@ -9,16 +9,19 @@ class AnimeList extends StatefulWidget {
 
 class _AnimeListState extends State<AnimeList>
     with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   @override
   void initState() {
+    _tabController = TabController(length: 1, vsync: this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
+    return Expanded(
       child: TabBarView(
-        children: <Widget>[
+        controller: _tabController,
+        children: const <Widget>[
           Text('Hello'),
         ],
       ),
