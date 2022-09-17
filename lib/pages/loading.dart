@@ -38,8 +38,6 @@ class _LoadingState extends State<Loading> {
 
     Globals.client.username = (await Globals.client.userDataRequest())['name'];
 
-    // TODO: Add home page
-    // Get.offNamed('/home');
     Get.to(() => const Home());
   }
 
