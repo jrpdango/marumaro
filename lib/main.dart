@@ -16,14 +16,9 @@ void main() {
   });
 
   runApp(
-    GetMaterialApp(
+    const GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Loading(),
-        '/login': (context) => const Login(),
-        '/mal_web_view': (context) => const MALWebView(),
-      },
+      home: Loading(),
     ),
   );
 }
