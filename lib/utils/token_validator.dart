@@ -70,7 +70,7 @@ class TokenValidator {
     await _writeTokenPairToFile();
   }
 
-  static Future<void> verifyTokens() async {
+  static Future<void> verifyTokenPair() async {
     await _assignTokenPairFromFile();
     if (await _isValidAccessToken()) {
       // Access token is valid, client can make calls
