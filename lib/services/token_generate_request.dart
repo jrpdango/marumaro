@@ -18,10 +18,10 @@ class TokenGenerateRequest {
   Future<TokenPair> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String> data = {
-      "client_id": MALClient.clientId,
-      "code": accessCode ?? '',
-      "code_verifier": Globals.client.codeChallenge,
-      "grant_type": "authorization_code"
+      'client_id': MALClient.clientId,
+      'code': accessCode ?? '',
+      'code_verifier': Globals.client.codeChallenge,
+      'grant_type': 'authorization_code'
     };
     TokenPair newTokenPair;
 
@@ -34,10 +34,10 @@ class TokenGenerateRequest {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = json.decode(response.body);
         newTokenPair = TokenPair(
-          accessToken: responseMap["access_token"],
-          refreshToken: responseMap["refresh_token"],
+          accessToken: responseMap['access_token'],
+          refreshToken: responseMap['refresh_token'],
         );
-        debugPrint("Status Code for token generation: ${response.statusCode}");
+        debugPrint('Status Code for token generation: ${response.statusCode}');
         debugPrint(responseMap.toString());
       } else {
         throw Exception(
@@ -48,8 +48,8 @@ class TokenGenerateRequest {
       return newTokenPair;
     } catch (e) {
       newTokenPair = TokenPair(
-        accessToken: "invalid_token",
-        refreshToken: "invalid_token",
+        accessToken: 'invalid_token',
+        refreshToken: 'invalid_token',
       );
 
       debugPrint('Something went wrong. $e');
