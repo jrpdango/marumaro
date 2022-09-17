@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miru/widgets/anime_list.dart';
-import 'package:miru/widgets/custom_appbar.dart';
+import 'package:miru/widgets/base_app_bar.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
       drawer: const Drawer(
         child: Text('This is the drawer'),
       ),
-      appBar: const CustomAppBar(),
+      appBar: const BaseAppBar(),
       body: const AnimeList(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
