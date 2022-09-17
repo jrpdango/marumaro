@@ -12,16 +12,30 @@ class _AnimeListState extends State<AnimeList>
   late TabController _tabController;
   @override
   void initState() {
-    _tabController = TabController(length: 1, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TabBarView(
-      controller: _tabController,
-      children: const <Widget>[
-        Text('Hello'),
+    return Column(
+      children: <Widget>[
+        TabBar(
+          controller: _tabController,
+          tabs: const <Widget>[
+            Tab(child: Text('Currently Watching')),
+            Tab(child: Text('Plan To Watch')),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: const <Widget>[
+              Text('Sarashi Mono'),
+              Text('Tame no'),
+            ],
+          ),
+        ),
       ],
     );
   }
