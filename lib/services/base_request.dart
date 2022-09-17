@@ -24,6 +24,7 @@ class BaseRequest {
     headers ??= <String, String>{
       'Authorization': 'Bearer ${Globals.client.tokenPair?.accessToken}'
     };
+    // TODO: Make other requests
     switch (httpRequestType) {
       case MiruHttpRequestType.get:
         response = await Globals.client.userClient.get(
