@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miru/widgets/anime_list.dart';
+import 'package:miru/widgets/custom_appbar.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,9 +18,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
+      appBar: const CustomAppBar(),
       body: const AnimeList(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
