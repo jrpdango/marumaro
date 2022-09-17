@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/widgets/custom_tabbarview_scroll_physics.dart';
 
 class AnimeList extends StatefulWidget {
   const AnimeList({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _AnimeListState extends State<AnimeList>
         Expanded(
           child: TabBarView(
             controller: _tabController,
+            physics: const CustomTabBarViewScrollPhysics(),
             children: const <Widget>[
               Text('Sarashi Mono'),
               Text('Tame no'),
