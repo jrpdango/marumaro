@@ -25,7 +25,7 @@ class TokenValidator {
   }
 
   // Method to write tokens to device
-  static Future<File> _writeTokensToFile() async {
+  static Future<File> _writeTokenPairToFile() async {
     Directory directory = await getApplicationDocumentsDirectory();
     File file = File('${directory.path}/miruTokens.json');
     String data = json.encode({
@@ -67,7 +67,7 @@ class TokenValidator {
   static Future<void> _oAuthNewTokens() async {
     String accessCode = await OAuthRequest().send();
     await _getTokenPair(accessCode);
-    await _writeTokensToFile();
+    await _writeTokenPairToFile();
   }
 
   static Future<void> verifyTokens() async {
@@ -89,7 +89,7 @@ class TokenValidator {
       }
       debugPrint('Refresh code in file is valid, tokens have been refreshed.');
       // Tokens are refreshed, access token is now valid, write to file
-      _writeTokensToFile();
+      _writeTokenPairToFile();
     }
   }
 }
