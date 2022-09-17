@@ -22,7 +22,7 @@ void main() {
       routes: {
         '/': (context) => const Loading(),
         '/login': (context) => const Login(),
-        '/mal_web_view': (context) => MALWebView(),
+        '/mal_web_view': (context) => const MALWebView(),
       },
     ),
   );
