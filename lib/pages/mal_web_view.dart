@@ -31,19 +31,19 @@ class _MALWebViewState extends State<MALWebView> {
           children: <Widget>[
             WebView(
               javascriptMode: JavascriptMode.unrestricted,
-              initialUrl: content?["url"].toString(),
+              initialUrl: content?['url'].toString(),
               onWebViewCreated: (WebViewController webViewController) {
                 _controller.complete(webViewController);
               },
               onPageStarted: (String url) {
                 // User is redirected here
-                if (url.startsWith("http://localhost/oauth")) {
+                if (url.startsWith('http://localhost/oauth')) {
                   setState(() {
                     loading = true;
                   });
                   Get.back(
                     result: {
-                      "accessCode": Uri.parse(url),
+                      'accessCode': Uri.parse(url),
                     },
                   );
                 }
