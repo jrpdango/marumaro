@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-// -------------- PAGES ------------------
 import 'package:miru/pages/loading.dart';
-import 'package:miru/pages/login.dart';
-import 'package:miru/pages/mal_web_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
