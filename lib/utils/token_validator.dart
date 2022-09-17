@@ -64,7 +64,7 @@ class TokenValidator {
     return (await Globals.client.userDataRequest()).isNotEmpty;
   }
 
-  static Future<void> _oAuthNewTokens() async {
+  static Future<void> _oAuthNewTokenPair() async {
     String accessCode = await OAuthRequest().send();
     await _getTokenPair(accessCode);
     await _writeTokenPairToFile();
@@ -85,7 +85,7 @@ class TokenValidator {
         debugPrint(
           'Refresh code in file isn\'t valid, need to get new token pair.',
         );
-        await _oAuthNewTokens();
+        await _oAuthNewTokenPair();
       }
       debugPrint('Refresh code in file is valid, tokens have been refreshed.');
       // Tokens are refreshed, access token is now valid, write to file
