@@ -16,7 +16,7 @@ import 'package:miru/services/user_data_request.dart';
 import 'package:flutter/material.dart' show NetworkImage;
 
 class MALClient {
-  static const String clientId = "b6cd1c6e3172ade1142272d4c288bdf2";
+  static const String clientId = 'b6cd1c6e3172ade1142272d4c288bdf2';
   static final HttpClient _httpClient = HttpClient()
     ..badCertificateCallback =
         ((X509Certificate cert, String host, int port) => true);
