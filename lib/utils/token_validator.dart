@@ -17,7 +17,7 @@ class TokenValidator {
     debugPrint('Refresh token: ${Globals.client.tokenPair?.refreshToken}');
   }
 
-  static Future<void> _refreshTokens() async {
+  static Future<void> _refreshTokenPair() async {
     Globals.client.tokenPair = await const TokenRefreshRequest().send();
     debugPrint('DEBUG: Tokens refreshed:');
     debugPrint('Access token: ${Globals.client.tokenPair?.accessToken}');
@@ -79,7 +79,7 @@ class TokenValidator {
       debugPrint(
           'Access code in file is not valid, attempting to refresh with refresh token.');
       // Attempt to refresh tokens
-      await _refreshTokens();
+      await _refreshTokenPair();
       // Request for new tokens as long as the current ones aren't valid
       while (!(await _isValidAccessToken())) {
         debugPrint(
