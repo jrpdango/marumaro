@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ColoredTabBar extends Container implements PreferredSizeWidget {
-  ColoredTabBar({this.color, this.tabBar});
+  ColoredTabBar({Key? key, Color? color, this.tabBar})
+      : super(key: key, color: color);
 
-  final Color? color;
   final TabBar? tabBar;
 
   @override
@@ -11,8 +11,8 @@ class ColoredTabBar extends Container implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: this.padding,
-        color: this.color,
-        child: this.tabBar,
+        padding: padding,
+        color: color,
+        child: tabBar,
       );
 }
