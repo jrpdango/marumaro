@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:convert';
 
 class TokenValidator {
-  static Future<void> _getTokens(String? accessCode) async {
+  static Future<void> _getTokenPair(String? accessCode) async {
     Globals.client.tokenPair =
         await TokenGenerateRequest(accessCode: accessCode).send();
     debugPrint('DEBUG: Tokens received:');
@@ -66,7 +66,7 @@ class TokenValidator {
 
   static Future<void> _oAuthNewTokens() async {
     String accessCode = await OAuthRequest().send();
-    await _getTokens(accessCode);
+    await _getTokenPair(accessCode);
     await _writeTokensToFile();
   }
 
