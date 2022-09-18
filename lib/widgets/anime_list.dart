@@ -25,7 +25,7 @@ class _AnimeListState extends State<AnimeList>
         SizedBox(
           height: 30,
           child: CustomTabBar(
-            color: Colors.grey[900],
+            color: const Color(0xFF1C1C1C),
             tabBar: TabBar(
               controller: _tabController,
               tabs: const <Widget>[
