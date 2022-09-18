@@ -1,9 +1,12 @@
-// TODO: Implement theme
 import 'package:flutter/material.dart';
 
-// @immutable
-// class MiruTheme extends ThemeExtension<MiruTheme> {
-//   const MiruTheme({this.background = Colors.black87});
+const Color _textColor = Color(0xFFFDFFFF);
+const Color _unselectedItemColor = Color(0xFFBBBDBD);
 
-//   final Color background;
-// }
+ThemeData themeData = ThemeData.dark().copyWith(
+  textTheme: Typography().white,
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    selectedItemColor: _textColor,
+    unselectedItemColor: _unselectedItemColor,
+  ),
+);

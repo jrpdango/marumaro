@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:miru/pages/loading.dart';
+import 'package:miru/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +14,10 @@ void main() {
   });
 
   runApp(
-    const GetMaterialApp(
+    GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Loading(),
+      home: const Loading(),
+      theme: themeData,
     ),
   );
 }
