@@ -15,6 +15,7 @@ ThemeData themeData = ThemeData.dark().copyWith(
       ),
     ),
   ),
+  // TODO: Edit selectedlabelstyle
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: _tabBarBackgroundColor,
     selectedItemColor: _textColor,
