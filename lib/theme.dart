@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const Color _textColor = Color(0xFFFDFFFF);
 const Color _unselectedItemColor = Color(0xFFBBBDBD);
 const Color _tabBarIndicatorColor = Color(0xFF21E9FF);
+const Color _tabBarBackgroundColor = Color(0xFF1C1C1C);
 
 ThemeData themeData = ThemeData.dark().copyWith(
   textTheme: Typography().white,
@@ -15,6 +16,7 @@ ThemeData themeData = ThemeData.dark().copyWith(
     ),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: _tabBarBackgroundColor,
     selectedItemColor: _textColor,
     unselectedItemColor: _unselectedItemColor,
   ),

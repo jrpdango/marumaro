@@ -25,23 +25,24 @@ class _HomeState extends State<Home> {
       appBar: const CustomAppBar(),
       body: const AnimeList(),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              backgroundColor: Colors.black87,
-              label: 'Home'),
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_rounded),
-              backgroundColor: Colors.black87,
-              label: 'Schedule'),
+            icon: Icon(Icons.calendar_today_rounded),
+            label: 'Schedule',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.compass_calibration_rounded),
-              backgroundColor: Colors.black87,
-              label: 'Browse'),
+            icon: Icon(Icons.compass_calibration_rounded),
+            label: 'Browse',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.more),
-              backgroundColor: Colors.black87,
-              label: 'More'),
+            icon: Icon(Icons.more),
+            label: 'More',
+          ),
         ],
       ),
     );
