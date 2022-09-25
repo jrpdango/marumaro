@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/widgets/logout_button.dart';
 import 'package:miru/widgets/user_profile_card.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -10,6 +11,7 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: const <Widget>[
           UserProfileCard(),
+          LogoutButton(),
         ],
       ),
     );
