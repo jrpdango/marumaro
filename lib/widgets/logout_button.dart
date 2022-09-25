@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/pages/loading.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:miru/utils/token_deleter.dart';
 
 class LogoutButton extends StatelessWidget {
   const LogoutButton({Key? key}) : super(key: key);
@@ -24,9 +22,7 @@ class LogoutButton extends StatelessWidget {
                   actions: <Widget>[
                     TextButton(
                       onPressed: () async {
-                        Directory directory =
-                            await getApplicationDocumentsDirectory();
-                        File("${directory.path}/miruTokens.json").deleteSync();
+                        deleteLocalTokens();
                         Globals.client.tokenPair = null;
                         Get.off(() => const Loading());
                       },
