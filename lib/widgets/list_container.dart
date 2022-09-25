@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:miru/enums/anime_list_status.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
