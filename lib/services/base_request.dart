@@ -34,6 +34,13 @@ class BaseRequest {
           headers: headers,
         );
         break;
+      case MiruHttpRequestType.post:
+        response = await Globals.client.userClient.post(
+          uri,
+          headers: headers,
+          body: body,
+        );
+        break;
       case MiruHttpRequestType.patch:
         response = await Globals.client.userClient.patch(
           uri,
