@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miru/widgets/custom_tab_bar.dart';
 import 'package:miru/widgets/custom_tabbarview_scroll_physics.dart';
+import 'package:miru/widgets/list_container.dart';
 
 class AnimeList extends StatefulWidget {
   const AnimeList({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _AnimeListState extends State<AnimeList>
             controller: _tabController,
             physics: const CustomTabBarViewScrollPhysics(),
             children: const <Widget>[
-              Text('Tab1'),
+              ListContainer(),
               Text('Tab2'),
               Text('Tab3'),
               Text('Tab4'),

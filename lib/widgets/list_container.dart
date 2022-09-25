@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/widgets/content_card.dart';
 
 class ListContainer extends StatefulWidget {
   const ListContainer({Key? key}) : super(key: key);
@@ -12,14 +13,14 @@ class _MyWidgetState extends State<ListContainer> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        child: Obx(
-          () => ListView.builder(
-            itemBuilder: ((context, index) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-              );
-            }),
-          ),
+        child: ListView.builder(
+          itemCount: 20,
+          itemBuilder: ((context, index) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+              child: ContentCard(),
+            );
+          }),
         ),
         onRefresh: () async {
           return await null;
