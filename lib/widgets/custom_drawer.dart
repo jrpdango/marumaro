@@ -10,8 +10,9 @@ class CustomDrawer extends StatelessWidget {
 
     try {
       Globals.client.userImage = NetworkImage(
-        (await (Globals.client.userDataRequest(mode: 'Jikan')))['data']
-            ['images']['jpg']['image_url'],
+        (await Globals.client.userDataRequest(
+          mode: 'Jikan',
+        ))['data']['images']['jpg']['image_url'],
       );
       return Globals.client.userImage;
     } catch (e) {
