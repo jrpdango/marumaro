@@ -3,6 +3,7 @@ import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/services/base_request.dart';
 
+//TODO: Test if new request works
 class DeleteAnimeRequest implements MalRequest {
   final int animeID;
 
