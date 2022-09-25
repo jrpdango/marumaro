@@ -4,8 +4,13 @@ const Color _textColor = Color(0xFFFDFFFF);
 const Color _unselectedItemColor = Color(0xFFBBBDBD);
 const Color _tabBarIndicatorColor = Color(0xFF21E9FF);
 const Color _tabBarBackgroundColor = Color(0xFF1C1C1C);
+const Color _backgroundColor = Color(0xFF212121);
 
 ThemeData themeData = ThemeData.dark().copyWith(
+  scaffoldBackgroundColor: _backgroundColor,
+  drawerTheme: const DrawerThemeData().copyWith(
+    backgroundColor: _backgroundColor,
+  ),
   textTheme: Typography().white,
   tabBarTheme: const TabBarTheme(
     indicator: UnderlineTabIndicator(
