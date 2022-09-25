@@ -1,6 +1,6 @@
 enum MiruHttpRequestType {
   get,
   post,
-  put,
+  patch,
   delete,
 }
