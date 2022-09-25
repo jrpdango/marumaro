@@ -16,6 +16,7 @@ ThemeData themeData = ThemeData.dark().copyWith(
   ),
   textTheme: Typography().white,
   tabBarTheme: const TabBarTheme(
+    labelPadding: EdgeInsets.symmetric(horizontal: 15.0),
     indicator: UnderlineTabIndicator(
       borderSide: BorderSide(
         width: 2.0,
