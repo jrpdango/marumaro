@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ContentCard extends StatelessWidget {
-  const ContentCard({Key? key}) : super(key: key);
+  final String imageUrl;
+
+  const ContentCard({
+    Key? key,
+    required this.imageUrl,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +30,7 @@ class ContentCard extends StatelessWidget {
                 placeholderCacheHeight: 90,
                 placeholderCacheWidth: 65,
                 placeholder: "assets/404img.png",
-                // TODO: This is a placeholder image
-                image:
-                    'https://media.discordapp.net/attachments/489847778881699871/994210790318018640/facebook_1657108707628_6950417680840581726.jpg?width=528&height=660',
+                image: imageUrl,
                 imageErrorBuilder: (context, error, stackTrace) => SizedBox(
                   height: 90,
                   width: 65,
