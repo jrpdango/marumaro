@@ -32,11 +32,12 @@ class UserProfileCard extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(7.0)),
           onTap: () {},
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0, vertical: 20.0),
+                  vertical: 20.0,
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(300.0),
                   child: FutureBuilder(
