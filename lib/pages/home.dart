@@ -19,7 +19,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: Add custom drawer
       drawer: const CustomDrawer(),
       appBar: const CustomAppBar(),
       body: const AnimeList(),
