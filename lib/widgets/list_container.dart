@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/enums/anime_list_status.dart';
 import 'package:miru/widgets/content_card.dart';
 
 class ListContainer extends StatefulWidget {
-  const ListContainer({Key? key}) : super(key: key);
+  final AnimeListType animeListType;
+
+  const ListContainer({
+    Key? key,
+    required this.animeListType,
+  }) : super(key: key);
 
   @override
   State<ListContainer> createState() => _MyWidgetState();
