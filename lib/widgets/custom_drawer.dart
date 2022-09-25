@@ -6,8 +6,12 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Drawer(
-      child: UserProfileCard(),
+    return Drawer(
+      child: Column(
+        children: const <Widget>[
+          UserProfileCard(),
+        ],
+      ),
     );
   }
 }
