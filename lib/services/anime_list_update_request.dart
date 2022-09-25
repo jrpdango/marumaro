@@ -1,6 +1,7 @@
-import 'package:http/http.dart';
-import 'package:miru/globals.dart';
+import 'package:flutter/foundation.dart';
+import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
+import 'package:miru/services/base_request.dart';
 
 class AnimeListUpdateRequest implements MalRequest {
   final int animeID;
@@ -16,26 +17,22 @@ class AnimeListUpdateRequest implements MalRequest {
   });
 
   @override
-  Future<String> send() async {
-    try {
-      Uri url = Uri(
-          scheme: "https",
-          host: "api.myanimelist.net",
-          path: "v2/anime/$animeID/my_list_status");
-      Response response = await Globals.client.userClient.patch(url, headers: {
-        "Authorization": "Bearer ${Globals.client.tokenPair?.accessToken}"
-      }, body: {
+  Future<Map<String, dynamic>> send() async {
+    Uri uri = Uri(
+      scheme: "https",
+      host: "api.myanimelist.net",
+      path: "v2/anime/$animeID/my_list_status",
+    );
+    Map<String, dynamic> response = await BaseRequest(
+      uri: uri,
+      httpRequestType: MiruHttpRequestType.patch,
+      body: {
         "status": status,
         "score": score,
-        "num_watched_episodes": episodesWatched
-      });
-      if (response.statusCode == 200) {
-        return "200";
-      } else {
-        return "List update request sent, but something went wrong. Status code: ${response.statusCode}";
-      }
-    } catch (exception) {
-      return "Oops! Something went wrong. $exception";
-    }
+        "num_watched_episodes": episodesWatched,
+      },
+    ).send();
+    debugPrint('List updated successfully!');
+    return response;
   }
 }
