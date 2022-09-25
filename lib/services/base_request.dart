@@ -12,11 +12,13 @@ class BaseRequest {
   final Uri uri;
   final MiruHttpRequestType httpRequestType;
   Map<String, String>? headers;
+  Map<String, dynamic>? body;
 
   BaseRequest({
     required this.uri,
     required this.httpRequestType,
     this.headers,
+    this.body,
   });
 
   Future<Map<String, dynamic>> send() async {
@@ -30,6 +32,13 @@ class BaseRequest {
         response = await Globals.client.userClient.get(
           uri,
           headers: headers,
+        );
+        break;
+      case MiruHttpRequestType.patch:
+        response = await Globals.client.userClient.patch(
+          uri,
+          headers: headers,
+          body: body,
         );
         break;
       default:
