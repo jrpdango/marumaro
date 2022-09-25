@@ -26,7 +26,6 @@ class UserProfileCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(7.0),
       ),
-      color: Colors.grey[900],
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(7.0)),
         onTap: () {},
