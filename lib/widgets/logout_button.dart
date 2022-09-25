@@ -7,6 +7,12 @@ import 'package:miru/utils/token_deleter.dart';
 class LogoutButton extends StatelessWidget {
   const LogoutButton({Key? key}) : super(key: key);
 
+  void _logout() {
+    deleteLocalTokens();
+    Globals.client.tokenPair = null;
+    Get.off(() => const Loading());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -21,10 +27,8 @@ class LogoutButton extends StatelessWidget {
                   title: const Text('Are you sure you want to logout?'),
                   actions: <Widget>[
                     TextButton(
-                      onPressed: () async {
-                        deleteLocalTokens();
-                        Globals.client.tokenPair = null;
-                        Get.off(() => const Loading());
+                      onPressed: () {
+                        _logout();
                       },
                       child: const Text('Yes'),
                     ),
