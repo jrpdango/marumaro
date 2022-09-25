@@ -26,7 +26,6 @@ class BaseRequest {
     headers ??= <String, String>{
       'Authorization': 'Bearer ${Globals.client.tokenPair?.accessToken}'
     };
-    // TODO: Make other requests
     switch (httpRequestType) {
       case MiruHttpRequestType.get:
         response = await Globals.client.userClient.get(
@@ -54,11 +53,6 @@ class BaseRequest {
           headers: headers,
         );
         break;
-      default:
-        response = await Globals.client.userClient.get(
-          uri,
-          headers: headers,
-        );
     }
     Map<String, dynamic> responseMap = json.decode(response.body);
     try {
