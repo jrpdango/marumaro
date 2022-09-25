@@ -4,10 +4,10 @@ import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/services/base_request.dart';
 
 //TODO: Test if new request works
-class DeleteAnimeRequest implements MalRequest {
+class AnimeDeleteRequest implements MalRequest {
   final int animeID;
 
-  DeleteAnimeRequest({required this.animeID});
+  AnimeDeleteRequest({required this.animeID});
 
   @override
   Future<Map<String, dynamic>> send() async {
