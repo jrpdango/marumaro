@@ -3,6 +3,7 @@ import 'package:miru/enums/anime_list_status.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/content_card.dart';
+import 'package:miru/widgets/content_card_details.dart';
 
 class ListContainer extends StatefulWidget {
   final AnimeListType animeListType;
@@ -52,6 +53,13 @@ class _MyWidgetState extends State<ListContainer> {
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
               child: ContentCard(
                 imageUrl: _animeList?[index].picture.toString() ?? '',
+                contentCardDetails: ContentCardDetails(
+                  title: _animeList?[index].title ?? '',
+                  progress:
+                      '${_animeList?[index].userEpisodesWatched}/${_animeList?[index].totalEpisodes}',
+                  score: _animeList?[index].userScore.toString() ?? '',
+                  airingStatus: _animeList?[index].showStatus.toString() ?? '',
+                ),
               ),
             );
           }),

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:miru/widgets/content_card_details.dart';
 
 class ContentCard extends StatelessWidget {
   final String imageUrl;
+  final ContentCardDetails contentCardDetails;
 
   const ContentCard({
     Key? key,
     required this.imageUrl,
+    required this.contentCardDetails,
   }) : super(key: key);
 
   @override
@@ -38,8 +41,8 @@ class ContentCard extends StatelessWidget {
                 ),
               ),
             ),
-            const Expanded(
-              child: SizedBox(),
+            Expanded(
+              child: contentCardDetails,
             ),
           ],
         ),
