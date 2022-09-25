@@ -6,14 +6,14 @@ import 'package:miru/services/base_request.dart';
 class AnimeListUpdateRequest implements MalRequest {
   final int animeID;
   final String status;
-  final String score;
-  final String episodesWatched;
+  final int score;
+  final int episodesWatched;
 
   AnimeListUpdateRequest({
     required this.animeID,
     this.status = "watching",
-    this.score = "0",
-    this.episodesWatched = "0",
+    this.score = 0,
+    this.episodesWatched = 0,
   });
 
   @override
