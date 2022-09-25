@@ -1,8 +1,9 @@
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/globals.dart';
+import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/services/base_request.dart';
 
-class UserDataRequest {
+class UserDataRequest implements MalRequest {
   final String mode;
   final bool isFullImage;
 
@@ -11,6 +12,7 @@ class UserDataRequest {
     this.isFullImage = false,
   });
 
+  @override
   Future<Map<String, dynamic>> send() async {
     Uri uri;
 

@@ -3,14 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:miru/globals.dart';
+import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/models/token_pair.dart';
 import 'package:miru/utils/mal_client.dart';
 
 import 'package:miru/constants.dart' as constants;
 
-class TokenRefreshRequest {
+class TokenRefreshRequest implements MalRequest {
   const TokenRefreshRequest();
 
+  @override
   Future<TokenPair> send() async {
     Uri url = Uri.parse(constants.apiTokenUrl);
     Map<String, String?> data = {

@@ -1,3 +1,5 @@
 abstract class MalRequest {
-  Future<String> send();
+  /// Sends the request to MAL servers through the API.
+  ///
+  Future<dynamic> send();
 }

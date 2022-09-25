@@ -1,7 +1,8 @@
 import 'package:http/http.dart';
 import 'package:miru/globals.dart';
+import 'package:miru/interfaces/mal_request.dart';
 
-class AnimeListUpdateRequest {
+class AnimeListUpdateRequest implements MalRequest {
   final int animeID;
   final String status;
   final String score;
@@ -14,6 +15,7 @@ class AnimeListUpdateRequest {
     this.episodesWatched = "0",
   });
 
+  @override
   Future<String> send() async {
     try {
       Uri url = Uri(

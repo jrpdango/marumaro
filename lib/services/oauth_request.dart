@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/globals.dart';
+import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/pages/login.dart';
 import 'package:miru/pages/mal_web_view.dart';
 
-class OAuthRequest {
+class OAuthRequest implements MalRequest {
+  @override
   Future<String> send() async {
     await Get.to(() => const Login());
     debugPrint('No valid tokens. Gotta auth and get new ones.');

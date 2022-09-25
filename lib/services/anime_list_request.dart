@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
+import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/models/anime.dart';
 
 import 'package:miru/services/base_request.dart';
 
-class AnimeListRequest {
+class AnimeListRequest implements MalRequest {
   final int? limit;
   final int? offset;
   final String? username;
@@ -65,8 +66,7 @@ class AnimeListRequest {
     return animeMap;
   }
 
-  /// Sends a request to update anime list to MAL servers through API.
-  ///
+  @override
   Future<Map<String, dynamic>> send() async {
     if (uri == null) {
       uri = Uri(
