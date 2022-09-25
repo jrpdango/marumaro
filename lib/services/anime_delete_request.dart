@@ -12,9 +12,9 @@ class AnimeDeleteRequest implements MalRequest {
   @override
   Future<Map<String, dynamic>> send() async {
     Uri uri = Uri(
-        scheme: "https",
-        host: "api.myanimelist.net",
-        path: "v2/anime/$animeID/my_list_status");
+        scheme: 'https',
+        host: 'api.myanimelist.net',
+        path: 'v2/anime/$animeID/my_list_status');
 
     Map<String, dynamic> response = await BaseRequest(
       uri: uri,
