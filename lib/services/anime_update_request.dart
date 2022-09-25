@@ -11,7 +11,7 @@ class AnimeUpdateRequest implements MalRequest {
 
   AnimeUpdateRequest({
     required this.animeID,
-    this.status = "watching",
+    this.status = 'watching',
     this.score = 0,
     this.episodesWatched = 0,
   });
@@ -19,17 +19,17 @@ class AnimeUpdateRequest implements MalRequest {
   @override
   Future<Map<String, dynamic>> send() async {
     Uri uri = Uri(
-      scheme: "https",
-      host: "api.myanimelist.net",
-      path: "v2/anime/$animeID/my_list_status",
+      scheme: 'https',
+      host: 'api.myanimelist.net',
+      path: 'v2/anime/$animeID/my_list_status',
     );
     Map<String, dynamic> response = await BaseRequest(
       uri: uri,
       httpRequestType: MiruHttpRequestType.patch,
       body: {
-        "status": status,
-        "score": score,
-        "num_watched_episodes": episodesWatched,
+        'status': status,
+        'score': score,
+        'num_watched_episodes': episodesWatched,
       },
     ).send();
     debugPrint('List updated successfully!');
