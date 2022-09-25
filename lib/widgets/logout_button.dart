@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/globals.dart';
+import 'package:miru/pages/loading.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LogoutButton extends StatelessWidget {
@@ -25,7 +27,8 @@ class LogoutButton extends StatelessWidget {
                         Directory directory =
                             await getApplicationDocumentsDirectory();
                         File("${directory.path}/miruTokens.json").deleteSync();
-                        Get.offNamed("/");
+                        Globals.client.tokenPair = null;
+                        Get.off(() => const Loading());
                       },
                       child: const Text('Yes'),
                     ),
