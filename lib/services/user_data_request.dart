@@ -5,11 +5,11 @@ import 'package:miru/services/base_request.dart';
 
 class UserDataRequest implements MalRequest {
   final String mode;
-  final bool isFullImage;
+  final bool? isFullImage;
 
   const UserDataRequest({
     required this.mode,
-    this.isFullImage = false,
+    this.isFullImage,
   });
 
   @override
@@ -27,7 +27,7 @@ class UserDataRequest implements MalRequest {
         scheme: 'https',
         host: 'api.jikan.moe',
         path:
-            'v4/users/${Globals.client.username}/${isFullImage ? 'full' : ''}',
+            'v4/users/${Globals.client.username}/${(isFullImage ?? false) ? 'full' : ''}',
       );
     }
 

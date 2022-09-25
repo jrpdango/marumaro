@@ -54,8 +54,11 @@ class MALClient {
   //   print(response);
   // }
 
-  Future<Map<String, dynamic>> userDataRequest() {
-    return const UserDataRequest(mode: 'MAL').send();
+  Future<Map<String, dynamic>> userDataRequest({
+    String mode = 'MAL',
+    bool? isFullImage,
+  }) {
+    return UserDataRequest(mode: mode, isFullImage: isFullImage).send();
   }
 
   Future<Map<String, dynamic>> requestAnimeList({

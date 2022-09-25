@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
+import 'package:miru/widgets/custom_drawer.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,9 +20,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       // TODO: Add custom drawer
-      drawer: const Drawer(
-        child: Text('This is the drawer'),
-      ),
+      drawer: const CustomDrawer(),
       appBar: const CustomAppBar(),
       body: const AnimeList(),
       bottomNavigationBar: BottomNavigationBar(
