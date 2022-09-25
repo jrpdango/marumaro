@@ -55,6 +55,7 @@ class _MyWidgetState extends State<ListContainer> {
                 imageUrl: _animeList?[index].picture.toString() ?? '',
                 contentCardDetails: ContentCardDetails(
                   title: _animeList?[index].title ?? '',
+                  // TODO: Should make this separate, not just one string
                   progress:
                       '${_animeList?[index].userEpisodesWatched}/${_animeList?[index].totalEpisodes}',
                   score: _animeList?[index].userScore.toString() ?? '',

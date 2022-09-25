@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ContentCardDetails extends StatelessWidget {
+  // TODO: Add more properties and format within this widget
   final String title;
   final String progress;
+  // TODO: Make this an int
   final String score;
   final String airingStatus;
 
@@ -32,6 +34,7 @@ class ContentCardDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: This hasn't been cleaned up, just copied from old miru
     return SizedBox(
       width: 267.0,
       height: 90.0,
