@@ -52,7 +52,6 @@ class _MyWidgetState extends State<ListContainer> {
               padding:
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
               child: ContentCard(
-                // TODO: This is a temporary image
                 imageUrl: _animeList?[index].picture.toString() ?? '',
               ),
             );
