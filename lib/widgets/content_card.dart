@@ -6,7 +6,6 @@ class ContentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.grey[900],
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(5.0)),
         onTap: () {},
