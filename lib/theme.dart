@@ -8,6 +8,7 @@ const Color _backgroundColor = Color(0xFF212121);
 const Color _cardColor = Color(0xFF262626);
 
 ThemeData themeData = ThemeData.dark().copyWith(
+  dialogBackgroundColor: _backgroundColor,
   cardColor: _cardColor,
   scaffoldBackgroundColor: _backgroundColor,
   drawerTheme: const DrawerThemeData().copyWith(
