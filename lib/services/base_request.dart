@@ -41,6 +41,12 @@ class BaseRequest {
           body: body,
         );
         break;
+      case MiruHttpRequestType.delete:
+        response = await Globals.client.userClient.delete(
+          uri,
+          headers: headers,
+        );
+        break;
       default:
         response = await Globals.client.userClient.get(
           uri,
