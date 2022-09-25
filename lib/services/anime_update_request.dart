@@ -3,13 +3,13 @@ import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/services/base_request.dart';
 
-class AnimeListUpdateRequest implements MalRequest {
+class AnimeUpdateRequest implements MalRequest {
   final int animeID;
   final String status;
   final int score;
   final int episodesWatched;
 
-  AnimeListUpdateRequest({
+  AnimeUpdateRequest({
     required this.animeID,
     this.status = "watching",
     this.score = 0,
