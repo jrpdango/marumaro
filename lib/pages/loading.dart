@@ -1,5 +1,6 @@
 import 'dart:io' show Directory, File;
 import 'package:miru/pages/home.dart';
+import 'package:miru/utils/token_deleter.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _LoadingState extends State<Loading> {
   /// Verify token validity and initialization of anime list.
   ///
   void _setupMALConnection({required bool deleteTokens}) async {
-    if (deleteTokens) _deleteLocalTokens();
+    if (deleteTokens) deleteLocalTokens();
     await TokenValidator.verifyTokenPair();
 
     Map<String, dynamic> result =
@@ -39,13 +40,6 @@ class _LoadingState extends State<Loading> {
     Globals.client.username = (await Globals.client.userDataRequest())['name'];
 
     Get.to(() => const Home());
-  }
-
-  /// Deletes locally-stored tokens.
-  ///
-  void _deleteLocalTokens() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    File('${directory.path}/miruTokens.json').deleteSync();
   }
 
   @override
