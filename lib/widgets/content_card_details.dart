@@ -55,8 +55,8 @@ class ContentCardDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: This hasn't been cleaned up, just copied from old miru
-    return SizedBox(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
       height: 90.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +95,7 @@ class ContentCardDetails extends StatelessWidget {
                 Card(
                   color: _getScoreColor(),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 6.0, right: 5.0),
+                    padding: const EdgeInsets.only(left: 7.0, right: 5.0),
                     child: Row(
                       children: <Widget>[
                         Text(
