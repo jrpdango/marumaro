@@ -32,6 +32,27 @@ class ContentCardDetails extends StatelessWidget {
     return rawStatus;
   }
 
+  Color _getScoreColor() {
+    switch (score) {
+      case 1:
+      case 2:
+      case 3:
+        return Colors.red;
+      case 4:
+      case 5:
+      case 6:
+        return Colors.amber.shade700;
+      case 7:
+      case 8:
+      case 9:
+        return Colors.green;
+      case 10:
+        return const Color(0xFF21E9FF);
+      default:
+        return Colors.white;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: This hasn't been cleaned up, just copied from old miru
@@ -73,8 +94,9 @@ class ContentCardDetails extends StatelessWidget {
                   ),
                 ),
                 Card(
+                  color: _getScoreColor(),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       const SizedBox(
                         width: 6.0,
                       ),
