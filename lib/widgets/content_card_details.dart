@@ -4,7 +4,6 @@ class ContentCardDetails extends StatelessWidget {
   // TODO: Add more properties and format within this widget
   final String title;
   final String progress;
-  // TODO: Make this an int
   final int score;
   final String airingStatus;
 
