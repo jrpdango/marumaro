@@ -57,7 +57,6 @@ class ContentCardDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: This hasn't been cleaned up, just copied from old miru
     return SizedBox(
-      width: 267.0,
       height: 90.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
