@@ -28,13 +28,13 @@ class _MyWidgetState extends State<ListContainer> {
         _animeList = Globals.client.animeMap['watching'];
         break;
       case AnimeListType.planToWatch:
-        _animeList = Globals.client.animeMap['planToWatch'];
+        _animeList = Globals.client.animeMap['plan_to_watch'];
         break;
       case AnimeListType.completed:
         _animeList = Globals.client.animeMap['completed'];
         break;
       case AnimeListType.onHold:
-        _animeList = Globals.client.animeMap['onHold'];
+        _animeList = Globals.client.animeMap['on_hold'];
         break;
       case AnimeListType.dropped:
         _animeList = Globals.client.animeMap['dropped'];

@@ -49,10 +49,18 @@ class _AnimeListState extends State<AnimeList>
               ListContainer(
                 animeListType: AnimeListType.watching,
               ),
-              Text('Tab2'),
-              Text('Tab3'),
-              Text('Tab4'),
-              Text('Tab5'),
+              ListContainer(
+                animeListType: AnimeListType.planToWatch,
+              ),
+              ListContainer(
+                animeListType: AnimeListType.completed,
+              ),
+              ListContainer(
+                animeListType: AnimeListType.onHold,
+              ),
+              ListContainer(
+                animeListType: AnimeListType.dropped,
+              ),
             ],
           ),
         ),
