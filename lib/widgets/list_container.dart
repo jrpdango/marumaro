@@ -46,6 +46,8 @@ class _MyWidgetState extends State<ListContainer> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
         child: ListView.builder(
+          key: PageStorageKey(widget.animeListType),
+          itemExtent: 106.0,
           itemCount: _animeList?.length,
           itemBuilder: ((context, index) {
             return Padding(
