@@ -38,37 +38,27 @@ class ContentCardDetails extends StatelessWidget {
     return SizedBox(
       width: 267.0,
       height: 90.0,
-      // color: Colors.red,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
-            child: Row(
-              children: [
-                Text(
-                  _makeConciseTitle(title),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                  ),
-                ),
-              ],
+            child: Text(
+              _makeConciseTitle(title),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+              ),
             ),
           ),
           Container(
             padding: const EdgeInsets.only(top: 25.0),
-            child: Row(
-              children: [
-                const SizedBox(height: 5.0),
-                Text(
-                  'Show Status: ${_makeCleanStatus(airingStatus)}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13.0,
-                  ),
-                ),
-              ],
+            child: Text(
+              'Show Status: ${_makeCleanStatus(airingStatus)}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13.0,
+              ),
             ),
           ),
           Expanded(
