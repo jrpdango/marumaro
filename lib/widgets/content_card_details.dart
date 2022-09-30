@@ -25,10 +25,10 @@ class ContentCardDetails extends StatelessWidget {
   }
 
   String _makeCleanStatus(String rawStatus) {
-    if (rawStatus == "finished_airing") {
-      return "Finished Airing";
-    } else if (rawStatus == "currently_airing") {
-      return "Currently Airing";
+    if (rawStatus == 'finished_airing') {
+      return 'Finished Airing';
+    } else if (rawStatus == 'currently_airing') {
+      return 'Currently Airing';
     }
     return rawStatus;
   }
