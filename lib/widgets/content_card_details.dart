@@ -109,6 +109,7 @@ class ContentCardDetails extends StatelessWidget {
                       ),
                       const Icon(
                         Icons.star,
+                        color: Colors.black87,
                         size: 13.0,
                       ),
                       const SizedBox(
