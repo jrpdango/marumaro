@@ -14,7 +14,7 @@ ThemeData themeData = ThemeData.dark().copyWith(
     indicator: UnderlineTabIndicator(
       borderSide: BorderSide(
         width: 2.0,
-        color: MiruColors.tabBarIndicatorColor,
+        color: MiruColors.primaryColor,
       ),
     ),
   ),
