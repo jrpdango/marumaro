@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-
-const Color _textColor = Color(0xFFFDFFFF);
-const Color _unselectedItemColor = Color(0xFFBBBDBD);
-const Color _tabBarIndicatorColor = Color(0xFF21E9FF);
-const Color _tabBarBackgroundColor = Color(0xFF1C1C1C);
-const Color _backgroundColor = Color(0xFF212121);
-const Color _cardColor = Color(0xFF262626);
+import 'package:miru/constants.dart' show MiruColors;
 
 ThemeData themeData = ThemeData.dark().copyWith(
-  dialogBackgroundColor: _backgroundColor,
-  cardColor: _cardColor,
-  scaffoldBackgroundColor: _backgroundColor,
+  dialogBackgroundColor: MiruColors.backgroundColor,
+  cardColor: MiruColors.cardColor,
+  scaffoldBackgroundColor: MiruColors.backgroundColor,
   drawerTheme: const DrawerThemeData().copyWith(
-    backgroundColor: _backgroundColor,
+    backgroundColor: MiruColors.backgroundColor,
   ),
   textTheme: Typography().white,
   tabBarTheme: const TabBarTheme(
@@ -20,14 +14,14 @@ ThemeData themeData = ThemeData.dark().copyWith(
     indicator: UnderlineTabIndicator(
       borderSide: BorderSide(
         width: 2.0,
-        color: _tabBarIndicatorColor,
+        color: MiruColors.tabBarIndicatorColor,
       ),
     ),
   ),
   // TODO: Edit selectedlabelstyle
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: _tabBarBackgroundColor,
-    selectedItemColor: _textColor,
-    unselectedItemColor: _unselectedItemColor,
+    backgroundColor: MiruColors.tabBarBackgroundColor,
+    selectedItemColor: MiruColors.textColor,
+    unselectedItemColor: MiruColors.unselectedItemColor,
   ),
 );

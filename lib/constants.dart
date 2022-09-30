@@ -7,9 +7,11 @@ const int limitOfListItems = 300;
 const String apiTokenUrl = 'https://myanimelist.net/v1/oauth2/token';
 
 // -------------- COLORS --------------
-const Color textColor = Color(0xFFFDFFFF);
-const Color unselectedItemColor = Color(0xFFBBBDBD);
-const Color tabBarIndicatorColor = Color(0xFF21E9FF);
-const Color tabBarBackgroundColor = Color(0xFF1C1C1C);
-const Color backgroundColor = Color(0xFF212121);
-const Color cardColor = Color(0xFF262626);
+class MiruColors {
+  static const Color textColor = Color(0xFFFDFFFF);
+  static const Color unselectedItemColor = Color(0xFFBBBDBD);
+  static const Color tabBarIndicatorColor = Color(0xFF21E9FF);
+  static const Color tabBarBackgroundColor = Color(0xFF1C1C1C);
+  static const Color backgroundColor = Color(0xFF212121);
+  static const Color cardColor = Color(0xFF262626);
+}
