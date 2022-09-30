@@ -49,7 +49,7 @@ class _MyWidgetState extends State<ListContainer> {
           key: PageStorageKey(widget.animeListType),
           itemExtent: 106.0,
           itemCount: _animeList?.length,
-          itemBuilder: ((context, index) {
+          itemBuilder: (context, index) {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
@@ -64,7 +64,7 @@ class _MyWidgetState extends State<ListContainer> {
                 ),
               ),
             );
-          }),
+          },
         ),
         // TODO: Refresh
         onRefresh: () async {
