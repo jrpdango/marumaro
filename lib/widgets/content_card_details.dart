@@ -63,19 +63,13 @@ class ContentCardDetails extends StatelessWidget {
           ),
           Expanded(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
                   'Progress: $episodesWatched/$totalEpisodes',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13.0,
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: const <Widget>[
-                      Text(''),
-                    ],
                   ),
                 ),
                 Card(
