@@ -58,7 +58,7 @@ class _MyWidgetState extends State<ListContainer> {
                   // TODO: Should make this separate, not just one string
                   progress:
                       '${_animeList?[index].userEpisodesWatched}/${_animeList?[index].totalEpisodes}',
-                  score: _animeList?[index].userScore.toString() ?? '',
+                  score: _animeList?[index].userScore ?? 0,
                   airingStatus: _animeList?[index].showStatus.toString() ?? '',
                 ),
               ),

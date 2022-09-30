@@ -5,7 +5,7 @@ class ContentCardDetails extends StatelessWidget {
   final String title;
   final String progress;
   // TODO: Make this an int
-  final String score;
+  final int score;
   final String airingStatus;
 
   const ContentCardDetails({
@@ -95,7 +95,7 @@ class ContentCardDetails extends StatelessWidget {
                         width: 6.0,
                       ),
                       Text(
-                        score,
+                        score.toString(),
                         style: const TextStyle(
                           color: Colors.black87,
                           fontSize: 13.0,
