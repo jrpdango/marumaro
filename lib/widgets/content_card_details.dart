@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/constants.dart' show MiruColors;
 
 class ContentCardDetails extends StatelessWidget {
   final String title;
@@ -47,7 +48,7 @@ class ContentCardDetails extends StatelessWidget {
       case 9:
         return Colors.green;
       case 10:
-        return const Color(0xFF21E9FF);
+        return MiruColors.primaryColor;
       default:
         return Colors.white;
     }
