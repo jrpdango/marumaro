@@ -72,7 +72,7 @@ class ContentCardDetails extends StatelessWidget {
               ),
             ),
           ),
-          Container(
+          Padding(
             padding: const EdgeInsets.only(top: 25.0),
             child: Text(
               'Show Status: ${_makeCleanStatus(airingStatus)}',
@@ -95,27 +95,24 @@ class ContentCardDetails extends StatelessWidget {
                 ),
                 Card(
                   color: _getScoreColor(),
-                  child: Row(
-                    children: <Widget>[
-                      const SizedBox(
-                        width: 6.0,
-                      ),
-                      Text(
-                        score.toString(),
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13.0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 6.0, right: 5.0),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          score.toString(),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 13.0,
+                          ),
                         ),
-                      ),
-                      const Icon(
-                        Icons.star,
-                        color: Colors.black87,
-                        size: 13.0,
-                      ),
-                      const SizedBox(
-                        width: 5.0,
-                      ),
-                    ],
+                        const Icon(
+                          Icons.star,
+                          color: Colors.black87,
+                          size: 13.0,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
