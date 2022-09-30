@@ -55,9 +55,8 @@ class _MyWidgetState extends State<ListContainer> {
                 imageUrl: _animeList?[index].picture.toString() ?? '',
                 contentCardDetails: ContentCardDetails(
                   title: _animeList?[index].title ?? '',
-                  // TODO: Should make this separate, not just one string
-                  progress:
-                      '${_animeList?[index].userEpisodesWatched}/${_animeList?[index].totalEpisodes}',
+                  episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
+                  totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
                   score: _animeList?[index].userScore ?? 0,
                   airingStatus: _animeList?[index].showStatus.toString() ?? '',
                 ),
@@ -65,6 +64,7 @@ class _MyWidgetState extends State<ListContainer> {
             );
           }),
         ),
+        // TODO: Refresh
         onRefresh: () async {
           return await null;
         });

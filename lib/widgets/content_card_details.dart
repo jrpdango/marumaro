@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ContentCardDetails extends StatelessWidget {
-  // TODO: Add more properties and format within this widget
   final String title;
-  final String progress;
-  final int score;
   final String airingStatus;
+  final int score;
+  final int episodesWatched;
+  final int totalEpisodes;
 
   const ContentCardDetails({
     Key? key,
     required this.title,
-    required this.progress,
-    required this.score,
     required this.airingStatus,
+    required this.score,
+    required this.episodesWatched,
+    required this.totalEpisodes,
   }) : super(key: key);
 
   String _makeConciseTitle(String fullTitle) {
@@ -74,7 +75,7 @@ class ContentCardDetails extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  'Progress: $progress',
+                  'Progress: $episodesWatched/$totalEpisodes',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13.0,
