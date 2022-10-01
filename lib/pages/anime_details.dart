@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
@@ -16,7 +17,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+        appBarType: AppBarType.back,
+      ),
       body: Text('Anime details here'),
     );
   }

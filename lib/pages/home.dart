@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
 import 'package:miru/widgets/custom_drawer.dart';
@@ -20,7 +21,9 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const CustomDrawer(),
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(
+        appBarType: AppBarType.drawer,
+      ),
       body: const AnimeList(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

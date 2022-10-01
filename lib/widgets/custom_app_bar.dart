@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:miru/enums/app_bar_type.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({Key? key}) : super(key: key);
+  final AppBarType appBarType;
+
+  const CustomAppBar({
+    Key? key,
+    required this.appBarType,
+  }) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
