@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:miru/constants.dart' as constants show limitOfListItems;
 import 'package:miru/enums/anime_list_status.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/content_card.dart';
 import 'package:miru/widgets/content_card_details.dart';
+import 'package:get/get.dart';
 
 class ListContainer extends StatefulWidget {
   final AnimeListType animeListType;
@@ -66,9 +68,12 @@ class _MyWidgetState extends State<ListContainer> {
             );
           },
         ),
-        // TODO: Refresh
         onRefresh: () async {
-          return await null;
+          // Request user anime list to refresh
+          Globals.client.animeMap = (await Globals.client.requestAnimeList(
+            limit: constants.limitOfListItems,
+          ))
+              .obs;
         });
   }
 }
