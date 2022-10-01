@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/constants.dart';
 import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
@@ -36,23 +37,35 @@ class _AnimeDetailsState extends State<AnimeDetails> {
         children: <Widget>[
           Stack(
             children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 140.0,
-                color: const Color.fromRGBO(0, 0, 0, 0.3),
-                child: Opacity(
-                  opacity: 0.07,
-                  child: FadeInImage.assetNetwork(
-                    fit: BoxFit.cover,
-                    height: 140,
-                    placeholderCacheHeight: 90,
-                    placeholderCacheWidth: 65,
-                    placeholder: 'assets/404img.png',
-                    image: widget.anime?.pictureMedium.toString() ?? '',
-                    imageErrorBuilder: (context, error, stackTrace) => SizedBox(
-                      height: 90,
-                      width: 65,
-                      child: Image.asset('assets/404img.png'),
+              ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment(0.0, 0.3),
+                    colors: <Color>[
+                      Colors.transparent,
+                      Color.fromRGBO(0, 0, 0, 0.2),
+                    ],
+                  ).createShader(bounds);
+                },
+                blendMode: BlendMode.dstATop,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 200.0,
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: FadeInImage.assetNetwork(
+                      fit: BoxFit.cover,
+                      height: 200,
+                      placeholderCacheHeight: 200,
+                      placeholderCacheWidth: 65,
+                      placeholder: 'assets/404img.png',
+                      image: widget.anime?.pictureMedium.toString() ?? '',
+                      imageErrorBuilder: (context, error, stackTrace) =>
+                          SizedBox(
+                        height: 200,
+                        child: Image.asset('assets/404img.png'),
+                      ),
                     ),
                   ),
                 ),
@@ -70,14 +83,14 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       fit: BoxFit.cover,
                       height: 140,
                       width: 115,
-                      placeholderCacheHeight: 90,
-                      placeholderCacheWidth: 65,
+                      placeholderCacheHeight: 140,
+                      placeholderCacheWidth: 115,
                       placeholder: 'assets/404img.png',
                       image: widget.anime?.pictureMedium.toString() ?? '',
                       imageErrorBuilder: (context, error, stackTrace) =>
                           SizedBox(
-                        height: 90,
-                        width: 65,
+                        height: 140,
+                        width: 115,
                         child: Image.asset('assets/404img.png'),
                       ),
                     ),
