@@ -40,7 +40,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                 width: MediaQuery.of(context).size.width,
                 height: 140.0,
                 child: Opacity(
-                  opacity: 0.1,
+                  opacity: 0.07,
                   child: FadeInImage.assetNetwork(
                     fit: BoxFit.cover,
                     height: 140,
