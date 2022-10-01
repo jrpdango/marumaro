@@ -33,12 +33,12 @@ class _AnimeDetailsState extends State<AnimeDetails> {
             width: 115,
             placeholderCacheHeight: 90,
             placeholderCacheWidth: 65,
-            placeholder: "assets/404img.png",
+            placeholder: 'assets/404img.png',
             image: widget.anime?.pictureMedium.toString() ?? '',
             imageErrorBuilder: (context, error, stackTrace) => SizedBox(
               height: 90,
               width: 65,
-              child: Image.asset("assets/404img.png"),
+              child: Image.asset('assets/404img.png'),
             ),
           )
         ],
