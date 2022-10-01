@@ -23,6 +23,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Get.back(),
@@ -33,13 +34,11 @@ class _AnimeDetailsState extends State<AnimeDetails> {
       ),
       body: Column(
         children: <Widget>[
-          Row(
+          Stack(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 12.0,
-                ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 140.0,
                 child: FadeInImage.assetNetwork(
                   fit: BoxFit.cover,
                   height: 140,
@@ -55,8 +54,35 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   ),
                 ),
               ),
-              Text(
-                widget.anime?.title ?? '',
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      10.0,
+                      90.0,
+                      10.0,
+                      12.0,
+                    ),
+                    child: FadeInImage.assetNetwork(
+                      fit: BoxFit.cover,
+                      height: 140,
+                      width: 115,
+                      placeholderCacheHeight: 90,
+                      placeholderCacheWidth: 65,
+                      placeholder: 'assets/404img.png',
+                      image: widget.anime?.pictureMedium.toString() ?? '',
+                      imageErrorBuilder: (context, error, stackTrace) =>
+                          SizedBox(
+                        height: 90,
+                        width: 65,
+                        child: Image.asset('assets/404img.png'),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    widget.anime?.title ?? '',
+                  ),
+                ],
               ),
             ],
           ),
