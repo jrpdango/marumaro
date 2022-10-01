@@ -36,9 +36,10 @@ class _AnimeDetailsState extends State<AnimeDetails> {
         children: <Widget>[
           Stack(
             children: <Widget>[
-              SizedBox(
+              Container(
                 width: MediaQuery.of(context).size.width,
                 height: 140.0,
+                color: const Color.fromRGBO(0, 0, 0, 0.3),
                 child: Opacity(
                   opacity: 0.07,
                   child: FadeInImage.assetNetwork(
