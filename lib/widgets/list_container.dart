@@ -44,36 +44,40 @@ class _MyWidgetState extends State<ListContainer> {
     }
   }
 
+  /// Retrieve latest user's list to refresh and assign it to the client.
+  ///
+  void _refresh() async {
+    Globals.client.animeMap = (await Globals.client.requestAnimeList(
+      limit: constants.limitOfListItems,
+    ))
+        .obs;
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-        child: ListView.builder(
-          key: PageStorageKey(widget.animeListType),
-          itemExtent: 106.0,
-          itemCount: _animeList?.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-              child: ContentCard(
-                imageUrl: _animeList?[index].picture.toString() ?? '',
-                contentCardDetails: ContentCardDetails(
-                  title: _animeList?[index].title ?? '',
-                  episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
-                  totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
-                  score: _animeList?[index].userScore ?? 0,
-                  airingStatus: _animeList?[index].showStatus.toString() ?? '',
-                ),
+      child: ListView.builder(
+        key: PageStorageKey(widget.animeListType),
+        itemExtent: 106.0,
+        itemCount: _animeList?.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+            child: ContentCard(
+              imageUrl: _animeList?[index].picture.toString() ?? '',
+              contentCardDetails: ContentCardDetails(
+                title: _animeList?[index].title ?? '',
+                episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
+                totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
+                score: _animeList?[index].userScore ?? 0,
+                airingStatus: _animeList?[index].showStatus.toString() ?? '',
               ),
-            );
-          },
-        ),
-        onRefresh: () async {
-          // Request user anime list to refresh
-          Globals.client.animeMap = (await Globals.client.requestAnimeList(
-            limit: constants.limitOfListItems,
-          ))
-              .obs;
-        });
+            ),
+          );
+        },
+      ),
+      onRefresh: () async => _refresh(),
+    );
   }
 }
