@@ -22,6 +22,8 @@ class _MALWebViewState extends State<MALWebView> {
     super.initState();
   }
 
+  // TODO: Add dispose for controller
+
   @override
   Widget build(BuildContext context) {
     final Map? content = Get.arguments;

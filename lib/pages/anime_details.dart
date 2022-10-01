@@ -2,19 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
-import 'package:miru/models/mal_client.dart';
-import 'package:miru/services/anime_details_request.dart';
-import 'package:miru/services/global_controller.dart';
-import 'package:miru/services/text_cleaner.dart';
-import 'package:miru/services/update_list_request.dart';
-import 'package:miru/widgets/episodes_watched_popup.dart';
-import 'package:miru/widgets/list_status_popup.dart';
-import 'package:miru/widgets/loading_popup.dart';
-import 'package:miru/widgets/score_popup.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
+  const AnimeDetailsPage({Key? key}) : super(key: key);
   @override
-  _AnimeDetailsPageState createState() => _AnimeDetailsPageState();
+  State<AnimeDetailsPage> createState() => _AnimeDetailsPageState();
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {

@@ -20,6 +20,8 @@ class _AnimeListState extends State<AnimeList>
     super.initState();
   }
 
+  //TODO: Add dispose for controller
+
   @override
   Widget build(BuildContext context) {
     return Column(
