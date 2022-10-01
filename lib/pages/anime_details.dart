@@ -39,18 +39,20 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 140.0,
-                child: FadeInImage.assetNetwork(
-                  fit: BoxFit.cover,
-                  height: 140,
-                  width: 115,
-                  placeholderCacheHeight: 90,
-                  placeholderCacheWidth: 65,
-                  placeholder: 'assets/404img.png',
-                  image: widget.anime?.pictureMedium.toString() ?? '',
-                  imageErrorBuilder: (context, error, stackTrace) => SizedBox(
-                    height: 90,
-                    width: 65,
-                    child: Image.asset('assets/404img.png'),
+                child: Opacity(
+                  opacity: 0.1,
+                  child: FadeInImage.assetNetwork(
+                    fit: BoxFit.cover,
+                    height: 140,
+                    placeholderCacheHeight: 90,
+                    placeholderCacheWidth: 65,
+                    placeholder: 'assets/404img.png',
+                    image: widget.anime?.pictureMedium.toString() ?? '',
+                    imageErrorBuilder: (context, error, stackTrace) => SizedBox(
+                      height: 90,
+                      width: 65,
+                      child: Image.asset('assets/404img.png'),
+                    ),
                   ),
                 ),
               ),
