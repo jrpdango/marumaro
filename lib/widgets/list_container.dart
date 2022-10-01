@@ -66,7 +66,7 @@ class _MyWidgetState extends State<ListContainer> {
             padding:
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
             child: ContentCard(
-              onTap: () => Get.to(() => const AnimeDetailsPage()),
+              onTap: () => Get.to(() => const AnimeDetails()),
               imageUrl: _animeList?[index].picture.toString() ?? '',
               contentCardDetails: ContentCardDetails(
                 title: _animeList?[index].title ?? '',

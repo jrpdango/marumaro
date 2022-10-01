@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
 
-class AnimeDetailsPage extends StatefulWidget {
-  const AnimeDetailsPage({Key? key}) : super(key: key);
+class AnimeDetails extends StatefulWidget {
+  const AnimeDetails({Key? key}) : super(key: key);
   @override
-  State<AnimeDetailsPage> createState() => _AnimeDetailsPageState();
+  State<AnimeDetails> createState() => _AnimeDetailsState();
 }
 
-class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
+class _AnimeDetailsState extends State<AnimeDetails> {
   @override
   void initState() {
     super.initState();

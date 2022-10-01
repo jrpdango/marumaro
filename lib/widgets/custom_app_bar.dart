@@ -32,7 +32,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return PreferredSize(
       preferredSize: preferredSize,
-      // TODO: Make customizable (e.g. have search button or not, etc)
       child: AppBar(
         automaticallyImplyLeading: false,
         leading: _determineLeadingIcon(context),
