@@ -27,20 +27,33 @@ class _AnimeDetailsState extends State<AnimeDetails> {
       ),
       body: Column(
         children: <Widget>[
-          FadeInImage.assetNetwork(
-            fit: BoxFit.cover,
-            height: 140,
-            width: 115,
-            placeholderCacheHeight: 90,
-            placeholderCacheWidth: 65,
-            placeholder: 'assets/404img.png',
-            image: widget.anime?.pictureMedium.toString() ?? '',
-            imageErrorBuilder: (context, error, stackTrace) => SizedBox(
-              height: 90,
-              width: 65,
-              child: Image.asset('assets/404img.png'),
-            ),
-          )
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 12.0,
+                ),
+                child: FadeInImage.assetNetwork(
+                  fit: BoxFit.cover,
+                  height: 140,
+                  width: 115,
+                  placeholderCacheHeight: 90,
+                  placeholderCacheWidth: 65,
+                  placeholder: 'assets/404img.png',
+                  image: widget.anime?.pictureMedium.toString() ?? '',
+                  imageErrorBuilder: (context, error, stackTrace) => SizedBox(
+                    height: 90,
+                    width: 65,
+                    child: Image.asset('assets/404img.png'),
+                  ),
+                ),
+              ),
+              Text(
+                widget.anime?.title ?? '',
+              ),
+            ],
+          ),
         ],
       ),
     );
