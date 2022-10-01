@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/constants.dart';
 import 'package:miru/enums/app_bar_type.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -32,13 +33,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return PreferredSize(
       preferredSize: preferredSize,
-      child: AppBar(
-        automaticallyImplyLeading: false,
-        leading: _determineLeadingIcon(context),
-        flexibleSpace: Image.asset(
-          'assets/city.jpg',
-          fit: BoxFit.cover,
-          alignment: const Alignment(0, -0.45),
+      child: ShaderMask(
+        shaderCallback: (Rect bounds) {
+          return const LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment(0.0, 0.6),
+            colors: <Color>[
+              Colors.transparent,
+              MiruColors.primaryColor,
+            ],
+          ).createShader(bounds);
+        },
+        blendMode: BlendMode.dstATop,
+        child: AppBar(
+          elevation: 0.0,
+          automaticallyImplyLeading: false,
+          leading: _determineLeadingIcon(context),
+          flexibleSpace: Image.asset(
+            'assets/city.jpg',
+            fit: BoxFit.cover,
+            alignment: const Alignment(0, -0.45),
+          ),
         ),
       ),
     );
