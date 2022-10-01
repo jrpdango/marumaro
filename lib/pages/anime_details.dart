@@ -54,6 +54,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   height: 200.0,
                   child: Opacity(
                     opacity: 0.3,
+                    // TODO: Create separate widget for FadeInImages
                     child: FadeInImage.assetNetwork(
                       fit: BoxFit.cover,
                       height: 200,
@@ -95,6 +96,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       ),
                     ),
                   ),
+                  // TODO: Apply text wrapping
                   Text(
                     widget.anime?.title ?? '',
                   ),
