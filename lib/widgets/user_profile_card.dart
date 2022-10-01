@@ -10,7 +10,7 @@ class UserProfileCard extends StatelessWidget {
 
     try {
       Globals.client.userImage = NetworkImage(
-        (await Globals.client.userDataRequest(
+        (await Globals.client.requestUserData(
           mode: 'Jikan',
         ))['data']['images']['jpg']['image_url'],
       );

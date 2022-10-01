@@ -54,7 +54,7 @@ class MALClient {
   //   print(response);
   // }
 
-  Future<Map<String, dynamic>> userDataRequest({
+  Future<Map<String, dynamic>> requestUserData({
     String mode = 'MAL',
     bool? isFullImage,
   }) {

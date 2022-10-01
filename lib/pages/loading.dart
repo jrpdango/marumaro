@@ -34,7 +34,7 @@ class _LoadingState extends State<Loading> {
 
     Globals.client.animeMap = result.obs;
 
-    Globals.client.username = (await Globals.client.userDataRequest())['name'];
+    Globals.client.username = (await Globals.client.requestUserData())['name'];
 
     Get.to(() => const Home());
   }

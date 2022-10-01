@@ -61,7 +61,7 @@ class TokenValidator {
   }
 
   static Future<bool> _isValidAccessToken() async {
-    return (await Globals.client.userDataRequest()).isNotEmpty;
+    return (await Globals.client.requestUserData()).isNotEmpty;
   }
 
   static Future<void> _oAuthNewTokenPair() async {
