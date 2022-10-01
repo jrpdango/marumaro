@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
@@ -22,8 +23,13 @@ class _AnimeDetailsState extends State<AnimeDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        appBarType: AppBarType.back,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: const Icon(Icons.arrow_back),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
       ),
       body: Column(
         children: <Widget>[
