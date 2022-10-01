@@ -4,11 +4,13 @@ import 'package:miru/widgets/content_card_details.dart';
 class ContentCard extends StatelessWidget {
   final String imageUrl;
   final ContentCardDetails contentCardDetails;
+  final Function? onTap;
 
   const ContentCard({
     Key? key,
     required this.imageUrl,
     required this.contentCardDetails,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -16,7 +18,7 @@ class ContentCard extends StatelessWidget {
     return Card(
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-        onTap: () {},
+        onTap: () => onTap?.call(),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

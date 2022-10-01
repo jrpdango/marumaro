@@ -3,6 +3,7 @@ import 'package:miru/constants.dart' as constants show limitOfListItems;
 import 'package:miru/enums/anime_list_status.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/pages/anime_details.dart';
 import 'package:miru/widgets/content_card.dart';
 import 'package:miru/widgets/content_card_details.dart';
 import 'package:get/get.dart';
@@ -65,6 +66,7 @@ class _MyWidgetState extends State<ListContainer> {
             padding:
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
             child: ContentCard(
+              onTap: () => Get.to(() => const AnimeDetailsPage()),
               imageUrl: _animeList?[index].picture.toString() ?? '',
               contentCardDetails: ContentCardDetails(
                 title: _animeList?[index].title ?? '',
