@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:miru/enums/anime_list_type.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/utils/oauth_url_generator.dart';
 
@@ -61,7 +63,7 @@ class MALClient {
     return UserDataRequest(mode: mode, isFullImage: isFullImage).send();
   }
 
-  Future<Map<String, dynamic>> requestAnimeList({
+  Future<Map<AnimeListType, RxList<Anime>>> requestAnimeList({
     String? status,
     String? sort = 'list_updated_at',
     int? limit = 100,
