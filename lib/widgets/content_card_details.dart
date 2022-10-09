@@ -69,38 +69,36 @@ class ContentCardDetails extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Progress: $episodesWatched/$totalEpisodes',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Card(
-                  color: _getScoreColor(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 7.0, right: 5.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          score.toString(),
-                          style: const TextStyle(
-                            color: Colors.black87,
-                            fontSize: 13.0,
-                          ),
-                        ),
-                        const Icon(
-                          Icons.star,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Progress: $episodesWatched/$totalEpisodes',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Card(
+                color: _getScoreColor(),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 7.0, right: 5.0),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        score.toString(),
+                        style: const TextStyle(
                           color: Colors.black87,
-                          size: 13.0,
+                          fontSize: 13.0,
                         ),
-                      ],
-                    ),
+                      ),
+                      const Icon(
+                        Icons.star,
+                        color: Colors.black87,
+                        size: 13.0,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           )
         ],
       ),
