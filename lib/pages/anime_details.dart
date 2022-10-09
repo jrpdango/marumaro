@@ -98,6 +98,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       Flexible(
                         child: Text(
                           widget.anime?.title ?? '',
+                          style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
                     ],

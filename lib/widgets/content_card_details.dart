@@ -63,6 +63,7 @@ class ContentCardDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
+          // TODO: Long text with <= 24 can still overflow
           Expanded(
             child: Text(
               _makeConciseTitle(title),
