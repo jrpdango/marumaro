@@ -1,8 +1,10 @@
+import 'package:miru/enums/anime_airing_status.dart';
+
 class Anime {
   final int id;
   final String title;
   final int totalEpisodes;
-  final String airingStatus;
+  final AnimeAiringStatus airingStatus;
   Uri? pictureMedium;
   Uri? pictureLarge;
   String? userStatus;

@@ -56,7 +56,7 @@ class AnimeListRequest implements MalRequest {
         pictureMedium: Uri.parse(element['node']['main_picture']['medium']),
         pictureLarge: Uri.parse(element['node']['main_picture']['large']),
         totalEpisodes: element['node']['num_episodes'],
-        airingStatus: element['node']['status'],
+        airingStatus: _getAiringStatus(element['node']['status']),
         userStatus: element['list_status']['status'],
         userEpisodesWatched: element['list_status']['num_episodes_watched'],
         userScore: element['list_status']['score'],
@@ -67,6 +67,8 @@ class AnimeListRequest implements MalRequest {
     return animeMap;
   }
 
+  /// Converts a String [rawStatus] to an [AnimeAiringStatus].
+  ///
   AnimeAiringStatus _getAiringStatus(String rawStatus) {
     switch (rawStatus) {
       case 'finished_airing':
