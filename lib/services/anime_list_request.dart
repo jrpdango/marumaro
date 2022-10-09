@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
@@ -64,6 +65,19 @@ class AnimeListRequest implements MalRequest {
     }
     animeMap['paging'] = rawMap['paging'];
     return animeMap;
+  }
+
+  AnimeAiringStatus _getAiringStatus(String rawStatus) {
+    switch (rawStatus) {
+      case 'finished_airing':
+        return AnimeAiringStatus.finishedAiring;
+      case 'currently_airing':
+        return AnimeAiringStatus.currentlyAiring;
+      case 'not_yet_aired':
+        return AnimeAiringStatus.notYetAired;
+      default:
+        return AnimeAiringStatus.currentlyAiring;
+    }
   }
 
   // TODO: Add comments
