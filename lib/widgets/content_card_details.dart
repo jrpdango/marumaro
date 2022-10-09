@@ -50,7 +50,12 @@ class ContentCardDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+      padding: const EdgeInsets.fromLTRB(
+        10.0,
+        2.0,
+        2.0,
+        2.0,
+      ),
       height: 140.0,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
