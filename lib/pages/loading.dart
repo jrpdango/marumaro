@@ -1,3 +1,5 @@
+import 'package:miru/enums/anime_list_type.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/utils/token_deleter.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +23,10 @@ class _LoadingState extends State<Loading> {
     if (deleteTokens) deleteLocalTokens();
     await TokenValidator.verifyTokenPair();
 
-    final Map<String, dynamic> result = await Globals.client
+    final Map<AnimeListType, RxList<Anime>> result = await Globals.client
         .requestAnimeList(limit: constants.limitOfListItems);
 
-    Globals.client.animeMap = result.obs;
+    Globals.client.animeMap = result;
 
     Globals.client.username = (await Globals.client.requestUserData())['name'];
 
