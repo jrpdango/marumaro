@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/models/anime.dart';
@@ -65,8 +66,19 @@ class AnimeListRequest implements MalRequest {
     return animeMap;
   }
 
+  Map<AnimeListType, RxList<Anime>> _createCompleteMap(
+      Map<String, dynamic> rawMap) {
+    Map<AnimeListType, RxList<Anime>> animeMap = {};
+    animeMap[AnimeListType.watching] = rawMap['watching'];
+    animeMap[AnimeListType.completed] = rawMap['completed'];
+    animeMap[AnimeListType.planToWatch] = rawMap['plan_to_watch'];
+    animeMap[AnimeListType.onHold] = rawMap['on_hold'];
+    animeMap[AnimeListType.dropped] = rawMap['dropped'];
+    return animeMap;
+  }
+
   @override
-  Future<Map<String, dynamic>> send() async {
+  Future<Map<AnimeListType, RxList<Anime>>> send() async {
     if (uri == null) {
       uri = Uri(
           scheme: 'https',
@@ -100,12 +112,12 @@ class AnimeListRequest implements MalRequest {
         }
 
         response['paging']['next'] = newUnsortedResponse['paging']['next'];
+        return _createCompleteMap(response);
       }
-      response.remove('paging');
     } catch (e) {
       debugPrint(e.toString());
     }
 
-    return response;
+    return {};
   }
 }
