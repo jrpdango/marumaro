@@ -51,20 +51,20 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                 blendMode: BlendMode.dstATop,
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: 200.0,
+                  height: 300.0,
                   child: Opacity(
                     opacity: 0.3,
                     // TODO: Create separate widget for FadeInImages
                     child: FadeInImage.assetNetwork(
                       fit: BoxFit.cover,
-                      height: 200,
-                      placeholderCacheHeight: 200,
-                      placeholderCacheWidth: 65,
+                      height: 300,
+                      placeholderCacheHeight: 300,
+                      placeholderCacheWidth: 365,
                       placeholder: 'assets/404img.png',
                       image: widget.anime?.pictureMedium.toString() ?? '',
                       imageErrorBuilder: (context, error, stackTrace) =>
                           SizedBox(
-                        height: 200,
+                        height: 300,
                         child: Image.asset('assets/404img.png'),
                       ),
                     ),
