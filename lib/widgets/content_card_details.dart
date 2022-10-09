@@ -53,8 +53,8 @@ class ContentCardDetails extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
       height: 140.0,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           // TODO: Long text with <= 24 can still overflow
           Text(
@@ -62,44 +62,46 @@ class ContentCardDetails extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
             overflow: TextOverflow.ellipsis,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 25.0),
-            child: Text(
-              'Show Status: ${_makeCleanStatus(airingStatus)}',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Progress: $episodesWatched/$totalEpisodes',
+                'Show Status: ${_makeCleanStatus(airingStatus)}',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              Card(
-                color: _getScoreColor(),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 7.0, right: 5.0),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        score.toString(),
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13.0,
-                        ),
-                      ),
-                      const Icon(
-                        Icons.star,
-                        color: Colors.black87,
-                        size: 13.0,
-                      ),
-                    ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Progress: $episodesWatched/$totalEpisodes',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                ),
-              ),
+                  Card(
+                    color: _getScoreColor(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 7.0, right: 5.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            score.toString(),
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontSize: 13.0,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.star,
+                            color: Colors.black87,
+                            size: 13.0,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
-          )
+          ),
         ],
       ),
     );
