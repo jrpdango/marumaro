@@ -112,8 +112,8 @@ class AnimeListRequest implements MalRequest {
         }
 
         response['paging']['next'] = newUnsortedResponse['paging']['next'];
-        return _createCompleteMap(response);
       }
+      return _createCompleteMap(response);
     } catch (e) {
       debugPrint(e.toString());
     }
