@@ -71,38 +71,38 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   ),
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      10.0,
-                      90.0,
-                      10.0,
-                      12.0,
-                    ),
-                    child: FadeInImage.assetNetwork(
-                      fit: BoxFit.cover,
-                      height: 140,
-                      width: 115,
-                      placeholderCacheHeight: 140,
-                      placeholderCacheWidth: 115,
-                      placeholder: 'assets/404img.png',
-                      image: widget.anime?.pictureMedium.toString() ?? '',
-                      imageErrorBuilder: (context, error, stackTrace) =>
-                          SizedBox(
-                        height: 140,
-                        width: 115,
-                        child: Image.asset('assets/404img.png'),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: FadeInImage.assetNetwork(
+                          fit: BoxFit.cover,
+                          height: 140,
+                          width: 115,
+                          placeholderCacheHeight: 140,
+                          placeholderCacheWidth: 115,
+                          placeholder: 'assets/404img.png',
+                          image: widget.anime?.pictureMedium.toString() ?? '',
+                          imageErrorBuilder: (context, error, stackTrace) =>
+                              SizedBox(
+                            height: 140,
+                            width: 115,
+                            child: Image.asset('assets/404img.png'),
+                          ),
+                        ),
                       ),
-                    ),
+                      Flexible(
+                        child: Text(
+                          widget.anime?.title ?? '',
+                        ),
+                      ),
+                    ],
                   ),
-                  // TODO: Apply text wrapping
-                  Flexible(
-                    child: Text(
-                      widget.anime?.title ?? '',
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
