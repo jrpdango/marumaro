@@ -59,10 +59,7 @@ class ContentCardDetails extends StatelessWidget {
           // TODO: Long text with <= 24 can still overflow
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-            ),
+            style: Theme.of(context).textTheme.titleLarge,
             overflow: TextOverflow.ellipsis,
           ),
           Padding(
