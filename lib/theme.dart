@@ -8,7 +8,7 @@ ThemeData themeData = ThemeData.dark().copyWith(
   drawerTheme: const DrawerThemeData().copyWith(
     backgroundColor: MiruColors.backgroundColor,
   ),
-  textTheme: Typography().white,
+  textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Rubik'),
   tabBarTheme: const TabBarTheme(
     labelPadding: EdgeInsets.symmetric(horizontal: 15.0),
     indicator: UnderlineTabIndicator(
