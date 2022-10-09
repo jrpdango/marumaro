@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/enums/anime_list_status.dart';
+import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/widgets/custom_tab_bar.dart';
 import 'package:miru/widgets/custom_tabbarview_scroll_physics.dart';
 import 'package:miru/widgets/list_container.dart';
