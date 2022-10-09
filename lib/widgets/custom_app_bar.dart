@@ -33,27 +33,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return PreferredSize(
       preferredSize: preferredSize,
-      child: ShaderMask(
-        shaderCallback: (Rect bounds) {
-          return const LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment(0.0, 0.6),
-            colors: <Color>[
-              Colors.transparent,
-              MiruColors.primaryColor,
-            ],
-          ).createShader(bounds);
-        },
-        blendMode: BlendMode.dstATop,
-        child: AppBar(
-          elevation: 0.0,
-          automaticallyImplyLeading: false,
-          leading: _determineLeadingIcon(context),
-          flexibleSpace: Image.asset(
-            'assets/city.jpg',
-            fit: BoxFit.cover,
-            alignment: const Alignment(0, -0.45),
-          ),
+      child: AppBar(
+        elevation: 0.0,
+        automaticallyImplyLeading: false,
+        leading: _determineLeadingIcon(context),
+        flexibleSpace: Image.asset(
+          'assets/city.jpg',
+          fit: BoxFit.cover,
+          alignment: const Alignment(0, -0.45),
         ),
       ),
     );
