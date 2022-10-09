@@ -66,6 +66,7 @@ class AnimeListRequest implements MalRequest {
     return animeMap;
   }
 
+  // TODO: Add comments
   Map<AnimeListType, RxList<Anime>> _createCompleteMap(
       Map<String, dynamic> rawMap) {
     Map<AnimeListType, RxList<Anime>> animeMap = {};
