@@ -17,13 +17,6 @@ class ContentCardDetails extends StatelessWidget {
     required this.totalEpisodes,
   }) : super(key: key);
 
-  String _makeConciseTitle(String fullTitle) {
-    if (fullTitle.length >= 24) {
-      return '${fullTitle.substring(0, 24)}...';
-    }
-    return fullTitle;
-  }
-
   String _makeCleanStatus(String rawStatus) {
     if (rawStatus == 'finished_airing') {
       return 'Finished Airing';
@@ -64,14 +57,13 @@ class ContentCardDetails extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           // TODO: Long text with <= 24 can still overflow
-          Expanded(
-            child: Text(
-              _makeConciseTitle(title),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-              ),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 25.0),
