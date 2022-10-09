@@ -47,7 +47,6 @@ class AnimeListRequest implements MalRequest {
     animeMap['plan_to_watch'] = <Anime>[].obs;
     animeMap['on_hold'] = <Anime>[].obs;
     animeMap['dropped'] = <Anime>[].obs;
-    animeMap['all'] = <Anime>[].obs;
     for (Map element in rawMap['data']) {
       Anime currentAnime = Anime(
         id: element['node']['id'],
@@ -61,7 +60,6 @@ class AnimeListRequest implements MalRequest {
         userScore: element['list_status']['score'],
       );
       animeMap[element['list_status']['status']]?.add(currentAnime);
-      animeMap['all']?.add(currentAnime);
     }
     animeMap['paging'] = rawMap['paging'];
     return animeMap;
