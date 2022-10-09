@@ -4,5 +4,4 @@ enum AnimeListType {
   completed,
   onHold,
   dropped,
-  paging,
 }
