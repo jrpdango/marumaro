@@ -56,7 +56,6 @@ class ContentCardDetails extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // TODO: Long text with <= 24 can still overflow
           Text(
             title,
             style: Theme.of(context).textTheme.titleLarge,
