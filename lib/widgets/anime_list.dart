@@ -20,7 +20,11 @@ class _AnimeListState extends State<AnimeList>
     super.initState();
   }
 
-  //TODO: Add dispose for controller
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
