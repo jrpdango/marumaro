@@ -66,10 +66,7 @@ class ContentCardDetails extends StatelessWidget {
             padding: const EdgeInsets.only(top: 25.0),
             child: Text(
               'Show Status: ${_makeCleanStatus(airingStatus)}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13.0,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
           Expanded(
@@ -78,10 +75,7 @@ class ContentCardDetails extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Progress: $episodesWatched/$totalEpisodes',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13.0,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Card(
                   color: _getScoreColor(),
