@@ -101,6 +101,7 @@ class AnimeListRequest implements MalRequest {
 
         response['paging']['next'] = newUnsortedResponse['paging']['next'];
       }
+      response.remove('paging');
     } catch (e) {
       debugPrint(e.toString());
     }
