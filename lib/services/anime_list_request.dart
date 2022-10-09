@@ -56,7 +56,7 @@ class AnimeListRequest implements MalRequest {
         pictureMedium: Uri.parse(element['node']['main_picture']['medium']),
         pictureLarge: Uri.parse(element['node']['main_picture']['large']),
         totalEpisodes: element['node']['num_episodes'],
-        showStatus: element['node']['status'],
+        airingStatus: element['node']['status'],
         userStatus: element['list_status']['status'],
         userEpisodesWatched: element['list_status']['num_episodes_watched'],
         userScore: element['list_status']['score'],

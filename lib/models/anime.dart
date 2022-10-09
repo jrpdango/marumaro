@@ -2,7 +2,7 @@ class Anime {
   final int id;
   final String title;
   final int totalEpisodes;
-  final String showStatus;
+  final String airingStatus;
   Uri? pictureMedium;
   Uri? pictureLarge;
   String? userStatus;
@@ -13,7 +13,7 @@ class Anime {
     required this.id,
     required this.title,
     required this.totalEpisodes,
-    required this.showStatus,
+    required this.airingStatus,
     this.pictureMedium,
     this.pictureLarge,
     this.userStatus,

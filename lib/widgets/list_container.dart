@@ -60,7 +60,7 @@ class _MyWidgetState extends State<ListContainer> {
                 episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
                 totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
                 score: _animeList?[index].userScore ?? 0,
-                airingStatus: _animeList?[index].showStatus.toString() ?? '',
+                airingStatus: _animeList?[index].airingStatus.toString() ?? '',
               ),
             ),
           );
