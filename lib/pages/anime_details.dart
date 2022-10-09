@@ -97,8 +97,10 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                     ),
                   ),
                   // TODO: Apply text wrapping
-                  Text(
-                    widget.anime?.title ?? '',
+                  Flexible(
+                    child: Text(
+                      widget.anime?.title ?? '',
+                    ),
                   ),
                 ],
               ),
