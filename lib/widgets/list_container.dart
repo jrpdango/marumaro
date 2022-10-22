@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
+import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
@@ -60,7 +61,8 @@ class _MyWidgetState extends State<ListContainer> {
                 episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
                 totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
                 score: _animeList?[index].userScore ?? 0,
-                airingStatus: _animeList?[index].airingStatus.toString() ?? '',
+                airingStatus: _animeList?[index].airingStatus ??
+                    AnimeAiringStatus.finishedAiring,
               ),
             ),
           );
