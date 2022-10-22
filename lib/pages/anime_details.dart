@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
+import 'package:miru/widgets/list_status_overlay.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
@@ -15,8 +16,10 @@ class AnimeDetails extends StatefulWidget {
 }
 
 class _AnimeDetailsState extends State<AnimeDetails> {
+  Rx<Anime>? anime;
   @override
   void initState() {
+    anime = widget.anime?.obs;
     super.initState();
   }
 
@@ -111,8 +114,14 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               DetailStatusBarSection(
                 icon: Icons.movie_rounded,
                 //TODO: use enum
-                text: widget.anime?.userStatus ?? '',
-                onTap: () {},
+                text: anime?.value.userStatus ?? '',
+                onTap: () {
+                  Get.dialog(
+                    ListStatusOverlay(
+                      anime: anime,
+                    ),
+                  );
+                },
               ),
               DetailStatusBarSection(
                 icon: Icons.remove_red_eye,
