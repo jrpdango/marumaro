@@ -10,6 +10,34 @@ class ListStatusOverlay extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  List<Widget> _buildStatusList(BuildContext context) {
+    List<Widget> statusList = [];
+    List<String> statuses = [
+      'Watching',
+      'Plan to Watch',
+      'Completed',
+      'On Hold',
+      'Dropped'
+    ];
+    for (String status in statuses) {
+      statusList.add(
+        TextButton(
+          onPressed: () {},
+          style: TextButton.styleFrom(
+            backgroundColor: MiruColors.buttonColor,
+          ),
+          child: Text(
+            status,
+            style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                  color: MiruColors.textColor,
+                ),
+          ),
+        ),
+      );
+    }
+    return statusList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -17,11 +45,7 @@ class ListStatusOverlay extends StatelessWidget {
         color: MiruColors.cardColor,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const <Widget>[
-            Text('hello'),
-            Text('hello'),
-            Text('hello'),
-          ],
+          children: _buildStatusList(context),
         ),
       ),
     );

@@ -14,4 +14,5 @@ class MiruColors {
   static const Color tabBarBackgroundColor = Color(0xFF1C1C1C);
   static const Color backgroundColor = Color(0xFF212121);
   static const Color cardColor = Color(0xFF2E2E2E);
+  static const Color buttonColor = Color(0xFF0F6973);
 }
