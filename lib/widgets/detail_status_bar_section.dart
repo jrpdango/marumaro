@@ -4,11 +4,13 @@ import 'package:miru/constants.dart';
 class DetailStatusBarSection extends StatelessWidget {
   final IconData icon;
   final String text;
+  final Function onTap;
 
   const DetailStatusBarSection({
     Key? key,
     required this.icon,
     required this.text,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -16,7 +18,7 @@ class DetailStatusBarSection extends StatelessWidget {
     return Material(
       color: MiruColors.tabBarBackgroundColor,
       child: InkWell(
-        onTap: () {},
+        onTap: () => onTap,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
