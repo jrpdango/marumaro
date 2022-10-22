@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
@@ -8,17 +9,24 @@ import 'package:miru/enums/anime_list_type.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
+  final int? index;
+  final Function? onUpdate;
   const AnimeDetails({
     Key? key,
     required this.anime,
+    required this.index,
+    this.onUpdate,
   }) : super(key: key);
   @override
   State<AnimeDetails> createState() => _AnimeDetailsState();
 }
 
 class _AnimeDetailsState extends State<AnimeDetails> {
+  int? index;
+
   @override
   void initState() {
+    index = widget.index;
     super.initState();
   }
 
@@ -117,10 +125,19 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   Get.dialog(
                     ListStatusOverlay(
                       animeListType: widget.anime?.userStatus,
-                      callback: (AnimeListType animeListType) {
+                      onSelect: (AnimeListType animeListType) {
+                        // TODO: set this to happen when pressing 'Update List'
+                        if (index != null) {
+                          Globals.client.animeMap[widget.anime?.userStatus]
+                              ?.removeAt(index!);
+                          Globals.client.animeMap[animeListType]
+                              ?.insert(0, widget.anime!);
+                          index = 0;
+                        }
                         setState(() {
                           widget.anime?.userStatus = animeListType;
                         });
+                        widget.onUpdate?.call();
                       },
                     ),
                   );

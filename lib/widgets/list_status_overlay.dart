@@ -6,10 +6,10 @@ import 'package:miru/models/anime.dart';
 
 class ListStatusOverlay extends StatelessWidget {
   final AnimeListType? animeListType;
-  final Function? callback;
+  final Function? onSelect;
   const ListStatusOverlay({
     this.animeListType,
-    this.callback,
+    this.onSelect,
     Key? key,
   }) : super(key: key);
 
@@ -36,8 +36,8 @@ class ListStatusOverlay extends StatelessWidget {
           ),
           child: TextButton(
             onPressed: () {
-              if (callback != null) {
-                callback!.call(status);
+              if (onSelect != null) {
+                onSelect!.call(status);
               }
               debugPrint(status.apiName);
             },

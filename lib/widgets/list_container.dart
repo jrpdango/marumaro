@@ -52,8 +52,11 @@ class _MyWidgetState extends State<ListContainer> {
             child: ContentCard(
               onTap: () => Get.to(
                 () => AnimeDetails(
-                  anime: _animeList?[index],
-                ),
+                    anime: _animeList?[index],
+                    index: index,
+                    onUpdate: () {
+                      setState(() {});
+                    }),
               ),
               imageUrl: _animeList?[index].pictureMedium.toString() ?? '',
               contentCardDetails: ContentCardDetails(
