@@ -1,4 +1,5 @@
 import 'package:miru/enums/anime_airing_status.dart';
+import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/models/season.dart';
 
 class Anime {
@@ -9,7 +10,7 @@ class Anime {
   final Season season;
   Uri? pictureMedium;
   Uri? pictureLarge;
-  String? userStatus;
+  AnimeListType? userStatus;
   int? userEpisodesWatched;
   int? userScore;
 

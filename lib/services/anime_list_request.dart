@@ -62,7 +62,7 @@ class AnimeListRequest implements MalRequest {
           name: element['node']['start_season']?['season'],
           year: element['node']['start_season']?['year'],
         ),
-        userStatus: element['list_status']['status'],
+        userStatus: _getAnimeListType(element['list_status']['status']),
         userEpisodesWatched: element['list_status']['num_episodes_watched'],
         userScore: element['list_status']['score'],
       );
@@ -84,6 +84,23 @@ class AnimeListRequest implements MalRequest {
         return AnimeAiringStatus.notYetAired;
       default:
         return AnimeAiringStatus.currentlyAiring;
+    }
+  }
+
+  AnimeListType _getAnimeListType(String rawType) {
+    switch (rawType) {
+      case 'watching':
+        return AnimeListType.watching;
+      case 'plan_to_watch':
+        return AnimeListType.planToWatch;
+      case 'completed':
+        return AnimeListType.completed;
+      case 'on_hold':
+        return AnimeListType.onHold;
+      case 'dropped':
+        return AnimeListType.dropped;
+      default:
+        return AnimeListType.watching;
     }
   }
 

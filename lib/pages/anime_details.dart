@@ -4,6 +4,7 @@ import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
 import 'package:miru/widgets/list_status_overlay.dart';
+import 'package:miru/enums/anime_list_type.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
@@ -114,7 +115,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               DetailStatusBarSection(
                 icon: Icons.movie_rounded,
                 //TODO: use enum
-                text: anime?.value.userStatus ?? '',
+                text: anime?.value.userStatus?.displayName ?? '',
                 onTap: () {
                   Get.dialog(
                     ListStatusOverlay(
