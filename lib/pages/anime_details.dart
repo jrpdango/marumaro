@@ -105,7 +105,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               ),
             ],
           ),
-          const DetailStatusBar(),
+          DetailStatusBar(
+            anime: widget.anime,
+          ),
         ],
       ),
     );

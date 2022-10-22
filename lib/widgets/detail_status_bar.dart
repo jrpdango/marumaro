@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart';
+import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
 
 class DetailStatusBar extends StatelessWidget {
-  const DetailStatusBar({Key? key}) : super(key: key);
+  final Anime? anime;
+
+  const DetailStatusBar({
+    Key? key,
+    required this.anime,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +21,8 @@ class DetailStatusBar extends StatelessWidget {
         children: <Widget>[
           DetailStatusBarSection(
             icon: Icons.movie_rounded,
-            text: 'Watching',
+            //TODO: use enum
+            text: anime?.userStatus ?? '',
             onTap: () {},
           ),
           DetailStatusBarSection(
