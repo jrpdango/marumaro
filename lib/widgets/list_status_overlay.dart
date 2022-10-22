@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:miru/constants.dart';
+import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/models/anime.dart';
 
 class ListStatusOverlay extends StatelessWidget {
-  final Rx<Anime>? anime;
+  final AnimeListType? animeListType;
+  final Function? callback;
   const ListStatusOverlay({
-    this.anime,
+    this.animeListType,
+    this.callback,
     Key? key,
   }) : super(key: key);
 
   List<Widget> _buildStatusList(BuildContext context) {
     List<Widget> statusList = [];
-    List<String> statuses = [
-      'Watching',
-      'Plan to Watch',
-      'Completed',
-      'On Hold',
-      'Dropped'
+    List<AnimeListType> statuses = [
+      AnimeListType.watching,
+      AnimeListType.planToWatch,
+      AnimeListType.completed,
+      AnimeListType.onHold,
+      AnimeListType.dropped,
     ];
-    for (String status in statuses) {
+    for (AnimeListType status in statuses) {
       statusList.add(
         Container(
           height: 64.0,
@@ -32,12 +35,17 @@ class ListStatusOverlay extends StatelessWidget {
             vertical: 8.0,
           ),
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              if (callback != null) {
+                callback!.call(status);
+              }
+              debugPrint(status.apiName);
+            },
             style: TextButton.styleFrom(
               backgroundColor: MiruColors.buttonColor,
             ),
             child: Text(
-              status,
+              status.displayName,
               style: Theme.of(context).textTheme.bodyText1?.copyWith(
                     color: MiruColors.textColor,
                   ),

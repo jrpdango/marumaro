@@ -17,10 +17,8 @@ class AnimeDetails extends StatefulWidget {
 }
 
 class _AnimeDetailsState extends State<AnimeDetails> {
-  Rx<Anime>? anime;
   @override
   void initState() {
-    anime = widget.anime?.obs;
     super.initState();
   }
 
@@ -114,12 +112,16 @@ class _AnimeDetailsState extends State<AnimeDetails> {
             children: <Widget>[
               DetailStatusBarSection(
                 icon: Icons.movie_rounded,
-                //TODO: use enum
-                text: anime?.value.userStatus?.displayName ?? '',
+                text: widget.anime?.userStatus?.displayName ?? '',
                 onTap: () {
                   Get.dialog(
                     ListStatusOverlay(
-                      anime: anime,
+                      animeListType: widget.anime?.userStatus,
+                      callback: (AnimeListType animeListType) {
+                        setState(() {
+                          widget.anime?.userStatus = animeListType;
+                        });
+                      },
                     ),
                   );
                 },
