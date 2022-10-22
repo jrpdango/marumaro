@@ -74,7 +74,9 @@ class ContentCardDetails extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                '${season.name} ${season.year}',
+                (season.name != null && season.year != null)
+                    ? '${season.name?.substring(0, 1).toUpperCase()}${season.name?.substring(1)} ${season.year}'
+                    : 'Season Unknown',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Row(

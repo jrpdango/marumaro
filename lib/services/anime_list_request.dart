@@ -59,8 +59,8 @@ class AnimeListRequest implements MalRequest {
         totalEpisodes: element['node']['num_episodes'],
         airingStatus: _getAiringStatus(element['node']['status']),
         season: Season(
-          name: element['node']['start_season']?['season'] ?? '',
-          year: element['node']['start_season']?['year'] ?? 2022,
+          name: element['node']['start_season']?['season'],
+          year: element['node']['start_season']?['year'],
         ),
         userStatus: element['list_status']['status'],
         userEpisodesWatched: element['list_status']['num_episodes_watched'],

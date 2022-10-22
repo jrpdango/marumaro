@@ -71,7 +71,7 @@ class MALClient {
     String? username = '@me',
     Uri? uri,
     String? fields =
-        'list_status,num_episodes,mean,status,rank,popularity,source,'
+        'list_status,num_episodes,start_season,mean,status,rank,popularity,source,'
             'studios,rating,average_episode_duration,alternative_titles,'
             'synopsis,start_date,end_date,genres',
   }) {
