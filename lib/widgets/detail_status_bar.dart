@@ -8,16 +8,25 @@ class DetailStatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 80.0),
+      constraints: const BoxConstraints(maxHeight: 64.0),
       color: MiruColors.tabBarBackgroundColor,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           DetailStatusBarSection(
             icon: Icons.movie_rounded,
             text: 'Watching',
-            onTap: () {
-              debugPrint('hello');
-            },
+            onTap: () {},
+          ),
+          DetailStatusBarSection(
+            icon: Icons.remove_red_eye,
+            text: '2/12',
+            onTap: () {},
+          ),
+          DetailStatusBarSection(
+            icon: Icons.star,
+            text: '0',
+            onTap: () {},
           ),
         ],
       ),

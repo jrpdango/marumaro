@@ -15,17 +15,19 @@ class DetailStatusBarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: MiruColors.tabBarBackgroundColor,
-      child: InkWell(
-        onTap: () => onTap.call(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(icon),
-            Text(text),
-          ],
+    return Expanded(
+      child: Material(
+        color: MiruColors.tabBarBackgroundColor,
+        child: InkWell(
+          onTap: () => onTap.call(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(icon),
+              Text(text),
+            ],
+          ),
         ),
       ),
     );
