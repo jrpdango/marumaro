@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
-import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';

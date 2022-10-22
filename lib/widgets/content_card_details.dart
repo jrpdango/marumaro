@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' show MiruColors;
-import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/models/season.dart';
 
 class ContentCardDetails extends StatelessWidget {
@@ -18,17 +17,6 @@ class ContentCardDetails extends StatelessWidget {
     required this.episodesWatched,
     required this.totalEpisodes,
   }) : super(key: key);
-
-  String _makeCleanStatus(AnimeAiringStatus rawStatus) {
-    switch (rawStatus) {
-      case AnimeAiringStatus.currentlyAiring:
-        return "Currently Airing";
-      case AnimeAiringStatus.finishedAiring:
-        return "Finished Airing";
-      case AnimeAiringStatus.notYetAired:
-        return "Not Yet Aired";
-    }
-  }
 
   Color _getScoreColor() {
     switch (score) {

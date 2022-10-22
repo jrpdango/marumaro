@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miru/constants.dart';
-import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/models/anime.dart';
-import 'package:miru/widgets/custom_app_bar.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;

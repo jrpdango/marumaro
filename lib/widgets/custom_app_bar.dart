@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miru/constants.dart';
 import 'package:miru/enums/app_bar_type.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
