@@ -4,6 +4,7 @@ import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/models/season.dart';
 import 'package:miru/pages/anime_details.dart';
 import 'package:miru/widgets/content_card.dart';
 import 'package:miru/widgets/content_card_details.dart';
@@ -61,8 +62,8 @@ class _MyWidgetState extends State<ListContainer> {
                 episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
                 totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
                 score: _animeList?[index].userScore ?? 0,
-                airingStatus: _animeList?[index].airingStatus ??
-                    AnimeAiringStatus.finishedAiring,
+                season: _animeList?[index].season ??
+                    Season(name: 'Spring', year: 2022),
               ),
             ),
           );

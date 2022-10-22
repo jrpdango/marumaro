@@ -5,6 +5,7 @@ import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/models/season.dart';
 
 import 'package:miru/services/base_request.dart';
 
@@ -57,6 +58,10 @@ class AnimeListRequest implements MalRequest {
         pictureLarge: Uri.parse(element['node']['main_picture']['large']),
         totalEpisodes: element['node']['num_episodes'],
         airingStatus: _getAiringStatus(element['node']['status']),
+        season: Season(
+          name: element['node']['start_season']?['season'] ?? '',
+          year: element['node']['start_season']?['year'] ?? 2022,
+        ),
         userStatus: element['list_status']['status'],
         userEpisodesWatched: element['list_status']['num_episodes_watched'],
         userScore: element['list_status']['score'],

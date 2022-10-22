@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' show MiruColors;
 import 'package:miru/enums/anime_airing_status.dart';
+import 'package:miru/models/season.dart';
 
 class ContentCardDetails extends StatelessWidget {
   final String title;
-  final AnimeAiringStatus airingStatus;
+  final Season season;
   final int score;
   final int episodesWatched;
   final int totalEpisodes;
@@ -12,7 +13,7 @@ class ContentCardDetails extends StatelessWidget {
   const ContentCardDetails({
     Key? key,
     required this.title,
-    required this.airingStatus,
+    required this.season,
     required this.score,
     required this.episodesWatched,
     required this.totalEpisodes,
@@ -73,7 +74,7 @@ class ContentCardDetails extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Show Status: ${_makeCleanStatus(airingStatus)}',
+                '${season.name} ${season.year}',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Row(
