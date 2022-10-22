@@ -24,4 +24,19 @@ extension AnimeListTypeExtension on AnimeListType {
         return 'Dropped';
     }
   }
+
+  String get apiName {
+    switch (this) {
+      case AnimeListType.watching:
+        return 'watching';
+      case AnimeListType.planToWatch:
+        return 'plan_to_watch';
+      case AnimeListType.completed:
+        return 'completed';
+      case AnimeListType.onHold:
+        return 'on_hold';
+      case AnimeListType.dropped:
+        return 'dropped';
+    }
+  }
 }
