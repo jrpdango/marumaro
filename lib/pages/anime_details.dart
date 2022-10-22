@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/widgets/detail_status_bar.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
@@ -104,6 +105,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               ),
             ],
           ),
+          const DetailStatusBar(),
         ],
       ),
     );
