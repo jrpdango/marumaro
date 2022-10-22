@@ -14,6 +14,7 @@ class DetailStatusBar extends StatelessWidget {
       color: MiruColors.tabBarBackgroundColor,
       child: Row(
         children: <Widget>[
+          DetailStatusBarSection(icon: Icons.movie_rounded, text: 'Watching'),
           DetailStatusBarSection(icon: Icons.movie_rounded, text: 'Watching')
         ],
       ),

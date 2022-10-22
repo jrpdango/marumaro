@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:miru/constants.dart';
 
 class DetailStatusBarSection extends StatelessWidget {
   final IconData icon;
@@ -14,11 +13,19 @@ class DetailStatusBarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Icon(icon),
-        Text(text),
-      ],
+    return Material(
+      color: MiruColors.tabBarBackgroundColor,
+      child: InkWell(
+        onTap: () {},
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon),
+            Text(text),
+          ],
+        ),
+      ),
     );
   }
 }
