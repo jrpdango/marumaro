@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
+import 'package:miru/widgets/detail_status_bar_section.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
@@ -106,7 +107,24 @@ class _AnimeDetailsState extends State<AnimeDetails> {
             ],
           ),
           DetailStatusBar(
-            anime: widget.anime,
+            children: <Widget>[
+              DetailStatusBarSection(
+                icon: Icons.movie_rounded,
+                //TODO: use enum
+                text: widget.anime?.userStatus ?? '',
+                onTap: () {},
+              ),
+              DetailStatusBarSection(
+                icon: Icons.remove_red_eye,
+                text: '2/12',
+                onTap: () {},
+              ),
+              DetailStatusBarSection(
+                icon: Icons.star,
+                text: '0',
+                onTap: () {},
+              ),
+            ],
           ),
         ],
       ),

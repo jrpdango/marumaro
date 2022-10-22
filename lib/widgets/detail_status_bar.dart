@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart';
-import 'package:miru/models/anime.dart';
-import 'package:miru/widgets/detail_status_bar_section.dart';
 
 class DetailStatusBar extends StatelessWidget {
-  final Anime? anime;
+  final List<Widget>? children;
 
   const DetailStatusBar({
     Key? key,
-    required this.anime,
+    this.children,
   }) : super(key: key);
 
   @override
@@ -18,24 +16,7 @@ class DetailStatusBar extends StatelessWidget {
       color: MiruColors.tabBarBackgroundColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          DetailStatusBarSection(
-            icon: Icons.movie_rounded,
-            //TODO: use enum
-            text: anime?.userStatus ?? '',
-            onTap: () {},
-          ),
-          DetailStatusBarSection(
-            icon: Icons.remove_red_eye,
-            text: '2/12',
-            onTap: () {},
-          ),
-          DetailStatusBarSection(
-            icon: Icons.star,
-            text: '0',
-            onTap: () {},
-          ),
-        ],
+        children: children ?? <Widget>[],
       ),
     );
   }
