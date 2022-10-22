@@ -21,16 +21,27 @@ class ListStatusOverlay extends StatelessWidget {
     ];
     for (String status in statuses) {
       statusList.add(
-        TextButton(
-          onPressed: () {},
-          style: TextButton.styleFrom(
-            backgroundColor: MiruColors.buttonColor,
+        Container(
+          height: 64.0,
+          width: double.infinity,
+          constraints: const BoxConstraints(
+            maxWidth: 320.0,
           ),
-          child: Text(
-            status,
-            style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                  color: MiruColors.textColor,
-                ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8.0,
+          ),
+          child: TextButton(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              backgroundColor: MiruColors.buttonColor,
+            ),
+            child: Text(
+              status,
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                    color: MiruColors.textColor,
+                  ),
+            ),
           ),
         ),
       );
@@ -42,9 +53,14 @@ class ListStatusOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        color: MiruColors.cardColor,
+        height: double.infinity,
+        constraints: const BoxConstraints(maxHeight: 360.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: MiruColors.cardColor,
+        ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: _buildStatusList(context),
         ),
       ),
