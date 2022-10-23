@@ -24,4 +24,5 @@ ThemeData themeData = ThemeData.dark().copyWith(
     selectedItemColor: MiruColors.textColor,
     unselectedItemColor: MiruColors.unselectedItemColor,
   ),
+  splashFactory: InkRipple.splashFactory,
 );
