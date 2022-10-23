@@ -44,123 +44,151 @@ class _AnimeDetailsState extends State<AnimeDetails> {
       ),
       body: Column(
         children: <Widget>[
-          Stack(
-            children: <Widget>[
-              ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return const LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment(0.0, 0.3),
-                    colors: <Color>[
-                      Colors.transparent,
-                      Color.fromRGBO(0, 0, 0, 0.2),
-                    ],
-                  ).createShader(bounds);
-                },
-                blendMode: BlendMode.dstATop,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: 300.0,
-                  child: Opacity(
-                    opacity: 0.3,
-                    // TODO: Create separate widget for FadeInImages
-                    child: FadeInImage.assetNetwork(
-                      fit: BoxFit.cover,
-                      height: 300,
-                      placeholderCacheHeight: 300,
-                      placeholderCacheWidth: 365,
-                      placeholder: 'assets/404img.png',
-                      image: widget.anime?.pictureMedium.toString() ?? '',
-                      imageErrorBuilder: (context, error, stackTrace) =>
-                          SizedBox(
+          Container(
+            constraints: const BoxConstraints(
+              maxHeight: 800.0,
+            ),
+            child: Stack(
+              children: <Widget>[
+                ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return const LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment(0.0, 0.3),
+                      colors: <Color>[
+                        Colors.transparent,
+                        Color.fromRGBO(0, 0, 0, 0.2),
+                      ],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstATop,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 300.0,
+                    child: Opacity(
+                      opacity: 0.3,
+                      // TODO: Create separate widget for FadeInImages
+                      child: FadeInImage.assetNetwork(
+                        fit: BoxFit.cover,
                         height: 300,
-                        child: Image.asset('assets/404img.png'),
+                        placeholderCacheHeight: 300,
+                        placeholderCacheWidth: 365,
+                        placeholder: 'assets/404img.png',
+                        image: widget.anime?.pictureMedium.toString() ?? '',
+                        imageErrorBuilder: (context, error, stackTrace) =>
+                            SizedBox(
+                          height: 300,
+                          child: Image.asset('assets/404img.png'),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 4.0),
-                        child: FadeInImage.assetNetwork(
-                          fit: BoxFit.cover,
-                          height: 140,
-                          width: 115,
-                          placeholderCacheHeight: 140,
-                          placeholderCacheWidth: 115,
-                          placeholder: 'assets/404img.png',
-                          image: widget.anime?.pictureMedium.toString() ?? '',
-                          imageErrorBuilder: (context, error, stackTrace) =>
-                              SizedBox(
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 4.0,
+                          ),
+                          child: FadeInImage.assetNetwork(
+                            fit: BoxFit.cover,
                             height: 140,
                             width: 115,
-                            child: Image.asset('assets/404img.png'),
+                            placeholderCacheHeight: 140,
+                            placeholderCacheWidth: 115,
+                            placeholder: 'assets/404img.png',
+                            image: widget.anime?.pictureMedium.toString() ?? '',
+                            imageErrorBuilder: (context, error, stackTrace) =>
+                                SizedBox(
+                              height: 140,
+                              width: 115,
+                              child: Image.asset('assets/404img.png'),
+                            ),
                           ),
                         ),
-                      ),
-                      Flexible(
-                        child: Text(
-                          widget.anime?.title ?? '',
-                          style: Theme.of(context).textTheme.headline5,
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                widget.anime?.title ?? '',
+                                style: Theme.of(context).textTheme.headline5,
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              TextButton.icon(
+                                onPressed: () {},
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.only(
+                                    left: 2.0,
+                                  ),
+                                ),
+                                // Icon and label are flipped here to make the text be on the left
+                                icon: const Text('Title Info'),
+                                label: const Icon(
+                                  Icons.arrow_drop_down_rounded,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: DetailStatusBar(
-                    children: <Widget>[
-                      DetailStatusBarSection(
-                        icon: Icons.movie_rounded,
-                        text: widget.anime?.userStatus?.displayName ?? '',
-                        onTap: () {
-                          Get.dialog(
-                            ListStatusOverlay(
-                              animeListType: widget.anime?.userStatus,
-                              onSelect: (AnimeListType animeListType) {
-                                // TODO: set this to happen when pressing 'Update List'
-                                if (index != null) {
-                                  Globals
-                                      .client.animeMap[widget.anime?.userStatus]
-                                      ?.removeAt(index!);
-                                  Globals.client.animeMap[animeListType]
-                                      ?.insert(0, widget.anime!);
-                                  index = 0;
-                                }
-                                setState(() {
-                                  widget.anime?.userStatus = animeListType;
-                                });
-                                widget.onUpdate?.call();
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      DetailStatusBarSection(
-                        icon: Icons.remove_red_eye,
-                        text: '2/12',
-                        onTap: () {},
-                      ),
-                      DetailStatusBarSection(
-                        icon: Icons.star,
-                        text: '0',
-                        onTap: () {},
-                      ),
-                    ],
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: DetailStatusBar(
+                      children: <Widget>[
+                        DetailStatusBarSection(
+                          icon: Icons.movie_rounded,
+                          text: widget.anime?.userStatus?.displayName ?? '',
+                          onTap: () {
+                            Get.dialog(
+                              ListStatusOverlay(
+                                animeListType: widget.anime?.userStatus,
+                                onSelect: (AnimeListType animeListType) {
+                                  // TODO: set this to happen when pressing 'Update List'
+                                  if (index != null) {
+                                    Globals.client
+                                        .animeMap[widget.anime?.userStatus]
+                                        ?.removeAt(index!);
+                                    Globals.client.animeMap[animeListType]
+                                        ?.insert(0, widget.anime!);
+                                    index = 0;
+                                  }
+                                  setState(() {
+                                    widget.anime?.userStatus = animeListType;
+                                  });
+                                  widget.onUpdate?.call();
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        DetailStatusBarSection(
+                          icon: Icons.remove_red_eye,
+                          text: '2/12',
+                          onTap: () {},
+                        ),
+                        DetailStatusBarSection(
+                          icon: Icons.star,
+                          text: '0',
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
