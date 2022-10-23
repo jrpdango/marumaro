@@ -37,8 +37,8 @@ class _MyWidgetState extends State<ListContainer> {
       limit: constants.limitOfListItems,
     ));
     _animeList = Globals.client.animeMap[widget.animeListType];
-    // TODO: Put trycatch here so app doesn't crash if user changes tabs whilst refreshing
-    setState(() {});
+    // Only call setState() if the widget is mounted
+    if (mounted) setState(() {});
   }
 
   @override
