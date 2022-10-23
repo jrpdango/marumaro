@@ -206,6 +206,23 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               ],
             ),
           ),
+          Container(
+            height: 48.0,
+            width: double.infinity,
+            margin: const EdgeInsets.all(16.0),
+            child: TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                backgroundColor: MiruColors.buttonColor,
+              ),
+              child: Text(
+                'Update List',
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                      color: MiruColors.textColor,
+                    ),
+              ),
+            ),
+          ),
         ],
       ),
     );
