@@ -9,7 +9,6 @@ import 'package:miru/widgets/list_status_overlay.dart';
 import 'package:miru/enums/anime_list_type.dart';
 
 class AnimeDetails extends StatefulWidget {
-  // TODO: deep copy this and manipulate the copy instead of this directly
   final Anime? anime;
   final int? index;
   final Function? onUpdate;
@@ -24,13 +23,15 @@ class AnimeDetails extends StatefulWidget {
 }
 
 class _AnimeDetailsState extends State<AnimeDetails> {
-  int? index;
-  AnimeListType? lastAnimeListType;
+  int? _index;
+  Anime? _anime;
 
   @override
   void initState() {
-    index = widget.index;
-    lastAnimeListType = widget.anime?.userStatus;
+    // Store an index of where in the ListContainer the selected ContentCard is
+    _index = widget.index;
+    // Create a deep copy of the passed Anime
+    _anime = widget.anime?.copyWith();
     super.initState();
   }
 
@@ -78,7 +79,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         placeholderCacheHeight: 300,
                         placeholderCacheWidth: 365,
                         placeholder: 'assets/404img.png',
-                        image: widget.anime?.pictureMedium.toString() ?? '',
+                        image: _anime?.pictureMedium.toString() ?? '',
                         imageErrorBuilder: (context, error, stackTrace) =>
                             SizedBox(
                           height: 300,
@@ -106,7 +107,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                             placeholderCacheHeight: 140,
                             placeholderCacheWidth: 115,
                             placeholder: 'assets/404img.png',
-                            image: widget.anime?.pictureMedium.toString() ?? '',
+                            image: _anime?.pictureMedium.toString() ?? '',
                             imageErrorBuilder: (context, error, stackTrace) =>
                                 SizedBox(
                               height: 140,
@@ -121,7 +122,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Text(
-                                widget.anime?.title ?? '',
+                                _anime?.title ?? '',
                                 style: Theme.of(context).textTheme.headline5,
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
@@ -168,14 +169,14 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       children: <Widget>[
                         DetailStatusBarSection(
                           icon: Icons.movie_rounded,
-                          text: widget.anime?.userStatus?.displayName ?? '',
+                          text: _anime?.userStatus?.displayName ?? '',
                           onTap: () {
                             Get.dialog(
                               ListStatusOverlay(
-                                animeListType: widget.anime?.userStatus,
+                                animeListType: _anime?.userStatus,
                                 onSelect: (AnimeListType animeListType) {
                                   setState(() {
-                                    widget.anime?.userStatus = animeListType;
+                                    _anime?.userStatus = animeListType;
                                   });
                                 },
                               ),
@@ -205,11 +206,15 @@ class _AnimeDetailsState extends State<AnimeDetails> {
             margin: const EdgeInsets.all(16.0),
             child: TextButton(
               onPressed: () {
-                if (index != null) {
-                  Globals.client.animeMap[lastAnimeListType]?.removeAt(index!);
+                if (_index != null) {
+                  // Remove the ContentCard from wherever it was
                   Globals.client.animeMap[widget.anime?.userStatus]
-                      ?.insert(0, widget.anime!);
-                  index = 0;
+                      ?.removeAt(_index!);
+                  // Insert at index 0 the ContentCard at its new status ListContainer
+                  Globals.client.animeMap[_anime?.userStatus]
+                      ?.insert(0, _anime!);
+                  // Set the local index to 0 since that's where the new ContentCard is
+                  _index = 0;
                   // This callback should call setState() on the current ListContainer
                   widget.onUpdate?.call();
                 }

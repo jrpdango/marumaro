@@ -26,4 +26,32 @@ class Anime {
     this.userEpisodesWatched,
     this.userScore,
   });
+
+  /// Creates a copy of this object with the given fields replaced with the new values.
+  ///
+  Anime copyWith({
+    int? id,
+    String? title,
+    int? totalEpisodes,
+    AnimeAiringStatus? airingStatus,
+    Season? season,
+    Uri? pictureMedium,
+    Uri? pictureLarge,
+    AnimeListType? userStatus,
+    int? userEpisodesWatched,
+    int? userScore,
+  }) {
+    return Anime(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      totalEpisodes: totalEpisodes ?? this.totalEpisodes,
+      airingStatus: airingStatus ?? this.airingStatus,
+      season: season ?? this.season,
+      pictureMedium: pictureMedium ?? this.pictureMedium,
+      pictureLarge: pictureLarge ?? this.pictureLarge,
+      userStatus: userStatus ?? this.userStatus,
+      userEpisodesWatched: userEpisodesWatched ?? this.userEpisodesWatched,
+      userScore: userScore ?? this.userScore,
+    );
+  }
 }
