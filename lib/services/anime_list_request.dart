@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
@@ -45,11 +44,11 @@ class AnimeListRequest implements MalRequest {
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
     Map<String, dynamic> animeMap = <String, dynamic>{};
-    animeMap['watching'] = <Anime>[].obs;
-    animeMap['completed'] = <Anime>[].obs;
-    animeMap['plan_to_watch'] = <Anime>[].obs;
-    animeMap['on_hold'] = <Anime>[].obs;
-    animeMap['dropped'] = <Anime>[].obs;
+    animeMap['watching'] = <Anime>[];
+    animeMap['completed'] = <Anime>[];
+    animeMap['plan_to_watch'] = <Anime>[];
+    animeMap['on_hold'] = <Anime>[];
+    animeMap['dropped'] = <Anime>[];
     for (Map element in rawMap['data']) {
       Anime currentAnime = Anime(
         id: element['node']['id'],
@@ -105,9 +104,9 @@ class AnimeListRequest implements MalRequest {
   }
 
   // TODO: Add comments
-  Map<AnimeListType, RxList<Anime>> _createCompleteMap(
+  Map<AnimeListType, List<Anime>> _createCompleteMap(
       Map<String, dynamic> rawMap) {
-    Map<AnimeListType, RxList<Anime>> animeMap = {};
+    Map<AnimeListType, List<Anime>> animeMap = {};
     animeMap[AnimeListType.watching] = rawMap['watching'];
     animeMap[AnimeListType.completed] = rawMap['completed'];
     animeMap[AnimeListType.planToWatch] = rawMap['plan_to_watch'];
@@ -117,7 +116,7 @@ class AnimeListRequest implements MalRequest {
   }
 
   @override
-  Future<Map<AnimeListType, RxList<Anime>>> send() async {
+  Future<Map<AnimeListType, List<Anime>>> send() async {
     if (uri == null) {
       uri = Uri(
           scheme: 'https',

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/get_rx.dart';
 import 'package:miru/constants.dart';
 import 'package:miru/enums/anime_list_type.dart';
-import 'package:miru/models/anime.dart';
 
 class ListStatusOverlay extends StatelessWidget {
   final AnimeListType? animeListType;

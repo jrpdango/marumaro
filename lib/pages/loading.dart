@@ -23,7 +23,7 @@ class _LoadingState extends State<Loading> {
     if (deleteTokens) deleteLocalTokens();
     await TokenValidator.verifyTokenPair();
 
-    final Map<AnimeListType, RxList<Anime>> result = await Globals.client
+    final Map<AnimeListType, List<Anime>> result = await Globals.client
         .requestAnimeList(limit: constants.limitOfListItems);
 
     Globals.client.animeMap = result;

@@ -4,7 +4,6 @@ import 'package:miru/models/anime.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/utils/oauth_url_generator.dart';
 
-import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 // import 'package:miru/services/anime_details_request.dart';
@@ -25,7 +24,7 @@ class MALClient {
   final String codeChallenge = CodeGenerator.genPKCEcode();
   final Client userClient = IOClient(_httpClient);
   TokenPair? tokenPair;
-  late Map<AnimeListType, RxList<Anime>> animeMap;
+  late Map<AnimeListType, List<Anime>> animeMap;
   String? username;
   NetworkImage? userImage;
 
@@ -63,7 +62,7 @@ class MALClient {
     return UserDataRequest(mode: mode, isFullImage: isFullImage).send();
   }
 
-  Future<Map<AnimeListType, RxList<Anime>>> requestAnimeList({
+  Future<Map<AnimeListType, List<Anime>>> requestAnimeList({
     String? status,
     String? sort = 'list_updated_at',
     int? limit = 100,

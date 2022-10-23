@@ -22,7 +22,7 @@ class ListContainer extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<ListContainer> {
-  RxList<Anime>? _animeList;
+  List<Anime>? _animeList;
 
   @override
   void initState() {
