@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miru/constants.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
@@ -122,19 +123,37 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              TextButton.icon(
-                                onPressed: () {},
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.only(
-                                    left: 2.0,
+                              InkWell(
+                                onTap: () {},
+                                borderRadius: BorderRadius.circular(4.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 2.0,
+                                    vertical: 8.0,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        'Title Info',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              // TODO: Create color
+                                              color: Color.fromARGB(
+                                                  255, 30, 205, 224),
+                                            ),
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_drop_down_rounded,
+                                        color:
+                                            Color.fromARGB(255, 30, 205, 224),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                // Icon and label are flipped here to make the text be on the left
-                                icon: const Text('Title Info'),
-                                label: const Icon(
-                                  Icons.arrow_drop_down_rounded,
-                                ),
-                              ),
+                              )
                             ],
                           ),
                         ),
