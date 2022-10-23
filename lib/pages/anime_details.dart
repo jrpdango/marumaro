@@ -87,7 +87,8 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 4.0),
                         child: FadeInImage.assetNetwork(
                           fit: BoxFit.cover,
                           height: 140,
@@ -114,44 +115,50 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   ),
                 ),
               ),
-            ],
-          ),
-          DetailStatusBar(
-            children: <Widget>[
-              DetailStatusBarSection(
-                icon: Icons.movie_rounded,
-                text: widget.anime?.userStatus?.displayName ?? '',
-                onTap: () {
-                  Get.dialog(
-                    ListStatusOverlay(
-                      animeListType: widget.anime?.userStatus,
-                      onSelect: (AnimeListType animeListType) {
-                        // TODO: set this to happen when pressing 'Update List'
-                        if (index != null) {
-                          Globals.client.animeMap[widget.anime?.userStatus]
-                              ?.removeAt(index!);
-                          Globals.client.animeMap[animeListType]
-                              ?.insert(0, widget.anime!);
-                          index = 0;
-                        }
-                        setState(() {
-                          widget.anime?.userStatus = animeListType;
-                        });
-                        widget.onUpdate?.call();
-                      },
-                    ),
-                  );
-                },
-              ),
-              DetailStatusBarSection(
-                icon: Icons.remove_red_eye,
-                text: '2/12',
-                onTap: () {},
-              ),
-              DetailStatusBarSection(
-                icon: Icons.star,
-                text: '0',
-                onTap: () {},
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: DetailStatusBar(
+                    children: <Widget>[
+                      DetailStatusBarSection(
+                        icon: Icons.movie_rounded,
+                        text: widget.anime?.userStatus?.displayName ?? '',
+                        onTap: () {
+                          Get.dialog(
+                            ListStatusOverlay(
+                              animeListType: widget.anime?.userStatus,
+                              onSelect: (AnimeListType animeListType) {
+                                // TODO: set this to happen when pressing 'Update List'
+                                if (index != null) {
+                                  Globals
+                                      .client.animeMap[widget.anime?.userStatus]
+                                      ?.removeAt(index!);
+                                  Globals.client.animeMap[animeListType]
+                                      ?.insert(0, widget.anime!);
+                                  index = 0;
+                                }
+                                setState(() {
+                                  widget.anime?.userStatus = animeListType;
+                                });
+                                widget.onUpdate?.call();
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                      DetailStatusBarSection(
+                        icon: Icons.remove_red_eye,
+                        text: '2/12',
+                        onTap: () {},
+                      ),
+                      DetailStatusBarSection(
+                        icon: Icons.star,
+                        text: '0',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
