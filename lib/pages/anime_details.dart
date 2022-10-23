@@ -9,6 +9,7 @@ import 'package:miru/widgets/list_status_overlay.dart';
 import 'package:miru/enums/anime_list_type.dart';
 
 class AnimeDetails extends StatefulWidget {
+  // TODO: deep copy this and manipulate the copy instead of this directly
   final Anime? anime;
   final int? index;
   final Function? onUpdate;
@@ -24,10 +25,12 @@ class AnimeDetails extends StatefulWidget {
 
 class _AnimeDetailsState extends State<AnimeDetails> {
   int? index;
+  AnimeListType? lastAnimeListType;
 
   @override
   void initState() {
     index = widget.index;
+    lastAnimeListType = widget.anime?.userStatus;
     super.initState();
   }
 
@@ -171,19 +174,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                               ListStatusOverlay(
                                 animeListType: widget.anime?.userStatus,
                                 onSelect: (AnimeListType animeListType) {
-                                  // TODO: set this to happen when pressing 'Update List'
-                                  if (index != null) {
-                                    Globals.client
-                                        .animeMap[widget.anime?.userStatus]
-                                        ?.removeAt(index!);
-                                    Globals.client.animeMap[animeListType]
-                                        ?.insert(0, widget.anime!);
-                                    index = 0;
-                                  }
                                   setState(() {
                                     widget.anime?.userStatus = animeListType;
                                   });
-                                  widget.onUpdate?.call();
                                 },
                               ),
                             );
@@ -211,7 +204,16 @@ class _AnimeDetailsState extends State<AnimeDetails> {
             width: double.infinity,
             margin: const EdgeInsets.all(16.0),
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                if (index != null) {
+                  Globals.client.animeMap[lastAnimeListType]?.removeAt(index!);
+                  Globals.client.animeMap[widget.anime?.userStatus]
+                      ?.insert(0, widget.anime!);
+                  index = 0;
+                  // This callback should call setState() on the current ListContainer
+                  widget.onUpdate?.call();
+                }
+              },
               style: TextButton.styleFrom(
                 backgroundColor: MiruColors.buttonColor,
               ),
