@@ -10,7 +10,7 @@ import 'package:miru/enums/anime_list_type.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
-  final int? index;
+  final int index;
   final Function? onUpdate;
   const AnimeDetails({
     Key? key,
