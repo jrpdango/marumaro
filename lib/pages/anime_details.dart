@@ -140,15 +140,12 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                             .textTheme
                                             .bodyMedium
                                             ?.copyWith(
-                                              // TODO: Create color
-                                              color: Color.fromARGB(
-                                                  255, 30, 205, 224),
+                                              color: MiruColors.primaryVariant,
                                             ),
                                       ),
                                       const Icon(
                                         Icons.arrow_drop_down_rounded,
-                                        color:
-                                            Color.fromARGB(255, 30, 205, 224),
+                                        color: MiruColors.primaryVariant,
                                       ),
                                     ],
                                   ),
