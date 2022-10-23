@@ -35,6 +35,13 @@ class _AnimeDetailsState extends State<AnimeDetails> {
     super.initState();
   }
 
+  /// Returns [true] if the current Anime has any changes to it.
+  get hasChanges {
+    return _anime?.userStatus == widget.anime?.userStatus &&
+        _anime?.userEpisodesWatched == widget.anime?.userEpisodesWatched &&
+        _anime?.userScore == widget.anime?.userScore;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -200,35 +207,43 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               ],
             ),
           ),
-          Container(
-            height: 48.0,
-            width: double.infinity,
-            margin: const EdgeInsets.all(16.0),
-            child: TextButton(
-              onPressed: () {
-                if (_index != null) {
-                  // Remove the ContentCard from wherever it was
-                  Globals.client.animeMap[widget.anime?.userStatus]
-                      ?.removeAt(_index!);
-                  // Insert at index 0 the ContentCard at its new status ListContainer
-                  Globals.client.animeMap[_anime?.userStatus]
-                      ?.insert(0, _anime!);
-                  // Set the local index to 0 since that's where the new ContentCard is
-                  _index = 0;
-                  // This callback should call setState() on the current ListContainer
-                  widget.onUpdate?.call();
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: MiruColors.buttonColor,
-              ),
-              child: Text(
-                'Update List',
-                style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                      color: MiruColors.textColor,
+          Builder(
+            builder: (_) {
+              if (!hasChanges) {
+                return Container(
+                  height: 48.0,
+                  width: double.infinity,
+                  margin: const EdgeInsets.all(16.0),
+                  child: TextButton(
+                    onPressed: () {
+                      if (_index != null) {
+                        // Remove the ContentCard from wherever it was
+                        Globals.client.animeMap[widget.anime?.userStatus]
+                            ?.removeAt(_index!);
+                        // Insert at index 0 the ContentCard at its new status ListContainer
+                        Globals.client.animeMap[_anime?.userStatus]
+                            ?.insert(0, _anime!);
+                        // Set the local index to 0 since that's where the new ContentCard is
+                        _index = 0;
+                        // This callback should call setState() on the current ListContainer
+                        widget.onUpdate?.call();
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: MiruColors.buttonColor,
                     ),
-              ),
-            ),
+                    child: Text(
+                      'Update List',
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                            color: MiruColors.textColor,
+                          ),
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
           ),
         ],
       ),
