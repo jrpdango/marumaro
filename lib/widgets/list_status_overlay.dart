@@ -25,9 +25,6 @@ class ListStatusOverlay extends StatelessWidget {
         Container(
           height: 64.0,
           width: double.infinity,
-          constraints: const BoxConstraints(
-            maxWidth: 320.0,
-          ),
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
             vertical: 8.0,
@@ -59,14 +56,17 @@ class ListStatusOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        height: double.infinity,
-        constraints: const BoxConstraints(maxHeight: 360.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           color: MiruColors.cardColor,
         ),
+        constraints: const BoxConstraints(
+          maxWidth: 320.0,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: _buildStatusList(context),
         ),
       ),
