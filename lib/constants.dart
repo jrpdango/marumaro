@@ -8,13 +8,13 @@ const String apiTokenUrl = 'https://myanimelist.net/v1/oauth2/token';
 
 /// Contains custom colors for the app.
 class MiruColors {
-  static const Color primaryColor = Color(0xFF21E9FF);
-  static const Color primaryVariant = Color(0xFF1ECDE0);
-  static const Color textColor = Color(0xFFFDFFFF);
-  static const Color unselectedItemColor = Color(0xFFBBBDBD);
-  static const Color tabBarBackgroundColor = Color(0xFF1C1C1C);
-  static const Color backgroundColor = Color(0xFF212121);
-  static const Color cardColor = Color(0xFF2E2E2E);
+  static const Color primaryColor = Color.fromARGB(255, 33, 233, 255);
+  static const Color primaryVariant = Color.fromARGB(255, 30, 205, 224);
+  static const Color textColor = Color.fromARGB(255, 253, 255, 255);
+  static const Color unselectedItemColor = Color.fromARGB(255, 187, 189, 189);
+  static const Color tabBarBackgroundColor = Color.fromARGB(255, 28, 28, 28);
+  static const Color backgroundColor = Color.fromARGB(255, 33, 33, 33);
+  static const Color cardColor = Color.fromARGB(255, 46, 46, 46);
   static const Color buttonColor = Color.fromARGB(255, 10, 150, 165);
   static const Color unselectedButtonColor = Color.fromARGB(255, 76, 112, 116);
 }
