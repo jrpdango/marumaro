@@ -13,10 +13,14 @@ class _ListProgressOverlayState extends State<ListProgressOverlay> {
   Widget build(BuildContext context) {
     return BaseOverlay(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: const <Widget>[
           Text('Test Overlay'),
-          TextField(
-            keyboardType: TextInputType.number,
+          Material(
+            child: TextField(
+              keyboardType: TextInputType.number,
+            ),
           ),
         ],
       ),

@@ -6,6 +6,7 @@ import 'package:miru/models/anime.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
+import 'package:miru/widgets/list_progress_overlay.dart';
 import 'package:miru/widgets/list_status_overlay.dart';
 import 'package:miru/enums/anime_list_type.dart';
 
@@ -200,7 +201,11 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         DetailStatusBarSection(
                           icon: Icons.remove_red_eye,
                           text: '2/12',
-                          onTap: () {},
+                          onTap: () {
+                            Get.dialog(
+                              const ListProgressOverlay(),
+                            );
+                          },
                         ),
                         DetailStatusBarSection(
                           icon: Icons.star,
