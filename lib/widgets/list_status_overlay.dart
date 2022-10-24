@@ -36,9 +36,13 @@ class ListStatusOverlay extends StatelessWidget {
               }
               debugPrint(status.apiName);
             },
-            style: TextButton.styleFrom(
-              backgroundColor: MiruColors.buttonColor,
-            ),
+            style: animeListType == status
+                ? TextButton.styleFrom(
+                    backgroundColor: MiruColors.buttonColor,
+                  )
+                : TextButton.styleFrom(
+                    backgroundColor: MiruColors.unselectedButtonColor,
+                  ),
             child: Text(
               status.displayName,
               style: Theme.of(context).textTheme.bodyText1?.copyWith(

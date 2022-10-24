@@ -190,6 +190,8 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                   setState(() {
                                     _userListStatus?.status = animeListType;
                                   });
+                                  // Close the overlay
+                                  Get.back();
                                 },
                               ),
                             );
