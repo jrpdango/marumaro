@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:miru/constants.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
 import 'package:miru/widgets/list_status_overlay.dart';
@@ -25,6 +26,7 @@ class AnimeDetails extends StatefulWidget {
 class _AnimeDetailsState extends State<AnimeDetails> {
   int? _index;
   Anime? _anime;
+  UserListStatus? _userListStatus;
 
   @override
   void initState() {
@@ -32,14 +34,17 @@ class _AnimeDetailsState extends State<AnimeDetails> {
     _index = widget.index;
     // Create a deep copy of the passed Anime
     _anime = widget.anime?.copyWith();
+    // Create a new UserListStatus for updates
+    _userListStatus = widget.anime?.userListStatus?.copyWith();
     super.initState();
   }
 
   /// Returns [true] if the current Anime has any changes to it.
   get hasChanges {
-    return _anime?.userStatus == widget.anime?.userStatus &&
-        _anime?.userEpisodesWatched == widget.anime?.userEpisodesWatched &&
-        _anime?.userScore == widget.anime?.userScore;
+    return _anime?.userListStatus?.status == _userListStatus?.status &&
+        _anime?.userListStatus?.currentProgress ==
+            _userListStatus?.currentProgress &&
+        _anime?.userListStatus?.score == _userListStatus?.score;
   }
 
   @override
@@ -176,14 +181,14 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       children: <Widget>[
                         DetailStatusBarSection(
                           icon: Icons.movie_rounded,
-                          text: _anime?.userStatus?.displayName ?? '',
+                          text: _userListStatus?.status?.displayName ?? '',
                           onTap: () {
                             Get.dialog(
                               ListStatusOverlay(
-                                animeListType: _anime?.userStatus,
+                                animeListType: _userListStatus?.status,
                                 onSelect: (AnimeListType animeListType) {
                                   setState(() {
-                                    _anime?.userStatus = animeListType;
+                                    _userListStatus?.status = animeListType;
                                   });
                                 },
                               ),
@@ -218,11 +223,16 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                     onPressed: () {
                       if (_index != null) {
                         // Remove the ContentCard from wherever it was
-                        Globals.client.animeMap[widget.anime?.userStatus]
+                        Globals.client.animeMap[_anime?.userListStatus?.status]
                             ?.removeAt(_index!);
                         // Insert at index 0 the ContentCard at its new status ListContainer
-                        Globals.client.animeMap[_anime?.userStatus]
+                        Globals.client.animeMap[_userListStatus?.status]
                             ?.insert(0, _anime!);
+                        // Assign the new userListStatus to the current Anime
+                        // setState to hide the 'Update List' button
+                        setState(() {
+                          _anime?.userListStatus = _userListStatus?.copyWith();
+                        });
                         // Set the local index to 0 since that's where the new ContentCard is
                         _index = 0;
                         // This callback should call setState() on the current ListContainer

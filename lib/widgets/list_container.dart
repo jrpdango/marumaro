@@ -64,9 +64,10 @@ class _MyWidgetState extends State<ListContainer> {
               imageUrl: _animeList?[index].pictureMedium.toString() ?? '',
               contentCardDetails: ContentCardDetails(
                 title: _animeList?[index].title ?? '',
-                episodesWatched: _animeList?[index].userEpisodesWatched ?? 0,
+                episodesWatched:
+                    _animeList?[index].userListStatus?.currentProgress ?? 0,
                 totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
-                score: _animeList?[index].userScore ?? 0,
+                score: _animeList?[index].userListStatus?.score ?? 0,
                 season: _animeList?[index].season ?? Season(),
               ),
             ),

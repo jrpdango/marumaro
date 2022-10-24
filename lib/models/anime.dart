@@ -1,5 +1,6 @@
 import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/models/season.dart';
 
 class Anime {
@@ -10,9 +11,7 @@ class Anime {
   final Season season;
   Uri? pictureMedium;
   Uri? pictureLarge;
-  AnimeListType? userStatus;
-  int? userEpisodesWatched;
-  int? userScore;
+  UserListStatus? userListStatus;
 
   Anime({
     required this.id,
@@ -22,9 +21,7 @@ class Anime {
     required this.season,
     this.pictureMedium,
     this.pictureLarge,
-    this.userStatus,
-    this.userEpisodesWatched,
-    this.userScore,
+    this.userListStatus,
   });
 
   /// Creates a copy of this object with the given fields replaced with the new values.
@@ -37,9 +34,7 @@ class Anime {
     Season? season,
     Uri? pictureMedium,
     Uri? pictureLarge,
-    AnimeListType? userStatus,
-    int? userEpisodesWatched,
-    int? userScore,
+    UserListStatus? userListStatus,
   }) {
     return Anime(
       id: id ?? this.id,
@@ -49,9 +44,8 @@ class Anime {
       season: season ?? this.season,
       pictureMedium: pictureMedium ?? this.pictureMedium,
       pictureLarge: pictureLarge ?? this.pictureLarge,
-      userStatus: userStatus ?? this.userStatus,
-      userEpisodesWatched: userEpisodesWatched ?? this.userEpisodesWatched,
-      userScore: userScore ?? this.userScore,
+      userListStatus:
+          userListStatus?.copyWith() ?? this.userListStatus?.copyWith(),
     );
   }
 }
