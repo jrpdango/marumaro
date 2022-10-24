@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' show MiruColors;
 
 class BaseOverlay extends StatelessWidget {
-  final List<Widget> children;
+  final Widget child;
   const BaseOverlay({
-    required this.children,
+    required this.child,
     Key? key,
   }) : super(key: key);
 
@@ -20,11 +20,7 @@ class BaseOverlay extends StatelessWidget {
           maxWidth: 320.0,
         ),
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: children,
-        ),
+        child: child,
       ),
     );
   }
