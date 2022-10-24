@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart';
 import 'package:miru/enums/anime_list_type.dart';
+import 'package:miru/widgets/base_overlay.dart';
 
 class ListStatusOverlay extends StatelessWidget {
   final AnimeListType? animeListType;
@@ -58,21 +59,11 @@ class ListStatusOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          color: MiruColors.cardColor,
-        ),
-        constraints: const BoxConstraints(
-          maxWidth: 320.0,
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: _buildStatusList(context),
-        ),
+    return BaseOverlay(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: _buildStatusList(context),
       ),
     );
   }
