@@ -18,7 +18,7 @@ class ContentCardDetails extends StatelessWidget {
     required this.totalEpisodes,
   }) : super(key: key);
 
-  Color _getScoreColor() {
+  Color get _scoreColor {
     switch (score) {
       case 1:
       case 2:
@@ -73,7 +73,7 @@ class ContentCardDetails extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Card(
-                    color: _getScoreColor(),
+                    color: _scoreColor,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 7.0, right: 5.0),
                       child: Row(
