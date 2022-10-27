@@ -82,6 +82,10 @@ class ListScoreOverlay extends StatelessWidget {
   }
 }
 
+/// Custom [Widget] for [ListScoreOverlay]. This is intended to be used within
+/// a function that produces a [Column] with [Row] children that contain
+/// two [ButtonCell] each.
+///
 class ButtonCell extends StatelessWidget {
   final String topText;
   final String bottomText;
