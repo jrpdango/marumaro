@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:miru/constants.dart';
 import 'package:miru/widgets/base_overlay.dart';
 
 class ListScoreOverlay extends StatelessWidget {
   const ListScoreOverlay({Key? key}) : super(key: key);
 
-  List<Row> get _buttonRows {
+  List<Row> _buttonRows(BuildContext context) {
     List<String> buttonTexts = [
       'Apalling',
       'Horrible',
@@ -24,28 +25,14 @@ class ListScoreOverlay extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Expanded>[
-            Expanded(
-              child: TextButton(
-                onPressed: () {},
-                child: Column(
-                  children: <Widget>[
-                    Text('${i + 1}'),
-                    Text(buttonTexts[i]),
-                  ],
-                ),
-              ),
+          children: <ButtonCell>[
+            ButtonCell(
+              topText: (i + 1).toString(),
+              bottomText: buttonTexts[i],
             ),
-            Expanded(
-              child: TextButton(
-                onPressed: () {},
-                child: Column(
-                  children: <Widget>[
-                    Text('${i + 2}'),
-                    Text(buttonTexts[i + 1]),
-                  ],
-                ),
-              ),
+            ButtonCell(
+              topText: (i + 2).toString(),
+              bottomText: buttonTexts[i + 1],
             ),
           ],
         ),
@@ -58,25 +45,74 @@ class ListScoreOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseOverlay(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextButton(
-            onPressed: () {},
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: const <Text>[
-                  Text('0'),
-                  Text('Unrated'),
-                ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 4.0,
+          vertical: 8.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextButton(
+              onPressed: () {},
+              child: const SizedBox(
+                width: double.infinity,
+                child: ButtonCell(
+                  topText: '0',
+                  bottomText: 'Unrated',
+                  padding: EdgeInsets.zero,
+                ),
               ),
             ),
+            Column(
+              children: _buttonRows(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ButtonCell extends StatelessWidget {
+  final String topText;
+  final String bottomText;
+  final EdgeInsetsGeometry padding;
+
+  const ButtonCell({
+    this.topText = '',
+    this.bottomText = '',
+    this.padding = const EdgeInsets.all(8.0),
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: padding,
+        child: TextButton(
+          onPressed: () {},
+          style: TextButton.styleFrom(
+            backgroundColor: MiruColors.unselectedButtonColor,
           ),
-          Column(
-            children: _buttonRows,
+          child: Column(
+            children: <Widget>[
+              Text(
+                topText,
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                      color: MiruColors.textColor,
+                    ),
+              ),
+              Text(
+                bottomText,
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                      color: MiruColors.textColor,
+                    ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
