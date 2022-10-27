@@ -4,10 +4,10 @@ import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/widgets/base_overlay.dart';
 
 class ListStatusOverlay extends StatelessWidget {
-  final AnimeListType? animeListType;
+  final AnimeListType? currentStatus;
   final Function? onSelect;
   const ListStatusOverlay({
-    this.animeListType,
+    this.currentStatus,
     this.onSelect,
     Key? key,
   }) : super(key: key);
@@ -37,7 +37,7 @@ class ListStatusOverlay extends StatelessWidget {
               }
               debugPrint(status.apiName);
             },
-            style: animeListType == status
+            style: currentStatus == status
                 ? TextButton.styleFrom(
                     backgroundColor: MiruColors.buttonColor,
                   )

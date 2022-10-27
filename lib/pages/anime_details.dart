@@ -188,8 +188,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           onTap: () {
                             Get.dialog(
                               ListStatusOverlay(
-                                // TODO: Rename this to currentStatus
-                                animeListType: _userListStatus?.status,
+                                currentStatus: _userListStatus?.status,
                                 onSelect: (AnimeListType animeListType) {
                                   setState(() {
                                     _userListStatus?.status = animeListType;
