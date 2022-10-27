@@ -66,7 +66,7 @@ class _MyWidgetState extends State<ListContainer> {
                 title: _animeList?[index].title ?? '',
                 episodesWatched:
                     _animeList?[index].userListStatus?.currentProgress ?? 0,
-                totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
+                totalEpisodes: _animeList?[index].formattedTotalEpisodes ?? '?',
                 score: _animeList?[index].userListStatus?.score ?? 0,
                 season: _animeList?[index].season ?? Season(),
               ),

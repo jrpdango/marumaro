@@ -7,7 +7,7 @@ class ContentCardDetails extends StatelessWidget {
   final Season season;
   final int score;
   final int episodesWatched;
-  final int totalEpisodes;
+  final String totalEpisodes;
 
   const ContentCardDetails({
     Key? key,
@@ -69,7 +69,7 @@ class ContentCardDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Progress: $episodesWatched/$totalEpisodes',
+                    'Progress: $episodesWatched / $totalEpisodes',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Card(
