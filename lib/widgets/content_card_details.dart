@@ -18,6 +18,8 @@ class ContentCardDetails extends StatelessWidget {
     required this.totalEpisodes,
   }) : super(key: key);
 
+  /// Returns a [Color] based on the current score.
+  ///
   Color get _scoreColor {
     switch (score) {
       case 1:
