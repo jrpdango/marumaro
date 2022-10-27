@@ -32,7 +32,12 @@ class ListProgressOverlay extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline6,
                       decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding:
+                            const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
                         hintText: currentProgress?.toString() ?? '',
                       ),
                       keyboardType: TextInputType.number,
