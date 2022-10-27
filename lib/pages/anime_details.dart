@@ -200,13 +200,14 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         ),
                         DetailStatusBarSection(
                           icon: Icons.remove_red_eye,
-                          text: '2/12',
+                          text:
+                              '${_userListStatus?.currentProgress ?? '?'} / ${_anime?.formattedTotalEpisodes ?? '?'}',
                           onTap: () {
                             Get.dialog(
                               ListProgressOverlay(
                                 currentProgress:
                                     _userListStatus?.currentProgress,
-                                total: _anime?.totalEpisodes,
+                                total: _anime?.formattedTotalEpisodes,
                               ),
                             );
                           },

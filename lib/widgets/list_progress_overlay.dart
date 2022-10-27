@@ -3,7 +3,7 @@ import 'package:miru/widgets/base_overlay.dart';
 
 class ListProgressOverlay extends StatelessWidget {
   final int? currentProgress;
-  final int? total;
+  final String? total;
 
   const ListProgressOverlay({
     required this.currentProgress,
@@ -39,9 +39,9 @@ class ListProgressOverlay extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 8.0, top: 16.0),
+                    margin: const EdgeInsets.only(left: 8.0, top: 16.0),
                     child: Text(
-                      '/ ${total != 0 && total != null ? total : '?'}',
+                      '/ $total',
                       style: Theme.of(context).textTheme.headline5,
                     ),
                   ),

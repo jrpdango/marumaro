@@ -24,6 +24,16 @@ class Anime {
     this.userListStatus,
   });
 
+  /// Getter that returns a [String] '?' if [totalEpisodes] is equal to 0.
+  ///
+  String get formattedTotalEpisodes {
+    if (totalEpisodes == 0) {
+      return '?';
+    } else {
+      return totalEpisodes.toString();
+    }
+  }
+
   /// Creates a copy of this object with the given fields replaced with the new values.
   ///
   Anime copyWith({
