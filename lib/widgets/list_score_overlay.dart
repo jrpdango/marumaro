@@ -58,27 +58,25 @@ class ListScoreOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseOverlay(
-      child: Material(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            TextButton(
-              onPressed: () {},
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: const <Text>[
-                    Text('0'),
-                    Text('Unrated'),
-                  ],
-                ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextButton(
+            onPressed: () {},
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: const <Text>[
+                  Text('0'),
+                  Text('Unrated'),
+                ],
               ),
             ),
-            Column(
-              children: _buttonRows,
-            ),
-          ],
-        ),
+          ),
+          Column(
+            children: _buttonRows,
+          ),
+        ],
       ),
     );
   }

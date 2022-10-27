@@ -11,16 +11,16 @@ class BaseOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          color: MiruColors.cardColor,
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        color: MiruColors.cardColor,
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: 320.0,
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: child,
         ),
-        constraints: const BoxConstraints(
-          maxWidth: 320.0,
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: child,
       ),
     );
   }

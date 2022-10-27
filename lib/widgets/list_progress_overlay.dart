@@ -26,33 +26,31 @@ class ListProgressOverlay extends StatelessWidget {
           const SizedBox(
             height: 8.0,
           ),
-          Material(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline6,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding:
-                            const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
-                        hintText: currentProgress?.toString() ?? '',
-                      ),
-                      keyboardType: TextInputType.number,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline6,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
+                      hintText: currentProgress?.toString() ?? '',
                     ),
+                    keyboardType: TextInputType.number,
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 8.0, top: 16.0),
-                    child: Text(
-                      '/ ${ProgressFormatter.format(total)}',
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 8.0, top: 16.0),
+                  child: Text(
+                    '/ ${ProgressFormatter.format(total)}',
+                    style: Theme.of(context).textTheme.headline5,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
