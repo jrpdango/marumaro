@@ -217,7 +217,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         ),
                         DetailStatusBarSection(
                           icon: Icons.star,
-                          text: '0',
+                          text: '${_userListStatus?.score ?? '?'}',
                           onTap: () {
                             Get.dialog(
                               ListScoreOverlay(
