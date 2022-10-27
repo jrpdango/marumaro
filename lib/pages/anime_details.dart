@@ -203,7 +203,11 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           text: '2/12',
                           onTap: () {
                             Get.dialog(
-                              const ListProgressOverlay(),
+                              ListProgressOverlay(
+                                currentProgress:
+                                    _userListStatus?.currentProgress,
+                                total: _anime?.totalEpisodes,
+                              ),
                             );
                           },
                         ),

@@ -1,25 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:miru/widgets/base_overlay.dart';
 
-class ListProgressOverlay extends StatefulWidget {
-  const ListProgressOverlay({Key? key}) : super(key: key);
+class ListProgressOverlay extends StatelessWidget {
+  final int? currentProgress;
+  final int? total;
 
-  @override
-  State<ListProgressOverlay> createState() => _ListProgressOverlayState();
-}
+  const ListProgressOverlay({
+    required this.currentProgress,
+    required this.total,
+    Key? key,
+  }) : super(key: key);
 
-class _ListProgressOverlayState extends State<ListProgressOverlay> {
   @override
   Widget build(BuildContext context) {
     return BaseOverlay(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
-        children: const <Widget>[
-          Text('Test Overlay'),
+        children: <Widget>[
+          Text(
+            'Set your progress',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          const SizedBox(
+            height: 8.0,
+          ),
           Material(
-            child: TextField(
-              keyboardType: TextInputType.number,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: currentProgress?.toString() ?? '',
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 8.0, top: 16.0),
+                    child: Text(
+                      '/ ${total != 0 && total != null ? total : '?'}',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
