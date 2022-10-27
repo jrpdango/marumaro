@@ -188,6 +188,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           onTap: () {
                             Get.dialog(
                               ListStatusOverlay(
+                                // TODO: Rename this to currentStatus
                                 animeListType: _userListStatus?.status,
                                 onSelect: (AnimeListType animeListType) {
                                   setState(() {
@@ -219,7 +220,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           text: '0',
                           onTap: () {
                             Get.dialog(
-                              const ListScoreOverlay(),
+                              ListScoreOverlay(
+                                currentScore: _userListStatus?.score ?? 0,
+                              ),
                             );
                           },
                         ),

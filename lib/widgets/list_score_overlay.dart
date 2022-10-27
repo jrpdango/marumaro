@@ -3,7 +3,12 @@ import 'package:miru/constants.dart';
 import 'package:miru/widgets/base_overlay.dart';
 
 class ListScoreOverlay extends StatelessWidget {
-  const ListScoreOverlay({Key? key}) : super(key: key);
+  final int currentScore;
+
+  const ListScoreOverlay({
+    Key? key,
+    required this.currentScore,
+  }) : super(key: key);
 
   List<Row> _buttonRows(BuildContext context) {
     List<String> buttonTexts = [
@@ -29,10 +34,12 @@ class ListScoreOverlay extends StatelessWidget {
             ButtonCell(
               topText: (i + 1).toString(),
               bottomText: buttonTexts[i],
+              isSelected: (i + 1) == currentScore,
             ),
             ButtonCell(
               topText: (i + 2).toString(),
               bottomText: buttonTexts[i + 1],
+              isSelected: (i + 2) == currentScore,
             ),
           ],
         ),
@@ -55,12 +62,13 @@ class ListScoreOverlay extends StatelessWidget {
           children: <Widget>[
             TextButton(
               onPressed: () {},
-              child: const SizedBox(
+              child: SizedBox(
                 width: double.infinity,
                 child: ButtonCell(
                   topText: '0',
                   bottomText: 'Unrated',
                   padding: EdgeInsets.zero,
+                  isSelected: currentScore == 0,
                 ),
               ),
             ),
@@ -78,11 +86,13 @@ class ButtonCell extends StatelessWidget {
   final String topText;
   final String bottomText;
   final EdgeInsetsGeometry padding;
+  final bool isSelected;
 
   const ButtonCell({
     this.topText = '',
     this.bottomText = '',
     this.padding = const EdgeInsets.all(8.0),
+    this.isSelected = false,
     Key? key,
   }) : super(key: key);
 
@@ -93,9 +103,13 @@ class ButtonCell extends StatelessWidget {
         padding: padding,
         child: TextButton(
           onPressed: () {},
-          style: TextButton.styleFrom(
-            backgroundColor: MiruColors.unselectedButtonColor,
-          ),
+          style: isSelected
+              ? TextButton.styleFrom(
+                  backgroundColor: MiruColors.buttonColor,
+                )
+              : TextButton.styleFrom(
+                  backgroundColor: MiruColors.unselectedButtonColor,
+                ),
           child: Column(
             children: <Widget>[
               Text(
