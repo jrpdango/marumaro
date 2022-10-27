@@ -60,15 +60,33 @@ class ListScoreOverlay extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            TextButton(
-              onPressed: () {},
-              child: SizedBox(
-                width: double.infinity,
-                child: ButtonCell(
-                  topText: '0',
-                  bottomText: 'Unrated',
-                  padding: EdgeInsets.zero,
-                  isSelected: currentScore == 0,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: TextButton(
+                onPressed: () {},
+                style: currentScore == 0
+                    ? TextButton.styleFrom(
+                        backgroundColor: MiruColors.buttonColor,
+                      )
+                    : TextButton.styleFrom(
+                        backgroundColor: MiruColors.unselectedButtonColor,
+                      ),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '0',
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                            color: MiruColors.textColor,
+                          ),
+                    ),
+                    Text(
+                      'Unrated',
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                            color: MiruColors.textColor,
+                          ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -105,6 +123,7 @@ class ButtonCell extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: padding,
+        // TODO: Turn this into a separate widget
         child: TextButton(
           onPressed: () {},
           style: isSelected
