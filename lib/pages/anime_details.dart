@@ -8,6 +8,7 @@ import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
 import 'package:miru/widgets/list_progress_overlay.dart';
+import 'package:miru/widgets/list_score_overlay.dart';
 import 'package:miru/widgets/list_status_overlay.dart';
 import 'package:miru/enums/anime_list_type.dart';
 
@@ -216,7 +217,11 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         DetailStatusBarSection(
                           icon: Icons.star,
                           text: '0',
-                          onTap: () {},
+                          onTap: () {
+                            Get.dialog(
+                              const ListScoreOverlay(),
+                            );
+                          },
                         ),
                       ],
                     ),
