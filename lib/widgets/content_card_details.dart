@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' show MiruColors;
 import 'package:miru/models/season.dart';
+import 'package:miru/utils/progress_formatter.dart';
 
 class ContentCardDetails extends StatelessWidget {
   final String title;
   final Season season;
   final int score;
   final int episodesWatched;
-  final String totalEpisodes;
+  final int totalEpisodes;
 
   const ContentCardDetails({
     Key? key,
@@ -71,7 +72,7 @@ class ContentCardDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Progress: $episodesWatched / $totalEpisodes',
+                    'Progress: $episodesWatched / ${ProgressFormatter.format(totalEpisodes)}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Card(

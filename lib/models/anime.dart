@@ -1,5 +1,4 @@
 import 'package:miru/enums/anime_airing_status.dart';
-import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/models/season.dart';
 
@@ -23,16 +22,6 @@ class Anime {
     this.pictureLarge,
     this.userListStatus,
   });
-
-  /// Getter that returns a [String] '?' if [totalEpisodes] is equal to 0.
-  ///
-  String get formattedTotalEpisodes {
-    if (totalEpisodes == 0) {
-      return '?';
-    } else {
-      return totalEpisodes.toString();
-    }
-  }
 
   /// Creates a copy of this object with the given fields replaced with the new values.
   ///

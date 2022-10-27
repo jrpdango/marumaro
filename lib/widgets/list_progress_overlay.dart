@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/base_overlay.dart';
 
 class ListProgressOverlay extends StatelessWidget {
   final int? currentProgress;
-  final String? total;
+  final int? total;
 
   const ListProgressOverlay({
     required this.currentProgress,
@@ -46,7 +47,7 @@ class ListProgressOverlay extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(left: 8.0, top: 16.0),
                     child: Text(
-                      '/ $total',
+                      '/ ${ProgressFormatter.format(total)}',
                       style: Theme.of(context).textTheme.headline5,
                     ),
                   ),

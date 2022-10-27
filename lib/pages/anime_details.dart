@@ -4,6 +4,7 @@ import 'package:miru/constants.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/user_list_status.dart';
+import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
 import 'package:miru/widgets/detail_status_bar_section.dart';
 import 'package:miru/widgets/list_progress_overlay.dart';
@@ -201,13 +202,13 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         DetailStatusBarSection(
                           icon: Icons.remove_red_eye,
                           text:
-                              '${_userListStatus?.currentProgress ?? '?'} / ${_anime?.formattedTotalEpisodes ?? '?'}',
+                              '${_userListStatus?.currentProgress ?? '?'} / ${ProgressFormatter.format(_anime?.totalEpisodes) ?? '?'}',
                           onTap: () {
                             Get.dialog(
                               ListProgressOverlay(
                                 currentProgress:
                                     _userListStatus?.currentProgress,
-                                total: _anime?.formattedTotalEpisodes,
+                                total: _anime?.totalEpisodes,
                               ),
                             );
                           },
