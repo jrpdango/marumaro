@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/constants.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/widgets/base_overlay.dart';
+import 'package:miru/widgets/overlay_button.dart';
 
 class ListStatusOverlay extends StatelessWidget {
   final AnimeListType? currentStatus;
@@ -30,26 +30,14 @@ class ListStatusOverlay extends StatelessWidget {
             horizontal: 16.0,
             vertical: 8.0,
           ),
-          child: TextButton(
+          child: OverlayButton(
             onPressed: () {
               if (onSelect != null) {
                 onSelect!.call(status);
               }
-              debugPrint(status.apiName);
             },
-            style: currentStatus == status
-                ? TextButton.styleFrom(
-                    backgroundColor: MiruColors.buttonColor,
-                  )
-                : TextButton.styleFrom(
-                    backgroundColor: MiruColors.unselectedButtonColor,
-                  ),
-            child: Text(
-              status.displayName,
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                    color: MiruColors.textColor,
-                  ),
-            ),
+            topText: status.displayName,
+            isSelected: currentStatus == status,
           ),
         ),
       );
