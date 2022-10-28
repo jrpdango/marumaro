@@ -124,7 +124,6 @@ class ButtonCell extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: padding,
-        // TODO: Turn this into a separate widget
         child: OverlayButton(
           onPressed: () {},
           topText: topText,
