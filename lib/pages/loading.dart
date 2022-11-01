@@ -30,7 +30,7 @@ class _LoadingState extends State<Loading> {
 
     Globals.client.username = (await Globals.client.requestUserData())['name'];
 
-    Get.to(() => const Home());
+    Get.off(() => const Home());
   }
 
   @override
