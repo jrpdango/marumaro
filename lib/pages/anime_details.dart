@@ -205,7 +205,11 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           onTap: () {
                             Get.dialog(
                               ListProgressOverlay(
-                                onChanged: () {},
+                                onChanged: (String test) {
+                                  debugPrint(test);
+                                  // Close the overlay
+                                  Get.back();
+                                },
                                 currentProgress:
                                     _userListStatus?.currentProgress,
                                 total: _anime?.totalEpisodes,

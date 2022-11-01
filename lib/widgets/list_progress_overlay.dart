@@ -8,13 +8,29 @@ class ListProgressOverlay extends StatelessWidget {
   final Function onChanged;
   final int? currentProgress;
   final int? total;
+  final TextEditingController _controller = TextEditingController();
 
-  const ListProgressOverlay({
+  ListProgressOverlay({
     required this.onChanged,
     required this.currentProgress,
     required this.total,
     Key? key,
   }) : super(key: key);
+
+  String? get formattedText {
+    try {
+      int parsedText = int.parse(_controller.text);
+      if (total == null) return null;
+      if (parsedText <= total! && parsedText >= 0) {
+        return _controller.text;
+      }
+    } catch (_) {
+      debugPrint(
+        'Something went wrong with the int input. It\'s probably null.',
+      );
+    }
+    return currentProgress?.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +52,7 @@ class ListProgressOverlay extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: TextField(
+                    controller: _controller,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline6,
                     decoration: InputDecoration(
@@ -68,7 +85,9 @@ class ListProgressOverlay extends StatelessWidget {
               vertical: 8.0,
             ),
             child: OverlayButton(
-              onPressed: () {},
+              onPressed: () {
+                onChanged.call(formattedText);
+              },
               topText: 'Confirm',
               // Marked as isSelected to make it a brighter blue
               isSelected: true,
