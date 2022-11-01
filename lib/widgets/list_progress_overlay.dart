@@ -21,9 +21,11 @@ class ListProgressOverlay extends StatelessWidget {
     try {
       int parsedText = int.parse(_controller.text);
       if (total == null) return null;
+      if (total == 0) return _controller.text;
       if (parsedText <= total! && parsedText >= 0) {
         return _controller.text;
       }
+      if (parsedText > total!) return total?.toString();
     } catch (_) {
       debugPrint(
         'Something went wrong with the int input. It\'s probably null.',
