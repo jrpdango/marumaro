@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/base_overlay.dart';
 import 'package:miru/widgets/overlay_button.dart';
@@ -42,8 +43,11 @@ class ListProgressOverlay extends StatelessWidget {
                       contentPadding:
                           const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 4.0),
                       hintText: currentProgress?.toString() ?? '',
+                      counterText: '',
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     keyboardType: TextInputType.number,
+                    maxLength: 10,
                   ),
                 ),
                 Container(
