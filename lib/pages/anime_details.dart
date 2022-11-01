@@ -226,6 +226,13 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           onTap: () {
                             Get.dialog(
                               ListScoreOverlay(
+                                onPressed: (int score) {
+                                  setState(() {
+                                    _userListStatus?.score = score;
+                                  });
+                                  // Close the overlay
+                                  Get.back();
+                                },
                                 currentScore: _userListStatus?.score ?? 0,
                               ),
                             );
