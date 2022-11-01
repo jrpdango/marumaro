@@ -45,7 +45,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
   }
 
   /// Returns [true] if the current Anime has any changes to it.
-  get hasChanges {
+  bool get hasChanges {
     return _anime?.userListStatus?.status == _userListStatus?.status &&
         _anime?.userListStatus?.currentProgress ==
             _userListStatus?.currentProgress &&
