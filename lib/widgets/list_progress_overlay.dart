@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/base_overlay.dart';
+import 'package:miru/widgets/overlay_button.dart';
 
 class ListProgressOverlay extends StatelessWidget {
   final Function onChanged;
@@ -26,7 +27,7 @@ class ListProgressOverlay extends StatelessWidget {
             style: Theme.of(context).textTheme.headline6,
           ),
           const SizedBox(
-            height: 8.0,
+            height: 16.0,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -53,6 +54,20 @@ class ListProgressOverlay extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          Container(
+            height: 64.0,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: OverlayButton(
+              onPressed: () {},
+              topText: 'Confirm',
+              // Marked as isSelected to make it a brighter blue
+              isSelected: true,
             ),
           ),
         ],
