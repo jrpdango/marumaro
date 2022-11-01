@@ -7,7 +7,12 @@ import 'package:miru/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: [
+      SystemUiOverlay.bottom,
+    ],
+  );
   SystemChrome.setSystemUIChangeCallback((systemOverlaysAreVisible) async {
     await Future.delayed(const Duration(seconds: 1));
     SystemChrome.restoreSystemUIOverlays();
