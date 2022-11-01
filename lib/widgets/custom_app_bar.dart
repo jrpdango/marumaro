@@ -4,11 +4,13 @@ import 'package:miru/enums/app_bar_type.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBarType appBarType;
+  final bool hasBackground;
   static const double fixedHeight = 60.0;
 
   const CustomAppBar({
     Key? key,
     required this.appBarType,
+    this.hasBackground = true,
   }) : super(key: key);
 
   @override
@@ -29,6 +31,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
+  Widget? get flexibleSpace {
+    if (hasBackground) {
+      return Image.asset(
+        'assets/city.jpg',
+        fit: BoxFit.cover,
+        alignment: const Alignment(0, -0.45),
+      );
+    }
+    return null;
+  }
+
+  Color? get backgroundColor {
+    if (!hasBackground) {
+      return Colors.transparent;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
@@ -40,11 +60,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           elevation: 0.0,
           automaticallyImplyLeading: false,
           leading: _determineLeadingIcon(context),
-          flexibleSpace: Image.asset(
-            'assets/city.jpg',
-            fit: BoxFit.cover,
-            alignment: const Alignment(0, -0.45),
-          ),
+          flexibleSpace: flexibleSpace,
+          backgroundColor: backgroundColor,
         ),
       ),
     );
