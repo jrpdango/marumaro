@@ -4,6 +4,7 @@ import 'package:miru/enums/app_bar_type.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBarType appBarType;
+  static const double fixedHeight = 60.0;
 
   const CustomAppBar({
     Key? key,
@@ -11,7 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => const Size.fromHeight(60.0);
+  Size get preferredSize => const Size.fromHeight(fixedHeight);
 
   IconButton _determineLeadingIcon(BuildContext context) {
     switch (appBarType) {
@@ -32,14 +33,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return PreferredSize(
       preferredSize: preferredSize,
-      child: AppBar(
-        elevation: 0.0,
-        automaticallyImplyLeading: false,
-        leading: _determineLeadingIcon(context),
-        flexibleSpace: Image.asset(
-          'assets/city.jpg',
-          fit: BoxFit.cover,
-          alignment: const Alignment(0, -0.45),
+      child: SizedBox(
+        height: fixedHeight,
+        child: AppBar(
+          primary: false,
+          elevation: 0.0,
+          automaticallyImplyLeading: false,
+          leading: _determineLeadingIcon(context),
+          flexibleSpace: Image.asset(
+            'assets/city.jpg',
+            fit: BoxFit.cover,
+            alignment: const Alignment(0, -0.45),
+          ),
         ),
       ),
     );
