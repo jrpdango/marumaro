@@ -3,12 +3,16 @@ import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/base_overlay.dart';
 
 class ListProgressOverlay extends StatelessWidget {
+  final Function onChanged;
   final int? currentProgress;
   final int? total;
+  final TextEditingController? textController;
 
   const ListProgressOverlay({
+    required this.onChanged,
     required this.currentProgress,
     required this.total,
+    this.textController,
     Key? key,
   }) : super(key: key);
 
@@ -32,6 +36,7 @@ class ListProgressOverlay extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: TextField(
+                    controller: textController,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline6,
                     decoration: InputDecoration(
