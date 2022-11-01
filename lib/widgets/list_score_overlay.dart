@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:miru/constants.dart';
 import 'package:miru/widgets/base_overlay.dart';
 import 'package:miru/widgets/overlay_button.dart';
 
@@ -72,31 +71,14 @@ class ListScoreOverlay extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: () {},
-                style: currentScore == 0
-                    ? TextButton.styleFrom(
-                        backgroundColor: MiruColors.buttonColor,
-                      )
-                    : TextButton.styleFrom(
-                        backgroundColor: MiruColors.unselectedButtonColor,
-                      ),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      '0',
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                            color: MiruColors.textColor,
-                          ),
-                    ),
-                    Text(
-                      'Unrated',
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                            color: MiruColors.textColor,
-                          ),
-                    ),
-                  ],
-                ),
+              child: OverlayButton(
+                onPressed: () {
+                  onPressed.call(0);
+                },
+                topText: '0',
+                bottomText: 'Unrated',
+                hasColumn: true,
+                isSelected: currentScore == 0,
               ),
             ),
             Column(
