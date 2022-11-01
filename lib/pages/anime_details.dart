@@ -214,7 +214,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                   Get.back();
                                 },
                                 currentProgress:
-                                    _userListStatus?.currentProgress,
+                                    _anime?.userListStatus?.currentProgress,
                                 total: _anime?.totalEpisodes,
                               ),
                             );
