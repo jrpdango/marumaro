@@ -247,23 +247,29 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   margin: const EdgeInsets.all(16.0),
                   child: TextButton(
                     onPressed: () {
-                      if (_index != null) {
+                      if (_index == null) return;
+                      // If list status changed, locally move the item to the right ListContainer
+                      if (_anime?.userListStatus?.status !=
+                          _userListStatus?.status) {
                         // Remove the ContentCard from wherever it was
                         Globals.client.animeMap[_anime?.userListStatus?.status]
                             ?.removeAt(_index!);
                         // Insert at index 0 the ContentCard at its new status ListContainer
                         Globals.client.animeMap[_userListStatus?.status]
                             ?.insert(0, _anime!);
-                        // Assign the new userListStatus to the current Anime
-                        // setState to hide the 'Update List' button
-                        setState(() {
-                          _anime?.userListStatus = _userListStatus?.copyWith();
-                        });
                         // Set the local index to 0 since that's where the new ContentCard is
                         _index = 0;
-                        // This callback should call setState() on the current ListContainer
-                        widget.onUpdate?.call();
                       }
+                      // Edit the client's animeMap Anime with the current UserListStatus
+                      widget.anime?.userListStatus =
+                          _userListStatus?.copyWith();
+                      // Assign the new userListStatus to the current Anime
+                      // setState to hide the 'Update List' button
+                      setState(() {
+                        _anime?.userListStatus = _userListStatus?.copyWith();
+                      });
+                      // This callback should call setState() on the current ListContainer
+                      widget.onUpdate?.call();
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: MiruColors.buttonColor,
