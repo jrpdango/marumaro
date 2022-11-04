@@ -8,6 +8,11 @@ class Anime {
   final int totalEpisodes;
   final AnimeAiringStatus airingStatus;
   final Season season;
+  final int? numListUsers;
+  final int? numScoringUsers;
+  final double? meanScore;
+  final int? rank;
+  final int? popularity;
   Uri? pictureMedium;
   Uri? pictureLarge;
   UserListStatus? userListStatus;
@@ -18,6 +23,11 @@ class Anime {
     required this.totalEpisodes,
     required this.airingStatus,
     required this.season,
+    this.numListUsers,
+    this.numScoringUsers,
+    this.meanScore,
+    this.rank,
+    this.popularity,
     this.pictureMedium,
     this.pictureLarge,
     this.userListStatus,
@@ -31,6 +41,11 @@ class Anime {
     int? totalEpisodes,
     AnimeAiringStatus? airingStatus,
     Season? season,
+    int? numListUsers,
+    int? numScoringUsers,
+    double? meanScore,
+    int? rank,
+    int? popularity,
     Uri? pictureMedium,
     Uri? pictureLarge,
     UserListStatus? userListStatus,
@@ -41,6 +56,11 @@ class Anime {
       totalEpisodes: totalEpisodes ?? this.totalEpisodes,
       airingStatus: airingStatus ?? this.airingStatus,
       season: season ?? this.season,
+      numListUsers: numListUsers ?? this.numListUsers,
+      numScoringUsers: numScoringUsers ?? this.numScoringUsers,
+      meanScore: meanScore ?? this.meanScore,
+      rank: rank ?? this.rank,
+      popularity: popularity ?? this.popularity,
       pictureMedium: pictureMedium ?? this.pictureMedium,
       pictureLarge: pictureLarge ?? this.pictureLarge,
       userListStatus:

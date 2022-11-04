@@ -62,6 +62,14 @@ class AnimeListRequest implements MalRequest {
           name: element['node']['start_season']?['season'],
           year: element['node']['start_season']?['year'],
         ),
+        numListUsers: element['node']['num_list_users'],
+        numScoringUsers: element['node']['num_scoring_users'],
+        // This can either give a double, int, or null
+        meanScore: element['node']['mean'].runtimeType != double
+            ? double.tryParse(element['node']['mean'].toString())
+            : element['node']['mean'],
+        rank: element['node']['rank'],
+        popularity: element['node']['popularity'],
         userListStatus: UserListStatus(
           status: _getAnimeListType(element['list_status']['status']),
           currentProgress: element['list_status']['num_episodes_watched'],
