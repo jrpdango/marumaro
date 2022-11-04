@@ -24,8 +24,9 @@ class StatsBlock extends StatelessWidget {
           flex: 3,
           child: Column(
             children: <Widget>[
-              Text('asdf'),
-              Text('asdf2'),
+              Text('Ranked #${anime?.rank}'),
+              Text('Popularity #${anime?.popularity}'),
+              Text('Members: ${anime?.numListUsers}'),
             ],
           ),
         ),
