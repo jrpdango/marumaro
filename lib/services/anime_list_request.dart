@@ -64,10 +64,8 @@ class AnimeListRequest implements MalRequest {
         ),
         numListUsers: element['node']['num_list_users'],
         numScoringUsers: element['node']['num_scoring_users'],
-        // This can either give a double, int, or null
-        meanScore: element['node']['mean'].runtimeType != double
-            ? double.tryParse(element['node']['mean'].toString())
-            : element['node']['mean'],
+        // This can either give a double, int, or null, so we convert it to double
+        meanScore: element['node']['mean']?.toDouble(),
         rank: element['node']['rank'],
         popularity: element['node']['popularity'],
         userListStatus: UserListStatus(
