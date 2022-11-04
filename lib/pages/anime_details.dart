@@ -275,6 +275,11 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       setState(() {
                         _anime?.userListStatus = _userListStatus?.copyWith();
                       });
+                      // Send list update request to MAL API
+                      Globals.client.updateAnimeList(
+                        animeId: _anime?.id,
+                        userListStatus: _anime?.userListStatus,
+                      );
                       // This callback should call setState() on the current ListContainer
                       widget.onUpdate?.call();
                     },

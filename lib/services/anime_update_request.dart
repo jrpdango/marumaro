@@ -6,16 +6,17 @@ import 'package:miru/models/user_list_status.dart';
 import 'package:miru/services/base_request.dart';
 
 class AnimeUpdateRequest implements MalRequest {
-  final int animeId;
+  final int? animeId;
   final UserListStatus? userListStatus;
 
   AnimeUpdateRequest({
-    required this.animeId,
+    this.animeId,
     this.userListStatus,
   });
 
   @override
   Future<Map<String, dynamic>> send() async {
+    if (animeId == null) return {};
     Uri uri = Uri(
       scheme: 'https',
       host: 'api.myanimelist.net',
@@ -25,10 +26,11 @@ class AnimeUpdateRequest implements MalRequest {
       uri: uri,
       httpRequestType: MiruHttpRequestType.patch,
       body: {
-        'status': userListStatus?.status ?? AnimeListType.watching.apiName,
+        'status':
+            userListStatus?.status?.apiName ?? AnimeListType.watching.apiName,
         'score': userListStatus?.score ?? 0,
         'num_watched_episodes': userListStatus?.currentProgress ?? 0,
-      },
+      }.map((key, value) => MapEntry(key, value.toString())),
     ).send();
     debugPrint('List updated successfully!');
     return response;

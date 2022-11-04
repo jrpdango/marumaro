@@ -45,7 +45,7 @@ class MALClient {
   // }
 
   Future<Map<String, dynamic>> updateAnimeList({
-    required int animeId,
+    int? animeId,
     UserListStatus? userListStatus,
   }) async {
     return await AnimeUpdateRequest(
