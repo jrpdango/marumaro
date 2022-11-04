@@ -14,6 +14,7 @@ import 'package:miru/widgets/list_score_overlay.dart';
 import 'package:miru/widgets/list_status_overlay.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/widgets/loading_overlay.dart';
+import 'package:miru/widgets/stats_block.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
@@ -307,6 +308,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               }
             },
           ),
+          StatsBlock(),
         ],
       ),
     );
