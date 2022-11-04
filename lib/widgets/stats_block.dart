@@ -24,13 +24,56 @@ class StatsBlock extends StatelessWidget {
           flex: 3,
           child: Column(
             children: <Widget>[
-              Text('Ranked #${anime?.rank}'),
-              Text('Popularity #${anime?.popularity}'),
-              Text('Members: ${anime?.numListUsers}'),
+              Stat(
+                statName: 'Ranked',
+                count: anime?.rank,
+              ),
+              Stat(
+                statName: 'Popularity',
+                count: anime?.popularity,
+              ),
+              Stat(
+                statName: 'Members:',
+                count: anime?.numListUsers,
+              ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Custom widget for [StatsBlock].
+///
+class Stat extends StatelessWidget {
+  final String statName;
+  final int? count;
+
+  const Stat({
+    required this.statName,
+    this.count,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Text.rich(
+        TextSpan(
+          text: statName,
+          style: Theme.of(context).textTheme.headline6?.copyWith(
+                fontWeight: FontWeight.normal,
+              ),
+          children: <TextSpan>[
+            TextSpan(
+              text: count != null ? ' #$count' : ' N/A',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
