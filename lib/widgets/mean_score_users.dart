@@ -11,8 +11,12 @@ class MeanScoreUsers extends StatelessWidget {
         children: <Widget>[
           Container(
             width: double.infinity,
-            color: MiruColors.primaryColor,
-            child: const Text('Mean Score'),
+            color: MiruColors.primaryVariant,
+            child: Text(
+              'Mean Score',
+              style: Theme.of(context).textTheme.bodyText1,
+              textAlign: TextAlign.center,
+            ),
           ),
           Text('1.23'),
           Text('1234567890 users'),
