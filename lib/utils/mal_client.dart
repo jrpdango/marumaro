@@ -76,7 +76,7 @@ class MALClient {
     String? fields =
         'list_status,num_episodes,start_season,mean,status,rank,popularity,source,'
             'studios,rating,average_episode_duration,alternative_titles,'
-            'synopsis,start_date,end_date,genres',
+            'synopsis,start_date,end_date,genres,num_list_users,num_scoring_users',
   }) {
     return AnimeListRequest(
       status: status,

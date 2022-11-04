@@ -13,9 +13,12 @@ class StatsBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        const Expanded(
+        Expanded(
           flex: 2,
-          child: MeanScoreUsers(),
+          child: MeanScoreUsers(
+            meanScore: anime?.meanScore,
+            users: anime?.numScoringUsers,
+          ),
         ),
         Expanded(
           flex: 3,

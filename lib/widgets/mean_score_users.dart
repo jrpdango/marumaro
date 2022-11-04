@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:miru/constants.dart';
 
 class MeanScoreUsers extends StatelessWidget {
-  final int? meanScore;
+  final double? meanScore;
   final int? users;
 
   const MeanScoreUsers({

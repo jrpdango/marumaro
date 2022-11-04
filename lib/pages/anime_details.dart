@@ -308,7 +308,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
               }
             },
           ),
-          StatsBlock(),
+          StatsBlock(
+            anime: _anime,
+          ),
         ],
       ),
     );
