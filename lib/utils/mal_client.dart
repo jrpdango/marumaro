@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/models/anime.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/services/anime_list_request.dart';
+import 'package:miru/services/anime_update_request.dart';
 import 'package:miru/utils/oauth_url_generator.dart';
-
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 // import 'package:miru/services/anime_details_request.dart';
@@ -11,7 +12,6 @@ import 'package:http/io_client.dart';
 // import 'package:miru/services/anime_search_request.dart';
 // import 'package:miru/services/delete_anime_request.dart';
 import 'package:miru/models/token_pair.dart';
-// import 'package:miru/services/update_list_request.dart';
 import 'package:miru/utils/pkce_code_generator.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:flutter/material.dart' show NetworkImage;
@@ -44,11 +44,15 @@ class MALClient {
   //   return await animeDetailsRequest.createRequest(this);
   // }
 
-  // Future<String> updateList(UpdateListRequest updateListRequest) async {
-  //   String response = await updateListRequest.createRequest(this);
-  //   print(response);
-  //   return response;
-  // }
+  Future<Map<String, dynamic>> updateAnimeList({
+    required int animeId,
+    UserListStatus? userListStatus,
+  }) async {
+    return await AnimeUpdateRequest(
+      animeId: animeId,
+      userListStatus: userListStatus,
+    ).send();
+  }
 
   // Future<void> deleteAnime(DeleteAnimeRequest deleteAnimeRequest) async {
   //   String response = await deleteAnimeRequest.createRequest(this);

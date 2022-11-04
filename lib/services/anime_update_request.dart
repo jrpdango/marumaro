@@ -1,19 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
 import 'package:miru/interfaces/mal_request.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/services/base_request.dart';
 
 class AnimeUpdateRequest implements MalRequest {
-  final int animeID;
-  final String status;
-  final int score;
-  final int episodesWatched;
+  final int animeId;
+  final UserListStatus? userListStatus;
 
   AnimeUpdateRequest({
-    required this.animeID,
-    this.status = 'watching',
-    this.score = 0,
-    this.episodesWatched = 0,
+    required this.animeId,
+    this.userListStatus,
   });
 
   @override
@@ -21,15 +19,15 @@ class AnimeUpdateRequest implements MalRequest {
     Uri uri = Uri(
       scheme: 'https',
       host: 'api.myanimelist.net',
-      path: 'v2/anime/$animeID/my_list_status',
+      path: 'v2/anime/$animeId/my_list_status',
     );
     Map<String, dynamic> response = await BaseRequest(
       uri: uri,
       httpRequestType: MiruHttpRequestType.patch,
       body: {
-        'status': status,
-        'score': score,
-        'num_watched_episodes': episodesWatched,
+        'status': userListStatus?.status ?? AnimeListType.watching.apiName,
+        'score': userListStatus?.score ?? 0,
+        'num_watched_episodes': userListStatus?.currentProgress ?? 0,
       },
     ).send();
     debugPrint('List updated successfully!');
