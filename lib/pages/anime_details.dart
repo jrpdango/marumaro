@@ -13,6 +13,7 @@ import 'package:miru/widgets/list_progress_overlay.dart';
 import 'package:miru/widgets/list_score_overlay.dart';
 import 'package:miru/widgets/list_status_overlay.dart';
 import 'package:miru/enums/anime_list_type.dart';
+import 'package:miru/widgets/loading_overlay.dart';
 
 class AnimeDetails extends StatefulWidget {
   final Anime? anime;
@@ -253,8 +254,13 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                   width: double.infinity,
                   margin: const EdgeInsets.all(16.0),
                   child: TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_index == null) return;
+                      // Show loading overlay
+                      Get.dialog(
+                        const LoadingOverlay(),
+                        barrierDismissible: false,
+                      );
                       // If list status changed, locally move the item to the right ListContainer
                       if (_anime?.userListStatus?.status !=
                           _userListStatus?.status) {
@@ -276,12 +282,14 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         _anime?.userListStatus = _userListStatus?.copyWith();
                       });
                       // Send list update request to MAL API
-                      Globals.client.updateAnimeList(
+                      await Globals.client.updateAnimeList(
                         animeId: _anime?.id,
                         userListStatus: _anime?.userListStatus,
                       );
                       // This callback should call setState() on the current ListContainer
                       widget.onUpdate?.call();
+                      // Close loading overlay
+                      Get.back();
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: MiruColors.buttonColor,
