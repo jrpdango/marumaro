@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:miru/constants.dart';
 
 class MeanScoreUsers extends StatelessWidget {
-  const MeanScoreUsers({Key? key}) : super(key: key);
+  final int? meanScore;
+  final int? users;
+
+  const MeanScoreUsers({
+    this.meanScore,
+    this.users,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +25,8 @@ class MeanScoreUsers extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          Text('1.23'),
-          Text('1234567890 users'),
+          Text(meanScore?.toString() ?? '0.00'),
+          Text('${users ?? 'No'} users'),
         ],
       ),
     );
