@@ -295,7 +295,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       setState(() {});
                       // Send list update request to MAL API
                       await Globals.client.updateAnimeList(
-                        animeId: _anime?.id,
+                        animeId: _anime?.animeId,
                         userListStatus: _anime?.userListStatus,
                       );
                       // This callback should call setState() on the current ListContainer
