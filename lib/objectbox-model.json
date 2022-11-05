@@ -4,41 +4,102 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:8918024314865301657",
-      "lastPropertyId": "3:2943675152839471290",
-      "name": "EntityAnime",
+      "id": "2:4120128794923097248",
+      "lastPropertyId": "14:8272006095580634613",
+      "name": "Anime",
       "properties": [
         {
-          "id": "1:4822301618269580165",
+          "id": "1:4796069092433205328",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:117692896875348722",
+          "id": "2:3929070391199885916",
           "name": "animeId",
           "type": 6,
           "flags": 8,
-          "indexId": "1:3574735414367288822"
+          "indexId": "2:1732950654605247558"
         },
         {
-          "id": "3:2943675152839471290",
+          "id": "3:2576318815711266653",
           "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:7013917253313201294",
+          "name": "totalEpisodes",
+          "type": 6
+        },
+        {
+          "id": "5:930574069908742788",
+          "name": "numListUsers",
+          "type": 6
+        },
+        {
+          "id": "6:6925431878909488888",
+          "name": "numScoringUsers",
+          "type": 6
+        },
+        {
+          "id": "7:5168438194810573184",
+          "name": "meanScore",
+          "type": 8
+        },
+        {
+          "id": "8:1712159522097707033",
+          "name": "rank",
+          "type": 6
+        },
+        {
+          "id": "9:1321949281564951923",
+          "name": "popularity",
+          "type": 6
+        },
+        {
+          "id": "10:4886520806131172010",
+          "name": "dbAiringStatus",
+          "type": 6
+        },
+        {
+          "id": "11:7969474882423911580",
+          "name": "dbSeason",
+          "type": 9
+        },
+        {
+          "id": "12:1799901650093163009",
+          "name": "dbPictureMedium",
+          "type": 9
+        },
+        {
+          "id": "13:4135774217184009444",
+          "name": "dbPictureLarge",
+          "type": 9
+        },
+        {
+          "id": "14:8272006095580634613",
+          "name": "dbUserListStatus",
           "type": 9
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "1:8918024314865301657",
-  "lastIndexId": "1:3574735414367288822",
+  "lastEntityId": "2:4120128794923097248",
+  "lastIndexId": "2:1732950654605247558",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    8918024314865301657
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    4822301618269580165,
+    117692896875348722,
+    2943675152839471290
+  ],
   "retiredRelationUids": [],
   "version": 1
 }
