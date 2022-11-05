@@ -8,12 +8,11 @@ import 'package:miru/pages/loading.dart';
 import 'package:miru/theme.dart';
 
 void main() async {
-  // Initialize ObjectBox
-  final Store store = await openStore();
-  // Assign store globally
-  Globals.store = store;
-
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize ObjectBox and assign store globally
+  Globals.store = await openStore();
+
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,
     overlays: [
@@ -33,5 +32,5 @@ void main() async {
     ),
   );
 
-  store.close();
+  // store.close();
 }

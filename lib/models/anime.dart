@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:miru/enums/anime_airing_status.dart';
+import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/models/season.dart';
 import 'package:objectbox/objectbox.dart';
@@ -92,7 +93,8 @@ class Anime {
     return jsonEncode([
       userListStatus?.currentProgress,
       userListStatus?.score,
-      userListStatus?.status,
+      // Get the index of the AnimeListType
+      userListStatus?.status?.index,
     ]);
   }
 
@@ -102,7 +104,7 @@ class Anime {
       userListStatus = UserListStatus(
         currentProgress: decodedUserListStatus[0],
         score: decodedUserListStatus[1],
-        status: decodedUserListStatus[2],
+        status: AnimeListType.values[decodedUserListStatus[2]],
       );
     }
   }

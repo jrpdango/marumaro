@@ -30,13 +30,14 @@ class _LoadingState extends State<Loading> {
 
     Globals.client.username = (await Globals.client.requestUserData())['name'];
 
-    Get.off(() => const Home());
+    debugPrint((Globals.store?.box<Anime>().count()).toString());
+    // Get.off(() => const Home());
   }
 
   @override
   void initState() {
     super.initState();
-    // _setupMALConnection(deleteTokens: false);
+    _setupMALConnection(deleteTokens: false);
   }
 
   @override

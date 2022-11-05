@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/enums/miru_http_request_type.dart';
+import 'package:miru/globals.dart';
 import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/user_list_status.dart';
@@ -17,6 +18,8 @@ class AnimeListRequest implements MalRequest {
   final String? sort;
   final String? fields;
   Uri? uri;
+
+  final animeBox = Globals.store?.box<Anime>();
 
   AnimeListRequest({
     this.status,
@@ -160,6 +163,10 @@ class AnimeListRequest implements MalRequest {
 
         response['paging']['next'] = newUnsortedResponse['paging']['next'];
       }
+      animeBox?.removeAll();
+      _createCompleteMap(response).forEach((key, value) {
+        animeBox?.putMany(value);
+      });
       return _createCompleteMap(response);
     } catch (e) {
       debugPrint(e.toString());
