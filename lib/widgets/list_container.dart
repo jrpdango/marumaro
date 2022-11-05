@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:miru/constants.dart' as constants show limitOfListItems;
 import 'package:miru/enums/anime_list_type.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/season.dart';
+import 'package:miru/objectbox.g.dart';
 import 'package:miru/pages/anime_details.dart';
 import 'package:miru/widgets/content_card.dart';
 import 'package:miru/widgets/content_card_details.dart';
@@ -27,7 +30,12 @@ class _MyWidgetState extends State<ListContainer> {
   @override
   void initState() {
     super.initState();
-    _animeList = Globals.client.animeMap[widget.animeListType];
+    // _animeList = Globals.client.animeMap[widget.animeListType];
+    _animeList = Globals.store
+        ?.box<Anime>()
+        .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
+        .build()
+        .find();
   }
 
   /// Retrieve latest user's list to refresh and assign it to the client.

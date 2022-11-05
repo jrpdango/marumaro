@@ -22,7 +22,11 @@ class Anime {
   final double? meanScore;
   final int? rank;
   final int? popularity;
+  final int? userCurrentProgress;
+  final int? userCurrentScore;
 
+  @Transient()
+  AnimeListType? userCurrentStatus;
   @Transient()
   Season? season;
   @Transient()
@@ -32,7 +36,7 @@ class Anime {
   @Transient()
   Uri? pictureLarge;
   @Transient()
-  UserListStatus? userListStatus;
+  UserListStatus? userStatus;
 
   // Converter for AnimeAiringStatus
   int? get dbAiringStatus {
@@ -88,28 +92,32 @@ class Anime {
     }
   }
 
-  // Converter for userListStatus
-  String? get dbUserListStatus {
-    return jsonEncode([
-      userListStatus?.currentProgress,
-      userListStatus?.score,
-      // Get the index of the AnimeListType
-      userListStatus?.status?.index,
-    ]);
+  int? get dbUserCurrentStatus {
+    return userCurrentStatus?.index;
   }
 
-  set dbUserListStatus(String? value) {
+  set dbUserCurrentStatus(int? value) {
     if (value != null) {
-      List<dynamic> decodedUserListStatus = jsonDecode(value);
-      userListStatus = UserListStatus(
-        currentProgress: decodedUserListStatus[0],
-        score: decodedUserListStatus[1],
-        status: AnimeListType.values[decodedUserListStatus[2]],
-      );
+      userCurrentStatus = AnimeListType.values[value];
     }
   }
 
+  @Transient()
+  UserListStatus get userListStatus {
+    return UserListStatus(
+      status: userCurrentStatus,
+      currentProgress: userCurrentProgress,
+      score: userCurrentScore,
+    );
+  }
+
+  @Transient()
+  set userListStatus(UserListStatus? value) {
+    userStatus = value;
+  }
+
   Anime({
+    this.id,
     required this.animeId,
     required this.title,
     required this.totalEpisodes,
@@ -122,7 +130,9 @@ class Anime {
     this.popularity,
     this.pictureMedium,
     this.pictureLarge,
-    this.userListStatus,
+    this.userCurrentProgress,
+    this.userCurrentScore,
+    this.userCurrentStatus,
   });
 
   /// Creates a copy of this object with the given fields replaced with the new values.
@@ -140,7 +150,9 @@ class Anime {
     int? popularity,
     Uri? pictureMedium,
     Uri? pictureLarge,
-    UserListStatus? userListStatus,
+    int? userCurrentScore,
+    int? userCurrentProgress,
+    AnimeListType? userCurrentStatus,
   }) {
     return Anime(
       animeId: animeId ?? this.animeId,
@@ -155,8 +167,9 @@ class Anime {
       popularity: popularity ?? this.popularity,
       pictureMedium: pictureMedium ?? this.pictureMedium,
       pictureLarge: pictureLarge ?? this.pictureLarge,
-      userListStatus:
-          userListStatus?.copyWith() ?? this.userListStatus?.copyWith(),
+      userCurrentScore: userCurrentScore ?? this.userCurrentScore,
+      userCurrentProgress: userCurrentProgress ?? this.userCurrentProgress,
+      userCurrentStatus: userCurrentStatus ?? this.userCurrentStatus,
     );
   }
 }

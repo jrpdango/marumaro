@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "2:4120128794923097248",
-      "lastPropertyId": "14:8272006095580634613",
+      "lastPropertyId": "17:7382033462214342641",
       "name": "Anime",
       "properties": [
         {
@@ -77,9 +77,19 @@
           "type": 9
         },
         {
-          "id": "14:8272006095580634613",
-          "name": "dbUserListStatus",
-          "type": 9
+          "id": "15:7238355218691474036",
+          "name": "userCurrentProgress",
+          "type": 6
+        },
+        {
+          "id": "16:3049065704719419137",
+          "name": "userCurrentScore",
+          "type": 6
+        },
+        {
+          "id": "17:7382033462214342641",
+          "name": "dbUserCurrentStatus",
+          "type": 6
         }
       ],
       "relations": []
@@ -98,7 +108,8 @@
   "retiredPropertyUids": [
     4822301618269580165,
     117692896875348722,
-    2943675152839471290
+    2943675152839471290,
+    8272006095580634613
   ],
   "retiredRelationUids": [],
   "version": 1

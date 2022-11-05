@@ -68,7 +68,9 @@ class AnimeListRequest implements MalRequest {
             totalEpisodes: anime.totalEpisodes,
             season: anime.season,
             pictureMedium: anime.pictureMedium,
-            userListStatus: anime.userListStatus,
+            userCurrentStatus: anime.userCurrentStatus,
+            userCurrentProgress: anime.userCurrentProgress,
+            userCurrentScore: anime.userCurrentScore,
           ),
         );
       }
@@ -94,16 +96,12 @@ class AnimeListRequest implements MalRequest {
       animeMap[statusType] = <Anime>[];
     }
     for (Map element in rawMap['data']) {
-      if (animeBox != null &&
-          (animeBox!
-                  .query(
-                    Anime_.animeId.equals(
-                      element['node']['id'],
-                    ),
-                  )
-                  .build()
-                  .find())
-              .isNotEmpty) {
+      Anime? animeQuery = animeBox
+          ?.query(Anime_.animeId.equals(element['node']['id']))
+          .build()
+          .findFirst();
+      if (animeQuery != null) {
+        // TODO: Maybe we can try directly querying the db in a ListContainer
         continue;
       }
       Anime currentAnime = Anime(
@@ -123,11 +121,14 @@ class AnimeListRequest implements MalRequest {
         meanScore: element['node']['mean']?.toDouble(),
         rank: element['node']['rank'],
         popularity: element['node']['popularity'],
-        userListStatus: UserListStatus(
-          status: _getAnimeListType(element['list_status']['status']),
-          currentProgress: element['list_status']['num_episodes_watched'],
-          score: element['list_status']['score'],
-        ),
+        // userListStatus: UserListStatus(
+        //   status: _getAnimeListType(element['list_status']['status']),
+        //   currentProgress: element['list_status']['num_episodes_watched'],
+        //   score: element['list_status']['score'],
+        // ),
+        userCurrentStatus: _getAnimeListType(element['list_status']['status']),
+        userCurrentProgress: element['list_status']['num_episodes_watched'],
+        userCurrentScore: element['list_status']['score'],
       );
       animeMap[element['list_status']['status']]?.add(currentAnime);
     }
@@ -181,7 +182,7 @@ class AnimeListRequest implements MalRequest {
 
   @override
   Future<Map<AnimeListType, List<Anime>>> send() async {
-    animeBox?.removeAll();
+    // animeBox?.removeAll();
     if (uri == null) {
       uri = Uri(
           scheme: 'https',
