@@ -25,26 +25,28 @@ class ListContainer extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<ListContainer> {
-  List<Anime>? _animeList;
+  List<Anime> _animeList = [];
 
   @override
   void initState() {
     super.initState();
     // _animeList = Globals.client.animeMap[widget.animeListType];
     _animeList = Globals.store
-        ?.box<Anime>()
-        .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
-        .build()
-        .find();
+            ?.box<Anime>()
+            .query(
+                Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
+            .build()
+            .find() ??
+        [];
   }
 
   /// Retrieve latest user's list to refresh and assign it to the client.
   ///
   void _refresh() async {
-    Globals.client.animeMap = (await Globals.client.requestAnimeList(
-      limit: constants.limitOfListItems,
-    ));
-    _animeList = Globals.client.animeMap[widget.animeListType];
+    _animeList = (await Globals.client.requestAnimeList(
+          limit: constants.limitOfListItems,
+        ))[widget.animeListType] ??
+        [];
     // Only call setState() if the widget is mounted
     if (mounted) setState(() {});
   }
@@ -55,28 +57,37 @@ class _MyWidgetState extends State<ListContainer> {
       child: ListView.builder(
         key: PageStorageKey(widget.animeListType),
         itemExtent: 130.0,
-        itemCount: _animeList?.length,
+        itemCount: _animeList.length,
         itemBuilder: (context, index) {
+          if (_animeList.isEmpty) return Container();
           return Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
             child: ContentCard(
               onTap: () => Get.to(
                 () => AnimeDetails(
-                    anime: _animeList?[index],
+                    anime: _animeList[index],
                     index: index,
                     onUpdate: () {
-                      setState(() {});
+                      setState(() {
+                        _animeList = Globals.store
+                                ?.box<Anime>()
+                                .query(Anime_.dbUserCurrentStatus
+                                    .equals(widget.animeListType.index))
+                                .build()
+                                .find() ??
+                            [];
+                      });
                     }),
               ),
-              imageUrl: _animeList?[index].pictureMedium.toString() ?? '',
+              imageUrl: _animeList[index].pictureMedium.toString(),
               contentCardDetails: ContentCardDetails(
-                title: _animeList?[index].title ?? '',
+                title: _animeList[index].title,
                 episodesWatched:
-                    _animeList?[index].userListStatus?.currentProgress ?? 0,
-                totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
-                score: _animeList?[index].userListStatus?.score ?? 0,
-                season: _animeList?[index].season ?? Season(),
+                    _animeList[index].userListStatus.currentProgress ?? 0,
+                totalEpisodes: _animeList[index].totalEpisodes,
+                score: _animeList[index].userListStatus.score ?? 0,
+                season: _animeList[index].season ?? Season(),
               ),
             ),
           );

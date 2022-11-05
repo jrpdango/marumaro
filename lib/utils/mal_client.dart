@@ -24,7 +24,6 @@ class MALClient {
   final String codeChallenge = CodeGenerator.genPKCEcode();
   final Client userClient = IOClient(_httpClient);
   TokenPair? tokenPair;
-  Map<AnimeListType, List<Anime>> animeMap = {};
   String? username;
   NetworkImage? userImage;
 

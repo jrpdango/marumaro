@@ -5,6 +5,7 @@ import 'package:miru/enums/app_bar_type.dart';
 import 'package:miru/globals.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/user_list_status.dart';
+import 'package:miru/objectbox.g.dart';
 import 'package:miru/utils/progress_formatter.dart';
 import 'package:miru/widgets/custom_app_bar.dart';
 import 'package:miru/widgets/detail_status_bar.dart';
@@ -42,16 +43,16 @@ class _AnimeDetailsState extends State<AnimeDetails> {
     // Create a deep copy of the passed Anime
     _anime = widget.anime?.copyWith();
     // Create a new UserListStatus for updates
-    _userListStatus = widget.anime?.userListStatus?.copyWith();
+    _userListStatus = _anime?.userListStatus.copyWith();
     super.initState();
   }
 
   /// Returns [true] if the current Anime has any changes to it.
   bool get hasChanges {
-    return _anime?.userListStatus?.status == _userListStatus?.status &&
-        _anime?.userListStatus?.currentProgress ==
-            _userListStatus?.currentProgress &&
-        _anime?.userListStatus?.score == _userListStatus?.score;
+    return _anime?.userListStatus.status != _userListStatus?.status ||
+        _anime?.userListStatus.currentProgress !=
+            _userListStatus?.currentProgress ||
+        _anime?.userListStatus.score != _userListStatus?.score;
   }
 
   @override
@@ -216,7 +217,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                   Get.back();
                                 },
                                 currentProgress:
-                                    _anime?.userListStatus?.currentProgress,
+                                    _anime?.userListStatus.currentProgress,
                                 total: _anime?.totalEpisodes,
                               ),
                             );
@@ -249,7 +250,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
           ),
           Builder(
             builder: (_) {
-              if (!hasChanges) {
+              if (hasChanges) {
                 return Container(
                   height: 48.0,
                   width: double.infinity,
@@ -262,26 +263,36 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         const LoadingOverlay(),
                         barrierDismissible: false,
                       );
+                      Box<Anime>? animeBox = Globals.store?.box<Anime>();
                       // If list status changed, locally move the item to the right ListContainer
-                      if (_anime?.userListStatus?.status !=
-                          _userListStatus?.status) {
-                        // Remove the ContentCard from wherever it was
-                        Globals.client.animeMap[_anime?.userListStatus?.status]
-                            ?.removeAt(_index!);
-                        // Insert at index 0 the ContentCard at its new status ListContainer
-                        Globals.client.animeMap[_userListStatus?.status]
-                            ?.insert(0, _anime!);
-                        // Set the local index to 0 since that's where the new ContentCard is
-                        _index = 0;
-                      }
+                      // if (_anime?.userListStatus.status !=
+                      //     _userListStatus?.status) {
+                      // // Remove the ContentCard from wherever it was
+                      // Globals.client.animeMap[_anime?.userListStatus?.status]
+                      //     ?.removeAt(_index!);
+                      // // Insert at index 0 the ContentCard at its new status ListContainer
+                      // Globals.client.animeMap[_userListStatus?.status]
+                      //     ?.insert(0, _anime!);
+                      // // Set the local index to 0 since that's where the new ContentCard is
+                      // _index = 0;
+                      Query<Anime>? animeQuery = animeBox
+                          ?.query(Anime_.animeId.equals(_anime!.animeId))
+                          .build();
+                      Anime? queriedAnime = animeQuery?.findFirst();
+                      animeQuery?.close();
+                      queriedAnime
+                        ?..userCurrentStatus = _userListStatus?.status
+                        ..userCurrentProgress = _userListStatus?.currentProgress
+                        ..userCurrentScore = _userListStatus?.score;
+                      if (queriedAnime != null) animeBox?.put(queriedAnime);
+                      // }
                       // Edit the client's animeMap Anime with the current UserListStatus
-                      widget.anime?.userListStatus =
-                          _userListStatus?.copyWith();
+                      // widget.anime?.userListStatus =
+                      //     _userListStatus?.copyWith();
                       // Assign the new userListStatus to the current Anime
                       // setState to hide the 'Update List' button
-                      setState(() {
-                        _anime?.userListStatus = _userListStatus?.copyWith();
-                      });
+                      _anime?.userListStatus = _userListStatus?.copyWith();
+                      setState(() {});
                       // Send list update request to MAL API
                       await Globals.client.updateAnimeList(
                         animeId: _anime?.id,

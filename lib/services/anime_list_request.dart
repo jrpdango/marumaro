@@ -45,40 +45,6 @@ class AnimeListRequest implements MalRequest {
     return uri.replace(queryParameters: parameters);
   }
 
-  Map<AnimeListType, List<Anime>> _createConciseMap(
-      Map<AnimeListType, List<Anime>> rawMap) {
-    List<AnimeListType> statusTypes = [
-      AnimeListType.watching,
-      AnimeListType.completed,
-      AnimeListType.planToWatch,
-      AnimeListType.onHold,
-      AnimeListType.dropped,
-    ];
-    // Map with less-detailed Anime to be stored in memory
-    Map<AnimeListType, List<Anime>> shortAnimeMap = {};
-    for (AnimeListType statusType in statusTypes) {
-      shortAnimeMap[statusType] = <Anime>[];
-    }
-    rawMap.forEach((key, value) {
-      for (Anime anime in value) {
-        shortAnimeMap[key]?.add(
-          Anime(
-            animeId: anime.animeId,
-            title: anime.title,
-            totalEpisodes: anime.totalEpisodes,
-            season: anime.season,
-            pictureMedium: anime.pictureMedium,
-            userCurrentStatus: anime.userCurrentStatus,
-            userCurrentProgress: anime.userCurrentProgress,
-            userCurrentScore: anime.userCurrentScore,
-          ),
-        );
-      }
-    });
-
-    return shortAnimeMap;
-  }
-
   /// Sorts a [Map] by status.
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
@@ -96,14 +62,14 @@ class AnimeListRequest implements MalRequest {
       animeMap[statusType] = <Anime>[];
     }
     for (Map element in rawMap['data']) {
-      Anime? animeQuery = animeBox
-          ?.query(Anime_.animeId.equals(element['node']['id']))
-          .build()
-          .findFirst();
-      if (animeQuery != null) {
-        // TODO: Maybe we can try directly querying the db in a ListContainer
+      Query<Anime>? animeQuery =
+          animeBox?.query(Anime_.animeId.equals(element['node']['id'])).build();
+      Anime? queriedAnime = animeQuery?.findFirst();
+      // If the Anime exists in the database, no need to create a new one
+      if (queriedAnime != null) {
         continue;
       }
+      animeQuery?.close();
       Anime currentAnime = Anime(
         animeId: element['node']['id'],
         title: element['node']['title'],
@@ -182,7 +148,7 @@ class AnimeListRequest implements MalRequest {
 
   @override
   Future<Map<AnimeListType, List<Anime>>> send() async {
-    // animeBox?.removeAll();
+    animeBox?.removeAll();
     if (uri == null) {
       uri = Uri(
           scheme: 'https',
@@ -221,7 +187,7 @@ class AnimeListRequest implements MalRequest {
       fullMap.forEach((key, value) {
         animeBox?.putMany(value);
       });
-      return _createConciseMap(fullMap);
+      return fullMap;
     } catch (e) {
       debugPrint(e.toString());
     }
