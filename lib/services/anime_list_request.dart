@@ -52,16 +52,16 @@ class AnimeListRequest implements MalRequest {
     animeMap['dropped'] = <Anime>[];
     for (Map element in rawMap['data']) {
       Anime currentAnime = Anime(
-        id: element['node']['id'],
+        animeId: element['node']['id'],
         title: element['node']['title'],
         pictureMedium: Uri.parse(element['node']['main_picture']['medium']),
         pictureLarge: Uri.parse(element['node']['main_picture']['large']),
         totalEpisodes: element['node']['num_episodes'],
-        airingStatus: _getAiringStatus(element['node']['status']),
         season: Season(
           name: element['node']['start_season']?['season'],
           year: element['node']['start_season']?['year'],
         ),
+        airingStatus: _getAiringStatus(element['node']['status']),
         numListUsers: element['node']['num_list_users'],
         numScoringUsers: element['node']['num_scoring_users'],
         // This can either give a double, int, or null, so we convert it to double
@@ -82,7 +82,7 @@ class AnimeListRequest implements MalRequest {
 
   /// Converts a String [rawStatus] to an [AnimeAiringStatus].
   ///
-  AnimeAiringStatus _getAiringStatus(String rawStatus) {
+  AnimeAiringStatus? _getAiringStatus(String rawStatus) {
     switch (rawStatus) {
       case 'finished_airing':
         return AnimeAiringStatus.finishedAiring;
@@ -91,7 +91,7 @@ class AnimeListRequest implements MalRequest {
       case 'not_yet_aired':
         return AnimeAiringStatus.notYetAired;
       default:
-        return AnimeAiringStatus.currentlyAiring;
+        return null;
     }
   }
 

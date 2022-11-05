@@ -1,13 +1,20 @@
 import 'package:miru/enums/anime_airing_status.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/models/season.dart';
+import 'package:miru/objectbox.g.dart';
 
+@Entity()
 class Anime {
-  final int id;
+  @Id()
+  int? id;
+
+  @Index()
+  int animeId;
+
   final String title;
   final int totalEpisodes;
-  final AnimeAiringStatus airingStatus;
   final Season season;
+  final AnimeAiringStatus? airingStatus;
   final int? numListUsers;
   final int? numScoringUsers;
   final double? meanScore;
@@ -18,11 +25,11 @@ class Anime {
   UserListStatus? userListStatus;
 
   Anime({
-    required this.id,
+    required this.animeId,
     required this.title,
     required this.totalEpisodes,
-    required this.airingStatus,
     required this.season,
+    this.airingStatus,
     this.numListUsers,
     this.numScoringUsers,
     this.meanScore,
@@ -36,11 +43,11 @@ class Anime {
   /// Creates a copy of this object with the given fields replaced with the new values.
   ///
   Anime copyWith({
-    int? id,
+    int? animeId,
     String? title,
     int? totalEpisodes,
-    AnimeAiringStatus? airingStatus,
     Season? season,
+    AnimeAiringStatus? airingStatus,
     int? numListUsers,
     int? numScoringUsers,
     double? meanScore,
@@ -51,11 +58,11 @@ class Anime {
     UserListStatus? userListStatus,
   }) {
     return Anime(
-      id: id ?? this.id,
+      animeId: animeId ?? this.animeId,
       title: title ?? this.title,
       totalEpisodes: totalEpisodes ?? this.totalEpisodes,
-      airingStatus: airingStatus ?? this.airingStatus,
       season: season ?? this.season,
+      airingStatus: airingStatus ?? this.airingStatus,
       numListUsers: numListUsers ?? this.numListUsers,
       numScoringUsers: numScoringUsers ?? this.numScoringUsers,
       meanScore: meanScore ?? this.meanScore,
