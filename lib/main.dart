@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:miru/globals.dart';
+import 'package:miru/objectbox.g.dart';
 
 import 'package:miru/pages/loading.dart';
 import 'package:miru/theme.dart';
 
-void main() {
+void main() async {
+  // Initialize ObjectBox
+  final Store store = await openStore();
+  // Assign store globally
+  Globals.store = store;
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,
@@ -25,4 +32,6 @@ void main() {
       theme: themeData,
     ),
   );
+
+  store.close();
 }

@@ -21,10 +21,16 @@ class Anime {
   final double? meanScore;
   final int? rank;
   final int? popularity;
+
+  @Transient()
   Season? season;
+  @Transient()
   AnimeAiringStatus? airingStatus;
+  @Transient()
   Uri? pictureMedium;
+  @Transient()
   Uri? pictureLarge;
+  @Transient()
   UserListStatus? userListStatus;
 
   // Converter for AnimeAiringStatus
