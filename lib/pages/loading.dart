@@ -31,7 +31,7 @@ class _LoadingState extends State<Loading> {
     Globals.client.username = (await Globals.client.requestUserData())['name'];
 
     debugPrint((Globals.store?.box<Anime>().count()).toString());
-    // Get.off(() => const Home());
+    Get.off(() => const Home());
   }
 
   @override

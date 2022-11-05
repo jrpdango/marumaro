@@ -7,6 +7,7 @@ import 'package:miru/interfaces/mal_request.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/models/season.dart';
+import 'package:miru/objectbox.g.dart';
 
 import 'package:miru/services/base_request.dart';
 
@@ -44,16 +45,67 @@ class AnimeListRequest implements MalRequest {
     return uri.replace(queryParameters: parameters);
   }
 
+  Map<AnimeListType, List<Anime>> _createConciseMap(
+      Map<AnimeListType, List<Anime>> rawMap) {
+    List<AnimeListType> statusTypes = [
+      AnimeListType.watching,
+      AnimeListType.completed,
+      AnimeListType.planToWatch,
+      AnimeListType.onHold,
+      AnimeListType.dropped,
+    ];
+    // Map with less-detailed Anime to be stored in memory
+    Map<AnimeListType, List<Anime>> shortAnimeMap = {};
+    for (AnimeListType statusType in statusTypes) {
+      shortAnimeMap[statusType] = <Anime>[];
+    }
+    rawMap.forEach((key, value) {
+      for (Anime anime in value) {
+        shortAnimeMap[key]?.add(
+          Anime(
+            animeId: anime.animeId,
+            title: anime.title,
+            totalEpisodes: anime.totalEpisodes,
+            season: anime.season,
+            pictureMedium: anime.pictureMedium,
+            userListStatus: anime.userListStatus,
+          ),
+        );
+      }
+    });
+
+    return shortAnimeMap;
+  }
+
   /// Sorts a [Map] by status.
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
+    List<String> statusTypes = [
+      'watching',
+      'completed',
+      'plan_to_watch',
+      'on_hold',
+      'dropped',
+    ];
+    // Map with completely-detailed Anime for storage
     Map<String, dynamic> animeMap = <String, dynamic>{};
-    animeMap['watching'] = <Anime>[];
-    animeMap['completed'] = <Anime>[];
-    animeMap['plan_to_watch'] = <Anime>[];
-    animeMap['on_hold'] = <Anime>[];
-    animeMap['dropped'] = <Anime>[];
+
+    for (String statusType in statusTypes) {
+      animeMap[statusType] = <Anime>[];
+    }
     for (Map element in rawMap['data']) {
+      if (animeBox != null &&
+          (animeBox!
+                  .query(
+                    Anime_.animeId.equals(
+                      element['node']['id'],
+                    ),
+                  )
+                  .build()
+                  .find())
+              .isNotEmpty) {
+        continue;
+      }
       Anime currentAnime = Anime(
         animeId: element['node']['id'],
         title: element['node']['title'],
@@ -129,6 +181,7 @@ class AnimeListRequest implements MalRequest {
 
   @override
   Future<Map<AnimeListType, List<Anime>>> send() async {
+    animeBox?.removeAll();
     if (uri == null) {
       uri = Uri(
           scheme: 'https',
@@ -163,11 +216,11 @@ class AnimeListRequest implements MalRequest {
 
         response['paging']['next'] = newUnsortedResponse['paging']['next'];
       }
-      animeBox?.removeAll();
-      _createCompleteMap(response).forEach((key, value) {
+      Map<AnimeListType, List<Anime>> fullMap = _createCompleteMap(response);
+      fullMap.forEach((key, value) {
         animeBox?.putMany(value);
       });
-      return _createCompleteMap(response);
+      return _createConciseMap(fullMap);
     } catch (e) {
       debugPrint(e.toString());
     }
