@@ -33,10 +33,13 @@ class _LoadingState extends State<Loading> {
     Get.off(() => const Home());
   }
 
+  void testObjectBox() {}
+
   @override
   void initState() {
     super.initState();
-    _setupMALConnection(deleteTokens: false);
+    // _setupMALConnection(deleteTokens: false);
+    testObjectBox();
   }
 
   @override
