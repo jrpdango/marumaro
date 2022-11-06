@@ -280,10 +280,12 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                           .build();
                       Anime? queriedAnime = animeQuery?.findFirst();
                       animeQuery?.close();
-                      queriedAnime
-                        ?..userCurrentStatus = _userListStatus?.status
-                        ..userCurrentProgress = _userListStatus?.currentProgress
-                        ..userCurrentScore = _userListStatus?.score;
+                      // queriedAnime
+                      //   ?..userCurrentStatus = _userListStatus?.status
+                      //   ..userCurrentProgress = _userListStatus?.currentProgress
+                      //   ..userCurrentScore = _userListStatus?.score;
+                      queriedAnime?.userListStatus =
+                          _userListStatus?.copyWith();
                       if (queriedAnime != null) animeBox?.put(queriedAnime);
                       // }
                       // Edit the client's animeMap Anime with the current UserListStatus
