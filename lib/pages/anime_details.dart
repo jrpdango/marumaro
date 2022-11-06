@@ -274,6 +274,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       queriedAnime?.userListStatus =
                           _userListStatus?.copyWith();
                       if (queriedAnime != null) animeBox?.put(queriedAnime);
+                      // Update original Anime's UserListStatus
+                      widget.anime?.userListStatus =
+                          _userListStatus?.copyWith();
                       // Assign the new userListStatus to the current Anime
                       // setState to hide the 'Update List' button
                       setState(() {

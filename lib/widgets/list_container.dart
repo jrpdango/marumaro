@@ -65,20 +65,36 @@ class _MyWidgetState extends State<ListContainer> {
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
             child: ContentCard(
               onTap: () => Get.to(
-                () => AnimeDetails(
-                    anime: _animeList[index],
+                () {
+                  Anime anime = _animeList[index];
+                  return AnimeDetails(
+                    anime: anime,
+                    // TODO: Remove passing index
                     index: index,
                     onUpdate: () {
-                      setState(() {
-                        _animeList = Globals.store
-                                ?.box<Anime>()
-                                .query(Anime_.dbUserCurrentStatus
-                                    .equals(widget.animeListType.index))
-                                .build()
-                                .find() ??
-                            [];
-                      });
-                    }),
+                      // Query the DB for every other Anime with this ListContainer's type
+                      Box<Anime>? animeBox = Globals.store?.box<Anime>();
+                      Query<Anime>? contentQuery = animeBox
+                          ?.query(Anime_.dbUserCurrentStatus
+                              .equals(widget.animeListType.index)
+                              .and(Anime_.animeId.notEquals(anime.animeId)))
+                          .build();
+                      List<Anime>? dbAnime = contentQuery?.find();
+                      contentQuery?.close();
+                      setState(
+                        () {
+                          // If the Anime is in the current ListContainer, add it on top
+                          if (anime.userCurrentStatus == widget.animeListType) {
+                            _animeList = [anime, ...dbAnime ?? []];
+                            // If the Anime transferred elsewhere, just show the others
+                          } else {
+                            _animeList = dbAnime ?? [];
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
               ),
               imageUrl: _animeList[index].pictureMedium.toString(),
               contentCardDetails: ContentCardDetails(
