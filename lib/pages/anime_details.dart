@@ -276,17 +276,16 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       if (queriedAnime != null) animeBox?.put(queriedAnime);
                       // Assign the new userListStatus to the current Anime
                       // setState to hide the 'Update List' button
-                      AnimeListType? lastStatus = _anime?.userCurrentStatus;
                       setState(() {
                         _anime?.userListStatus = _userListStatus?.copyWith();
                       });
                       // Send list update request to MAL API
-                      // await Globals.client.updateAnimeList(
-                      //   animeId: _anime?.animeId,
-                      //   userListStatus: _anime?.userListStatus,
-                      // );
+                      await Globals.client.updateAnimeList(
+                        animeId: _anime?.animeId,
+                        userListStatus: _anime?.userListStatus,
+                      );
                       // This callback should call setState() on the current ListContainer
-                      widget.onUpdate?.call(lastStatus);
+                      widget.onUpdate?.call();
                       // Close loading overlay
                       Get.back();
                     },

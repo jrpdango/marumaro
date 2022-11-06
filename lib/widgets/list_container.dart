@@ -65,50 +65,20 @@ class _MyWidgetState extends State<ListContainer> {
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
             child: ContentCard(
               onTap: () => Get.to(
-                () {
-                  int animeId = _animeList[index].animeId;
-                  int currentIndex = index;
-                  return AnimeDetails(
+                () => AnimeDetails(
                     anime: _animeList[index],
                     index: index,
-                    onUpdate: (AnimeListType userLastStatus) {
-                      setState(
-                        () {
-                          Anime? queriedAnime = Globals.store
-                              ?.box<Anime>()
-                              .query(Anime_.animeId.equals(animeId))
-                              .build()
-                              .findFirst();
-                          if (queriedAnime == null ||
-                              queriedAnime.userCurrentStatus == null) return;
-                          // If going to this ListContainer from another, insert at index 0.
-                          // - First check if where the Anime last came from isn't where it's going
-                          // - Then check if where it's going is this ListContainer
-                          // - Insert it at the top of the ListContainer, then set currentIndex to 0 in case user modifies it again
-                          if ((userLastStatus !=
-                                  queriedAnime.userCurrentStatus) &&
-                              (queriedAnime.userCurrentStatus ==
-                                  widget.animeListType)) {
-                            _animeList.insert(0, queriedAnime);
-                            currentIndex = 0;
-                          }
-                          // If leaving this ListContainer, remove it.
-                          // - First we check if the Anime is coming from this ListContainer
-                          // - Then if it's going somewhere that isn't here, remove it
-                          // - Otherwise, just update the Anime where it is
-                          else if (userLastStatus == widget.animeListType) {
-                            if (queriedAnime.userCurrentStatus !=
-                                widget.animeListType) {
-                              _animeList.removeAt(currentIndex);
-                            } else {
-                              _animeList[currentIndex] = queriedAnime;
-                            }
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
+                    onUpdate: () {
+                      setState(() {
+                        _animeList = Globals.store
+                                ?.box<Anime>()
+                                .query(Anime_.dbUserCurrentStatus
+                                    .equals(widget.animeListType.index))
+                                .build()
+                                .find() ??
+                            [];
+                      });
+                    }),
               ),
               imageUrl: _animeList[index].pictureMedium.toString(),
               contentCardDetails: ContentCardDetails(
