@@ -35,8 +35,6 @@ class Anime {
   Uri? pictureMedium;
   @Transient()
   Uri? pictureLarge;
-  @Transient()
-  UserListStatus? _userStatus;
 
   // Converter for AnimeAiringStatus
   int? get dbAiringStatus {
@@ -116,11 +114,6 @@ class Anime {
     userCurrentProgress = value?.currentProgress;
     userCurrentScore = value?.score;
     userCurrentStatus = value?.status;
-    // _userStatus = UserListStatus(
-    //   currentProgress: userCurrentProgress,
-    //   score: userCurrentScore,
-    //   status: userCurrentStatus,
-    // );
   }
 
   Anime({
@@ -178,6 +171,6 @@ class Anime {
       userCurrentScore: userCurrentScore ?? this.userCurrentScore,
       userCurrentProgress: userCurrentProgress ?? this.userCurrentProgress,
       userCurrentStatus: userCurrentStatus ?? this.userCurrentStatus,
-    )..userListStatus = userListStatus ?? this.userListStatus;
+    );
   }
 }
