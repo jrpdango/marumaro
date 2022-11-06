@@ -264,37 +264,21 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                         barrierDismissible: false,
                       );
                       Box<Anime>? animeBox = Globals.store?.box<Anime>();
-                      // If list status changed, locally move the item to the right ListContainer
-                      // if (_anime?.userListStatus.status !=
-                      //     _userListStatus?.status) {
-                      // // Remove the ContentCard from wherever it was
-                      // Globals.client.animeMap[_anime?.userListStatus?.status]
-                      //     ?.removeAt(_index!);
-                      // // Insert at index 0 the ContentCard at its new status ListContainer
-                      // Globals.client.animeMap[_userListStatus?.status]
-                      //     ?.insert(0, _anime!);
-                      // // Set the local index to 0 since that's where the new ContentCard is
-                      // _index = 0;
+                      // Find the anime in the database
                       Query<Anime>? animeQuery = animeBox
                           ?.query(Anime_.animeId.equals(_anime!.animeId))
                           .build();
                       Anime? queriedAnime = animeQuery?.findFirst();
                       animeQuery?.close();
-                      // queriedAnime
-                      //   ?..userCurrentStatus = _userListStatus?.status
-                      //   ..userCurrentProgress = _userListStatus?.currentProgress
-                      //   ..userCurrentScore = _userListStatus?.score;
+                      // Update the anime's UserStatusList
                       queriedAnime?.userListStatus =
                           _userListStatus?.copyWith();
                       if (queriedAnime != null) animeBox?.put(queriedAnime);
-                      // }
-                      // Edit the client's animeMap Anime with the current UserListStatus
-                      // widget.anime?.userListStatus =
-                      //     _userListStatus?.copyWith();
                       // Assign the new userListStatus to the current Anime
                       // setState to hide the 'Update List' button
-                      _anime?.userListStatus = _userListStatus?.copyWith();
-                      setState(() {});
+                      setState(() {
+                        _anime?.userListStatus = _userListStatus?.copyWith();
+                      });
                       // Send list update request to MAL API
                       await Globals.client.updateAnimeList(
                         animeId: _anime?.animeId,
