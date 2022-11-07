@@ -54,8 +54,12 @@ class AnimeListRequest implements MalRequest {
       Anime currentAnime = Anime(
         id: element['node']['id'],
         title: element['node']['title'],
-        pictureMedium: Uri.parse(element['node']['main_picture']['medium']),
-        pictureLarge: Uri.parse(element['node']['main_picture']['large']),
+        pictureMedium: element['node']['main_picture'] != null
+            ? Uri.parse(element['node']['main_picture']['medium'])
+            : null,
+        pictureLarge: element['node']['main_picture'] != null
+            ? Uri.parse(element['node']['main_picture']['large'])
+            : null,
         totalEpisodes: element['node']['num_episodes'],
         airingStatus: _getAiringStatus(element['node']['status']),
         season: Season(
