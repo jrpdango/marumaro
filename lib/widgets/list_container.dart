@@ -25,22 +25,27 @@ class ListContainer extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<ListContainer> {
-  List<Anime> _animeList = [];
+  List<Anime>? _animeList = [];
   int _currentOffset = 0;
 
   @override
   void initState() {
     super.initState();
-    // _animeList = Globals.client.animeMap[widget.animeListType];
-    Query<Anime>? query = Globals.store
-        ?.box<Anime>()
-        .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
-        .build();
-    query
-      ?..limit = 100
-      ..offset = _currentOffset;
-    _currentOffset += 100;
-    _animeList = query?.find() ?? [];
+    _animeList = Globals.client.userAnimeList[widget.animeListType] ?? [];
+    print(Globals.client.userAnimeList[widget.animeListType]);
+    if (_animeList!.isEmpty) {
+      Query<Anime>? query = Globals.store
+          ?.box<Anime>()
+          .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
+          .build();
+      query
+        ?..limit = 100
+        ..offset = _currentOffset;
+      _currentOffset += 100;
+      _animeList?.addAll(query?.find() ?? []);
+    } else {
+      _currentOffset += _animeList?.length ?? 0;
+    }
   }
 
   /// Retrieve latest user's list to refresh and assign it to the client.
@@ -63,7 +68,7 @@ class _MyWidgetState extends State<ListContainer> {
       ?..limit = 100
       ..offset = _currentOffset;
     _currentOffset += 100;
-    _animeList.addAll(query?.find() ?? []);
+    _animeList?.addAll(query?.find() ?? []);
     setState(() {});
   }
 
@@ -84,16 +89,17 @@ class _MyWidgetState extends State<ListContainer> {
         child: ListView.builder(
           key: PageStorageKey(widget.animeListType),
           itemExtent: 130.0,
-          itemCount: _animeList.length,
+          itemCount: _animeList?.length ?? 0,
           itemBuilder: (context, index) {
-            if (_animeList.isEmpty) return Container();
+            if (_animeList?.isEmpty ?? true) return Container();
             return Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
               child: ContentCard(
                 onTap: () => Get.to(
                   () {
-                    Anime anime = _animeList[index];
+                    if (_animeList == null) return Container();
+                    Anime anime = _animeList![index];
                     return AnimeDetails(
                       anime: anime,
                       // TODO: Remove passing index
@@ -124,14 +130,14 @@ class _MyWidgetState extends State<ListContainer> {
                     );
                   },
                 ),
-                imageUrl: _animeList[index].pictureMedium.toString(),
+                imageUrl: _animeList?[index].pictureMedium.toString() ?? '',
                 contentCardDetails: ContentCardDetails(
-                  title: _animeList[index].title,
+                  title: _animeList?[index].title ?? '',
                   episodesWatched:
-                      _animeList[index].userListStatus.currentProgress ?? 0,
-                  totalEpisodes: _animeList[index].totalEpisodes,
-                  score: _animeList[index].userListStatus.score ?? 0,
-                  season: _animeList[index].season ?? Season(),
+                      _animeList?[index].userListStatus.currentProgress ?? 0,
+                  totalEpisodes: _animeList?[index].totalEpisodes ?? 0,
+                  score: _animeList?[index].userListStatus.score ?? 0,
+                  season: _animeList?[index].season ?? Season(),
                 ),
               ),
             );

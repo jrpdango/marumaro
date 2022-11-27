@@ -23,6 +23,13 @@ class MALClient {
         ((X509Certificate cert, String host, int port) => true);
   final String codeChallenge = CodeGenerator.genPKCEcode();
   final Client userClient = IOClient(_httpClient);
+  final Map<AnimeListType, List<Anime>> userAnimeList = {
+    AnimeListType.watching: [],
+    AnimeListType.completed: [],
+    AnimeListType.planToWatch: [],
+    AnimeListType.onHold: [],
+    AnimeListType.dropped: [],
+  };
   TokenPair? tokenPair;
   String? username;
   NetworkImage? userImage;
