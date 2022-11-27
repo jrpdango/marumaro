@@ -37,9 +37,9 @@ class _MyWidgetState extends State<ListContainer> {
         .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
         .build();
     query
-      ?..limit = 30
+      ?..limit = 100
       ..offset = _currentOffset;
-    _currentOffset += 30;
+    _currentOffset += 100;
     _animeList = query?.find() ?? [];
   }
 
@@ -54,63 +54,89 @@ class _MyWidgetState extends State<ListContainer> {
     if (mounted) setState(() {});
   }
 
+  void _loadMoreItems() {
+    Query<Anime>? query = Globals.store
+        ?.box<Anime>()
+        .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
+        .build();
+    query
+      ?..limit = 100
+      ..offset = _currentOffset;
+    _currentOffset += 100;
+    _animeList.addAll(query?.find() ?? []);
+    setState(() {});
+  }
+
+  bool _handleScroll(ScrollNotification notification) {
+    if (notification is ScrollEndNotification &&
+        notification.metrics.extentAfter == 0) {
+      _loadMoreItems();
+      debugPrint('Scroll ended');
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      child: ListView.builder(
-        key: PageStorageKey(widget.animeListType),
-        itemExtent: 130.0,
-        itemCount: _animeList.length,
-        itemBuilder: (context, index) {
-          if (_animeList.isEmpty) return Container();
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-            child: ContentCard(
-              onTap: () => Get.to(
-                () {
-                  Anime anime = _animeList[index];
-                  return AnimeDetails(
-                    anime: anime,
-                    // TODO: Remove passing index
-                    index: index,
-                    onUpdate: () {
-                      // Query the DB for every other Anime with this ListContainer's type
-                      Box<Anime>? animeBox = Globals.store?.box<Anime>();
-                      Query<Anime>? contentQuery = animeBox
-                          ?.query(Anime_.dbUserCurrentStatus
-                              .equals(widget.animeListType.index)
-                              .and(Anime_.animeId.notEquals(anime.animeId)))
-                          .build();
-                      List<Anime>? dbAnime = contentQuery?.find();
-                      contentQuery?.close();
-                      setState(
-                        () {
-                          // If the Anime is in the current ListContainer, add it on top
-                          if (anime.userCurrentStatus == widget.animeListType) {
-                            _animeList = [anime, ...dbAnime ?? []];
-                            // If the Anime transferred elsewhere, just show the others
-                          } else {
-                            _animeList = dbAnime ?? [];
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
+      child: NotificationListener<ScrollNotification>(
+        onNotification: _handleScroll,
+        child: ListView.builder(
+          key: PageStorageKey(widget.animeListType),
+          itemExtent: 130.0,
+          itemCount: _animeList.length,
+          itemBuilder: (context, index) {
+            if (_animeList.isEmpty) return Container();
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+              child: ContentCard(
+                onTap: () => Get.to(
+                  () {
+                    Anime anime = _animeList[index];
+                    return AnimeDetails(
+                      anime: anime,
+                      // TODO: Remove passing index
+                      index: index,
+                      onUpdate: () {
+                        // Query the DB for every other Anime with this ListContainer's type
+                        Box<Anime>? animeBox = Globals.store?.box<Anime>();
+                        Query<Anime>? contentQuery = animeBox
+                            ?.query(Anime_.dbUserCurrentStatus
+                                .equals(widget.animeListType.index)
+                                .and(Anime_.animeId.notEquals(anime.animeId)))
+                            .build();
+                        List<Anime>? dbAnime = contentQuery?.find();
+                        contentQuery?.close();
+                        setState(
+                          () {
+                            // If the Anime is in the current ListContainer, add it on top
+                            if (anime.userCurrentStatus ==
+                                widget.animeListType) {
+                              _animeList = [anime, ...dbAnime ?? []];
+                              // If the Anime transferred elsewhere, just show the others
+                            } else {
+                              _animeList = dbAnime ?? [];
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+                imageUrl: _animeList[index].pictureMedium.toString(),
+                contentCardDetails: ContentCardDetails(
+                  title: _animeList[index].title,
+                  episodesWatched:
+                      _animeList[index].userListStatus.currentProgress ?? 0,
+                  totalEpisodes: _animeList[index].totalEpisodes,
+                  score: _animeList[index].userListStatus.score ?? 0,
+                  season: _animeList[index].season ?? Season(),
+                ),
               ),
-              imageUrl: _animeList[index].pictureMedium.toString(),
-              contentCardDetails: ContentCardDetails(
-                title: _animeList[index].title,
-                episodesWatched:
-                    _animeList[index].userListStatus.currentProgress ?? 0,
-                totalEpisodes: _animeList[index].totalEpisodes,
-                score: _animeList[index].userListStatus.score ?? 0,
-                season: _animeList[index].season ?? Season(),
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       onRefresh: () async => _refresh(),
     );
