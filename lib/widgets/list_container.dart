@@ -26,18 +26,21 @@ class ListContainer extends StatefulWidget {
 
 class _MyWidgetState extends State<ListContainer> {
   List<Anime> _animeList = [];
+  int _currentOffset = 0;
 
   @override
   void initState() {
     super.initState();
     // _animeList = Globals.client.animeMap[widget.animeListType];
-    _animeList = Globals.store
-            ?.box<Anime>()
-            .query(
-                Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
-            .build()
-            .find() ??
-        [];
+    Query<Anime>? query = Globals.store
+        ?.box<Anime>()
+        .query(Anime_.dbUserCurrentStatus.equals(widget.animeListType.index))
+        .build();
+    query
+      ?..limit = 30
+      ..offset = _currentOffset;
+    _currentOffset += 30;
+    _animeList = query?.find() ?? [];
   }
 
   /// Retrieve latest user's list to refresh and assign it to the client.
