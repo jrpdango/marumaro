@@ -51,6 +51,7 @@ class ShowDetails extends StatelessWidget {
                   ),
                 ),
                 Card(
+                  color: Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 6.0, vertical: 1.0),
@@ -62,7 +63,7 @@ class ShowDetails extends StatelessWidget {
                           style: const TextStyle(
                               color: Colors.black87, fontSize: 13.0),
                         ),
-                        const Icon(Icons.star, size: 13.0),
+                        const Icon(Icons.star, size: 13.0, color: Colors.black87),
                       ],
                     ),
                   ),
