@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class EpisodesWatchedPopup extends StatefulWidget {
+/// A popup for editing a progress count (episodes watched, chapters read, ...).
+class MediaProgressPopup extends StatefulWidget {
   final Function closeOverlayCallback;
   final Function callback;
-  final Function numEpsChoice;
-  final int totalEps;
+  final Function progressChoice;
+  final int total;
+  final String label;
 
-  const EpisodesWatchedPopup(
+  const MediaProgressPopup(
       {super.key,
       required this.closeOverlayCallback,
       required this.callback,
-      required this.numEpsChoice,
-      required this.totalEps});
+      required this.progressChoice,
+      required this.total,
+      required this.label});
 
   @override
-  State<EpisodesWatchedPopup> createState() => _EpisodesWatchedPopupState();
+  State<MediaProgressPopup> createState() => _MediaProgressPopupState();
 }
 
-class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
+class _MediaProgressPopupState extends State<MediaProgressPopup> {
   final TextEditingController _controller = TextEditingController();
-  bool epsChanged = false;
-  String currentEps = "";
+  bool progressChanged = false;
+  String currentProgress = "";
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Total Episodes: ${widget.totalEps}",
+              "${widget.label}: ${widget.total}",
               style: TextStyle(
                 color: Colors.white,
               ),
@@ -43,25 +46,25 @@ class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
                 onChanged: (String value) {
-                  if (value != widget.totalEps.toString() && value != "") {
+                  if (value != widget.total.toString() && value != "") {
                     setState(() {
-                      epsChanged = true;
+                      progressChanged = true;
                     });
-                    currentEps = value;
+                    currentProgress = value;
                   } else {
                     setState(() {
-                      epsChanged = false;
+                      progressChanged = false;
                     });
                     return;
                   }
                 },
               ),
             ),
-            epsChanged
+            progressChanged
                 ? TextButton(
                     onPressed: () {
                       widget.callback(true);
-                      widget.numEpsChoice(currentEps);
+                      widget.progressChoice(currentProgress);
                       widget.closeOverlayCallback();
                     },
                     child: Text("Done"),

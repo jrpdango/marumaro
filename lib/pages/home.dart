@@ -6,12 +6,12 @@ import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search.dart';
 import 'package:miru/services/global_controller.dart';
-import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
+import 'package:miru/widgets/manga_page.dart';
+import 'package:miru/widgets/media_list_pager.dart';
 import 'package:miru/widgets/more.dart';
-import 'package:miru/widgets/schedule.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -27,6 +27,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int _tabIndex = 0;
   bool _hasTabBar = true;
   bool _hasSearch = true;
+
+  bool get _isManga => _tabIndex == 1;
 
   @override
   void initState() {
@@ -44,18 +46,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   /// Creates tabs for the list statuses.
   List<Widget> _createTabs() {
-    return AnimeListStatus.values
+    final List<String> labels = _isManga
+        ? MangaListStatus.values
+            .map((MangaListStatus status) => status.label)
+            .toList()
+        : AnimeListStatus.values
+            .map((AnimeListStatus status) => status.label)
+            .toList();
+    return labels
         .map(
-          (AnimeListStatus status) => SizedBox(
+          (String label) => SizedBox(
             height: 30,
-            child: Tab(child: Text(status.label)),
+            child: Tab(child: Text(label)),
           ),
         )
         .toList();
   }
 
   /// Creates the list views shown by each tab.
-  List<ListContainer> _createTabContents() {
+  List<Widget> _createTabContents() {
     return AnimeListStatus.values
         .map((AnimeListStatus status) => ListContainer(listType: status))
         .toList();
@@ -64,12 +73,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget _buildCurrentPage() {
     switch (_tabIndex) {
       case 0:
-        return AnimeList(
+        return MediaListPager(
           tabController: _tabController,
           tabContents: _createTabContents(),
         );
       case 1:
-        return const Schedule();
+        return MangaPage(tabController: _tabController);
       case 2:
         return const Browse();
       default:
@@ -242,7 +251,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   child: IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const Search()),
+                      MaterialPageRoute(
+                        builder: (_) => Search(manga: _isManga),
+                      ),
                     ),
                   ),
                 ),
@@ -261,8 +272,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         onTap: (index) {
           setState(() {
             _tabIndex = index;
-            _hasTabBar = index == 0;
-            _hasSearch = index == 0;
+            _hasTabBar = index == 0 || index == 1;
+            _hasSearch = index == 0 || index == 1;
           });
         },
         items: const <BottomNavigationBarItem>[
@@ -271,9 +282,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               backgroundColor: Colors.black87,
               label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_rounded),
+              icon: Icon(Icons.auto_stories),
               backgroundColor: Colors.black87,
-              label: "Schedule"),
+              label: "Manga"),
           BottomNavigationBarItem(
               icon: Icon(Icons.compass_calibration_rounded),
               backgroundColor: Colors.black87,

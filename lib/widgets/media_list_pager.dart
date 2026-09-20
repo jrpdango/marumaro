@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:miru/widgets/list_container.dart';
 import 'package:miru/widgets/tab_page_scroll_physics.dart';
 
-/// A horizontally paged view of the status lists, kept in sync with [tabController].
+/// A horizontally paged view of a set of status lists, kept in sync with
+/// [tabController].
 ///
 /// Replaces [TabBarView] so the paging physics can be controlled. [TabBarView]
 /// always wraps the supplied physics in [PageScrollPhysics], whose velocity
 /// threshold makes swipes inconsistent; here the [PageView] uses
 /// [TabPageScrollPhysics] directly via `pageSnapping: false`.
-class AnimeList extends StatefulWidget {
+class MediaListPager extends StatefulWidget {
   final TabController tabController;
-  final List<ListContainer> tabContents;
+  final List<Widget> tabContents;
 
-  const AnimeList({
+  const MediaListPager({
     super.key,
     required this.tabContents,
     required this.tabController,
   });
 
   @override
-  State<AnimeList> createState() => _AnimeListState();
+  State<MediaListPager> createState() => _MediaListPagerState();
 }
 
-class _AnimeListState extends State<AnimeList> {
+class _MediaListPagerState extends State<MediaListPager> {
   late final PageController _pageController;
   late int _lastTabIndex;
 
@@ -43,7 +43,7 @@ class _AnimeListState extends State<AnimeList> {
   }
 
   @override
-  void didUpdateWidget(AnimeList oldWidget) {
+  void didUpdateWidget(MediaListPager oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.tabController != widget.tabController) {
       oldWidget.tabController.removeListener(_handleTabController);

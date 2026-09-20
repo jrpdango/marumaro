@@ -1,51 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:miru/models/anime.dart';
-import 'package:miru/models/anime_details.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/manga.dart';
+import 'package:miru/models/manga_details.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/anime_poster.dart';
-import 'package:miru/widgets/media_progress_popup.dart';
 import 'package:miru/widgets/list_status_popup.dart';
 import 'package:miru/widgets/loading_popup.dart';
+import 'package:miru/widgets/media_progress_popup.dart';
 import 'package:miru/widgets/score_popup.dart';
 
-class AnimeDetailsPage extends StatefulWidget {
-  const AnimeDetailsPage({super.key, required this.anime});
+class MangaDetailsPage extends StatefulWidget {
+  const MangaDetailsPage({super.key, required this.manga});
 
-  final Anime anime;
+  final Manga manga;
 
   @override
-  State<AnimeDetailsPage> createState() => _AnimeDetailsPageState();
+  State<MangaDetailsPage> createState() => _MangaDetailsPageState();
 }
 
-class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
+class _MangaDetailsPageState extends State<MangaDetailsPage> {
   GlobalController? _controller;
 
   bool _detailChanged = false;
-  late AnimeListStatus _chosenStatus = widget.anime.userStatus;
-  late int _chosenScore = widget.anime.userScore;
-  late int _chosenEpsWatched = widget.anime.userEpisodesWatched;
-  Future<AnimeDetails>? _animeDetails;
+  late MangaListStatus _chosenStatus = widget.manga.userStatus;
+  late int _chosenScore = widget.manga.userScore;
+  late int _chosenChaptersRead = widget.manga.userChaptersRead;
+  late int _chosenVolumesRead = widget.manga.userVolumesRead;
+  Future<MangaDetails>? _mangaDetails;
 
-  Anime get _anime => widget.anime;
+  Manga get _manga => widget.manga;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller ??= GlobalControllerScope.of(context);
-    _animeDetails ??=
-        _controller!.repository.fetchAnimeDetails(widget.anime.id);
+    _mangaDetails ??=
+        _controller!.repository.fetchMangaDetails(widget.manga.id);
   }
 
   /// Sends the pending changes to MAL and updates local state.
   Future<void> _updateItem() async {
     _showOverlay("loading");
     try {
-      await _controller!.updateAnime(
-        anime: _anime,
+      await _controller!.updateManga(
+        manga: _manga,
         status: _chosenStatus,
         score: _chosenScore,
-        episodesWatched: _chosenEpsWatched,
+        chaptersRead: _chosenChaptersRead,
+        volumesRead: _chosenVolumesRead,
       );
       if (mounted) setState(() => _detailChanged = false);
     } catch (e) {
@@ -69,11 +71,11 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
           builder: (_) => ListStatusPopup(
             callback: (val) => setState(() => _detailChanged = val),
-            options: AnimeListStatus.values
-                .map((AnimeListStatus status) => status.label)
+            options: MangaListStatus.values
+                .map((MangaListStatus status) => status.label)
                 .toList(),
             stringChoice: (choice) => setState(
-              () => _chosenStatus = AnimeListStatus.fromApiValue(
+              () => _chosenStatus = MangaListStatus.fromApiValue(
                 choice.replaceAll(" ", "_").toLowerCase(),
               ),
             ),
@@ -81,16 +83,30 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           ),
         );
         break;
-      case 'episodes':
+      case 'chapters':
         showDialog(
           context: context,
           barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
           builder: (_) => MediaProgressPopup(
             callback: (val) => setState(() => _detailChanged = val),
             progressChoice: (choice) =>
-                setState(() => _chosenEpsWatched = int.parse(choice)),
-            total: _anime.totalEpisodes,
-            label: "Total Episodes",
+                setState(() => _chosenChaptersRead = int.parse(choice)),
+            total: _manga.totalChapters,
+            label: "Total Chapters",
+            closeOverlayCallback: () => Navigator.of(context).pop(),
+          ),
+        );
+        break;
+      case 'volumes':
+        showDialog(
+          context: context,
+          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
+          builder: (_) => MediaProgressPopup(
+            callback: (val) => setState(() => _detailChanged = val),
+            progressChoice: (choice) =>
+                setState(() => _chosenVolumesRead = int.parse(choice)),
+            total: _manga.totalVolumes,
+            label: "Total Volumes",
             closeOverlayCallback: () => Navigator.of(context).pop(),
           ),
         );
@@ -118,7 +134,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   }
 
   /// Creates the rows displayed for [details].
-  List<Widget> _buildInfoList(AnimeDetails details) {
+  List<Widget> _buildInfoList(MangaDetails details) {
     return details.displayRows.map((MapEntry<String, String> row) {
       return SizedBox(
         height: 20.0,
@@ -164,22 +180,22 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: AnimePoster(picture: _anime.picture),
+                child: AnimePoster(picture: _manga.picture),
               ),
               Expanded(
                 child: Column(
                   children: [
                     Text(
-                      _anime.title,
+                      _manga.title,
                       style:
                           const TextStyle(color: Colors.white, fontSize: 20.0),
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    FutureBuilder<AnimeDetails>(
-                      future: _animeDetails,
+                    FutureBuilder<MangaDetails>(
+                      future: _mangaDetails,
                       builder: (BuildContext context,
-                          AsyncSnapshot<AnimeDetails> snapshot) {
+                          AsyncSnapshot<MangaDetails> snapshot) {
                         if (snapshot.hasData) {
                           return Text(
                             "Mean Score: ${snapshot.data!.meanScore}",
@@ -210,6 +226,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                       const Icon(Icons.bar_chart, color: Colors.white),
                       Text(
                         _chosenStatus.label,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(color: Colors.white),
                       ),
                     ],
@@ -218,12 +235,26 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               ),
               Expanded(
                 child: InkWell(
-                  onTap: () => _showOverlay("episodes"),
+                  onTap: () => _showOverlay("chapters"),
                   child: Column(
                     children: <Widget>[
-                      const Icon(Icons.remove_red_eye, color: Colors.white),
+                      const Icon(Icons.menu_book, color: Colors.white),
                       Text(
-                        "$_chosenEpsWatched/${_anime.totalEpisodes}",
+                        "$_chosenChaptersRead/${_manga.totalChapters}",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: InkWell(
+                  onTap: () => _showOverlay("volumes"),
+                  child: Column(
+                    children: <Widget>[
+                      const Icon(Icons.library_books, color: Colors.white),
+                      Text(
+                        "$_chosenVolumesRead/${_manga.totalVolumes}",
                         style: const TextStyle(color: Colors.white),
                       ),
                     ],
@@ -255,10 +286,10 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
               : const SizedBox(height: 0, width: 0),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: FutureBuilder<AnimeDetails>(
-              future: _animeDetails,
+            child: FutureBuilder<MangaDetails>(
+              future: _mangaDetails,
               builder:
-                  (BuildContext context, AsyncSnapshot<AnimeDetails> snapshot) {
+                  (BuildContext context, AsyncSnapshot<MangaDetails> snapshot) {
                 if (snapshot.hasError) {
                   return const Text("Error loading data. Please try again later.");
                 }

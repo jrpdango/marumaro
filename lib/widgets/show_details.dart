@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// The title, airing status, progress, and score shown on a list card.
+/// The title, status, progress, and score shown on a list card.
 class ShowDetails extends StatelessWidget {
   const ShowDetails({
     super.key,
@@ -8,12 +8,14 @@ class ShowDetails extends StatelessWidget {
     required this.progress,
     required this.score,
     required this.airingStatus,
+    this.statusPrefix = "Show Status",
   });
 
   final String title;
   final String progress;
   final String score;
   final String airingStatus;
+  final String statusPrefix;
 
   String _conciseTitle(String fullTitle) {
     if (fullTitle.length >= 24) {
@@ -39,7 +41,7 @@ class ShowDetails extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              "Show Status: $airingStatus",
+              "$statusPrefix: $airingStatus",
               style: const TextStyle(color: Colors.white, fontSize: 13.0),
             ),
             Row(

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/manga.dart';
 import 'package:miru/models/user.dart';
 import 'package:miru/services/auth_repository.dart';
 import 'package:miru/services/mal_api_client.dart';
@@ -32,6 +33,16 @@ class GlobalController extends ChangeNotifier {
       status: <Anime>[],
   };
 
+  final List<Manga> globalMangaList = <Manga>[];
+  final Map<MangaListStatus, List<Manga>> mangaLists =
+      <MangaListStatus, List<Manga>>{
+    for (final MangaListStatus status in MangaListStatus.values)
+      status: <Manga>[],
+  };
+
+  /// Whether [loadMangaList] has completed at least once.
+  bool mangaListLoaded = false;
+
   /// Loads the user's full anime list and rebuilds the status buckets.
   Future<void> loadAnimeList() async {
     final List<Anime> anime = await repository.fetchAnimeList();
@@ -44,6 +55,22 @@ class GlobalController extends ChangeNotifier {
     for (final Anime entry in anime) {
       lists[entry.userStatus]?.add(entry);
     }
+    notifyListeners();
+  }
+
+  /// Loads the user's full manga list and rebuilds the status buckets.
+  Future<void> loadMangaList() async {
+    final List<Manga> manga = await repository.fetchMangaList();
+    globalMangaList
+      ..clear()
+      ..addAll(manga);
+    for (final List<Manga> list in mangaLists.values) {
+      list.clear();
+    }
+    for (final Manga entry in manga) {
+      mangaLists[entry.userStatus]?.add(entry);
+    }
+    mangaListLoaded = true;
     notifyListeners();
   }
 
@@ -78,6 +105,45 @@ class GlobalController extends ChangeNotifier {
       final List<Anime>? list = lists[status];
       final int index =
           list?.indexWhere((Anime a) => a.id == anime.id) ?? -1;
+      if (index != -1) list![index] = updated;
+    }
+    notifyListeners();
+  }
+
+  /// Persists list changes for [manga] and updates local state.
+  Future<void> updateManga({
+    required Manga manga,
+    required MangaListStatus status,
+    required int score,
+    required int chaptersRead,
+    required int volumesRead,
+  }) async {
+    await repository.updateMangaListStatus(
+      mangaId: manga.id,
+      status: status,
+      score: score,
+      chaptersRead: chaptersRead,
+      volumesRead: volumesRead,
+    );
+
+    final Manga updated = manga.copyWith(
+      userStatus: status,
+      userScore: score,
+      userChaptersRead: chaptersRead,
+      userVolumesRead: volumesRead,
+    );
+
+    final int globalIndex =
+        globalMangaList.indexWhere((Manga m) => m.id == manga.id);
+    if (globalIndex != -1) globalMangaList[globalIndex] = updated;
+
+    if (manga.userStatus != status) {
+      mangaLists[manga.userStatus]?.removeWhere((Manga m) => m.id == manga.id);
+      mangaLists.putIfAbsent(status, () => <Manga>[]).insert(0, updated);
+    } else {
+      final List<Manga>? list = mangaLists[status];
+      final int index =
+          list?.indexWhere((Manga m) => m.id == manga.id) ?? -1;
       if (index != -1) list![index] = updated;
     }
     notifyListeners();

@@ -3,8 +3,7 @@ import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/pages/anime_details_page.dart';
 import 'package:miru/services/global_controller.dart';
-import 'package:miru/widgets/anime_poster.dart';
-import 'package:miru/widgets/show_details.dart';
+import 'package:miru/widgets/media_list_card.dart';
 
 class ListContainer extends StatefulWidget {
   /// An explicit list to display. When null, the controller's list for
@@ -62,36 +61,15 @@ class _ListContainerState extends State<ListContainer> {
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-                child: Card(
-                  color: Colors.grey[900],
-                  child: InkWell(
-                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => AnimeDetailsPage(anime: anime),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(5.0),
-                            bottomLeft: Radius.circular(5.0),
-                          ),
-                          child: AnimePoster(picture: anime.picture),
-                        ),
-                        Expanded(
-                          child: ShowDetails(
-                            title: anime.title,
-                            progress:
-                                "${anime.userEpisodesWatched}/${anime.totalEpisodes}",
-                            score: "${anime.userScore}",
-                            airingStatus: anime.showStatus?.label ?? "",
-                          ),
-                        ),
-                      ],
+                child: MediaListCard(
+                  picture: anime.picture,
+                  title: anime.title,
+                  progress: "${anime.userEpisodesWatched}/${anime.totalEpisodes}",
+                  score: "${anime.userScore}",
+                  statusLabel: anime.showStatus?.label ?? "",
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => AnimeDetailsPage(anime: anime),
                     ),
                   ),
                 ),

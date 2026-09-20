@@ -22,6 +22,49 @@ enum AnimeListStatus {
   }
 }
 
+/// The user's status for a manga in their list.
+enum MangaListStatus {
+  reading("reading", "Currently Reading"),
+  planToRead("plan_to_read", "Plan To Read"),
+  completed("completed", "Completed"),
+  onHold("on_hold", "On Hold"),
+  dropped("dropped", "Dropped");
+
+  const MangaListStatus(this.apiValue, this.label);
+
+  /// The value used by the MAL API.
+  final String apiValue;
+
+  /// A human-readable label.
+  final String label;
+
+  static MangaListStatus fromApiValue(String? value) {
+    return values.firstWhere(
+      (MangaListStatus status) => status.apiValue == value,
+      orElse: () => MangaListStatus.reading,
+    );
+  }
+}
+
+/// The publication status of a manga as reported by the MAL API.
+enum MangaPublishingStatus {
+  finished("finished", "Finished"),
+  currentlyPublishing("currently_publishing", "Currently Publishing"),
+  notYetPublished("not_yet_published", "Not Yet Published");
+
+  const MangaPublishingStatus(this.apiValue, this.label);
+
+  final String apiValue;
+  final String label;
+
+  static MangaPublishingStatus? fromApiValue(String? value) {
+    for (final MangaPublishingStatus status in values) {
+      if (status.apiValue == value) return status;
+    }
+    return null;
+  }
+}
+
 /// The airing status of an anime as reported by the MAL API.
 enum AnimeAiringStatus {
   finishedAiring("finished_airing", "Finished Airing"),
