@@ -32,7 +32,7 @@ class UserDataRequest {
     // JIKAN URL: https://api.jikan.moe/v4/users/{username}/full
     try {
       Response response = await client.userClient.get(url,
-          headers: {"Authorization": "Bearer ${client.token.accessToken}"});
+          headers: {"Authorization": "Bearer ${client.accessToken}"});
       Map respMap = Map();
       if (response.statusCode == 200) {
         //respMap gives a json response of keys {id, name, birthday, location, joined_at}

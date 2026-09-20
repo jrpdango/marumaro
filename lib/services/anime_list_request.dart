@@ -72,7 +72,7 @@ class AnimeListRequest {
         url = setParams(url!);
       }
       http.Response response = await client.userClient.get(url!,
-          headers: {"Authorization": "Bearer ${client.token.accessToken}"});
+          headers: {"Authorization": "Bearer ${client.accessToken}"});
       Map<String, dynamic> respMap = Map();
       respMap = json.decode(response.body);
       if (response.statusCode == 200) {

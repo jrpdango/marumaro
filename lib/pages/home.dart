@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -10,7 +8,6 @@ import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/more.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/schedule.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
@@ -200,10 +197,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           actions: <Widget>[
                             TextButton(
                               onPressed: () async {
-                                Directory directory =
-                                    await getApplicationDocumentsDirectory();
-                                File("${directory.path}/miruTokens.json")
-                                    .deleteSync();
+                                await _client.logout();
                                 Get.offNamed("/");
                               },
                               child: Text('Yes'),

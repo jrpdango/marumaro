@@ -36,7 +36,7 @@ class AnimeDetailsRequest {
       //"https://api.myanimelist.net/v2/anime/${this.animeID}" + this.fields;
       Response response = await client.userClient.get(
         url,
-        headers: {"Authorization": "Bearer ${client.token.accessToken}"},
+        headers: {"Authorization": "Bearer ${client.accessToken}"},
       );
       Map<String, dynamic> respMap = Map<String, dynamic>();
       respMap = json.decode(response.body);

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:miru/models/anime.dart';
-import 'package:miru/pages/home.dart';
-import 'package:miru/models/mal_client.dart';
-import 'package:miru/services/global_controller.dart';
-import 'package:miru/services/token_verifier.dart';
-import 'package:miru/services/anime_list_request.dart';
 import 'package:get/get.dart';
-import 'package:miru/constants.dart' as Constants show limitOfListItems;
+import 'package:miru/constants.dart' as constants show limitOfListItems;
+import 'package:miru/models/anime.dart';
+import 'package:miru/models/mal_client.dart';
+import 'package:miru/pages/home.dart';
+import 'package:miru/pages/login.dart';
+import 'package:miru/services/anime_list_request.dart';
+import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/user_data_request.dart';
 
 class Loading extends StatefulWidget {
@@ -16,10 +16,11 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  // late MALClient _client = MALClient();
   final _controller = Get.put(GlobalController());
   late MALClient _client = _controller.client.value;
   late RxList<Anime> _globalAnimeList = _controller.globalAnimeList;
+
+  bool _needsLogin = false;
 
   /// Initializes the user's anime list.
   ///
@@ -55,19 +56,28 @@ class _LoadingState extends State<Loading> {
     return result;
   }
 
-  /// Verify internet connectivity, token validity, and initialization of anime list.
+  /// Restores the stored session, prompting the user to log in if needed.
   ///
-  void setupMALConnection() async {
-    await TokenVerifier.verifyTokens(_client);
+  Future<void> setupMALConnection() async {
+    final bool authenticated = await _client.auth.restoreSession();
+    if (!authenticated) {
+      if (mounted) setState(() => _needsLogin = true);
+      return;
+    }
+    await finishSetup();
+  }
+
+  /// Loads the user's list and navigates to the home page.
+  ///
+  Future<void> finishSetup() async {
     Map<String, dynamic> result =
-        await initializeAnimeList(Constants.limitOfListItems);
+        await initializeAnimeList(constants.limitOfListItems);
     _client.clientAnimeList = result.obs;
     _client.username =
         (await _client.getUserData(UserDataRequest(mode: 'MAL')))['name'];
 
     Get.off(
       () => Home(),
-      // TODO: EDIT LATER
       arguments: {"connStatus": true},
     );
   }
@@ -80,13 +90,14 @@ class _LoadingState extends State<Loading> {
 
   @override
   Widget build(BuildContext context) {
+    if (_needsLogin) {
+      return Login(onSignedIn: finishSetup);
+    }
     return Scaffold(
-      body: Container(
-        color: Colors.black87,
-        child: Center(
-          child: SpinKitThreeBounce(
-            color: Colors.white60,
-          ),
+      backgroundColor: Colors.black87,
+      body: Center(
+        child: SpinKitThreeBounce(
+          color: Colors.white60,
         ),
       ),
     );

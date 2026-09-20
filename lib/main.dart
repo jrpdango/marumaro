@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:miru/pages/anime_details_page.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/pages/loading.dart';
-import 'package:miru/pages/login.dart';
-import 'package:miru/pages/mal_web_view.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search.dart';
 
@@ -16,11 +14,9 @@ void main() {
       routes: {
         '/': (context) => Loading(),
         '/home': (context) => Home(),
-        '/malweb': (context) => MALWebView(),
         // TODO: maybe rename this to anime_details
         '/animeDetailsPage': (context) => AnimeDetailsPage(),
         '/search': (context) => Search(),
-        '/login': (context) => Login(),
         '/profile': (context) => Profile(),
       },
     ),

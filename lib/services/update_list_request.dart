@@ -23,7 +23,7 @@ class UpdateListRequest {
       // String url =
       //     "https://api.myanimelist.net/v2/anime/${this.animeID}/my_list_status";
       Response response = await client.userClient.patch(url, headers: {
-        "Authorization": "Bearer ${client.token.accessToken}"
+        "Authorization": "Bearer ${client.accessToken}"
       }, body: {
         "status": status,
         "score": score,
