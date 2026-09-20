@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:get/get.dart';
 import 'package:http/http.dart';
-import 'package:http/io_client.dart';
 import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/models/token.dart';
@@ -14,12 +11,9 @@ import 'package:miru/services/user_data_request.dart';
 class MALClient {
   static const String CLIENTID = "b6cd1c6e3172ade1142272d4c288bdf2";
   late String accessCode;
-  final HttpClient httpClient = new HttpClient()
-    ..badCertificateCallback =
-        ((X509Certificate cert, String host, int port) => true);
-  late Client userClient = IOClient(httpClient);
+  late Client userClient = Client();
   final OAuthRequest oAuthRequest =
-      OAuthRequest(codeChallenge: CodeGenerator.genPKCEcode());
+      OAuthRequest(codeVerifier: CodeGenerator.genCodeVerifier());
   late Token token;
   late RxMap<String, dynamic> clientAnimeList;
   String? username;
@@ -35,25 +29,12 @@ class MALClient {
     return url;
   }
 
-  // TODO - maybe replace checkValidAccessToken in token_verifier
-  // Future<bool> hasValidAccessToken() async {
-  //   Map checker = await this.getUserData();
-  //   if (checker["status_code"] == 200) return true;
-  //   return false;
-  // }
-
   Future<void> getTokens() async {
     this.token = await oAuthRequest.generateTokens(this, this.accessCode);
-    print("DEBUG: Tokens received:");
-    print("Access token: ${this.token.accessToken}");
-    print("Refresh token: ${this.token.refreshToken}");
   }
 
   Future<void> refreshTokens() async {
     this.token = await oAuthRequest.refreshTokens(this, this.token);
-    print("DEBUG: Tokens refreshed:");
-    print("Access token: ${this.token.accessToken}");
-    print("Refresh token: ${this.token.refreshToken}");
   }
 
   Future<Map> getUserData(UserDataRequest userDataRequest) async {
