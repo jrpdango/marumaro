@@ -8,15 +8,14 @@ class EpisodesWatchedPopup extends StatefulWidget {
   final int totalEps;
 
   const EpisodesWatchedPopup(
-      {Key? key,
+      {super.key,
       required this.closeOverlayCallback,
       required this.callback,
       required this.numEpsChoice,
-      required this.totalEps})
-      : super(key: key);
+      required this.totalEps});
 
   @override
-  _EpisodesWatchedPopupState createState() => _EpisodesWatchedPopupState();
+  State<EpisodesWatchedPopup> createState() => _EpisodesWatchedPopupState();
 }
 
 class _EpisodesWatchedPopupState extends State<EpisodesWatchedPopup> {

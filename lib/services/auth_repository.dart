@@ -9,10 +9,8 @@ import 'package:miru/services/token_store.dart';
 
 /// Handles the MyAnimeList OAuth2 PKCE flow and token lifecycle.
 class AuthRepository {
-  AuthRepository({required Client httpClient, required TokenStore tokenStore})
-      : _httpClient = httpClient,
-        _tokenStore = tokenStore,
-        _codeVerifier = CodeGenerator.genCodeVerifier();
+  AuthRepository({required this._httpClient, required this._tokenStore})
+      : _codeVerifier = CodeGenerator.genCodeVerifier();
 
   static final Uri _authorizeEndpoint =
       Uri.parse("https://myanimelist.net/v1/oauth2/authorize");

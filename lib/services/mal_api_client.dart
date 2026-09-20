@@ -9,10 +9,9 @@ import 'package:miru/services/api_exception.dart';
 /// responses into [ApiException]s.
 class MalApiClient {
   MalApiClient({
-    required http.Client httpClient,
-    required String? Function() accessTokenProvider,
-  })  : _httpClient = httpClient,
-        _accessTokenProvider = accessTokenProvider;
+    required this._httpClient,
+    required this._accessTokenProvider,
+  });
 
   static const String _host = "api.myanimelist.net";
 

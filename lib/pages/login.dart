@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:miru/services/global_controller.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key, required this.onSignedIn}) : super(key: key);
+  const Login({super.key, required this.onSignedIn});
 
   /// Called once the user successfully authenticates.
   final Future<void> Function() onSignedIn;
 
   @override
-  _LoginState createState() => _LoginState();
+  State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {

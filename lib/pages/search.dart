@@ -5,10 +5,10 @@ import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
 
 class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+  const Search({super.key});
 
   @override
-  _SearchState createState() => _SearchState();
+  State<Search> createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoadingPopup extends StatelessWidget {
-  const LoadingPopup({Key? key}) : super(key: key);
+  const LoadingPopup({super.key});
 
   @override
   Widget build(BuildContext context) {

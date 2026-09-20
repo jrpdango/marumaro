@@ -6,7 +6,7 @@ import 'package:miru/services/mal_api_client.dart';
 
 /// Typed access to the MAL API endpoints used by the app.
 class MalRepository {
-  MalRepository({required MalApiClient api}) : _api = api;
+  MalRepository({required this._api});
 
   static const int _pageSize = 100;
   static const String _listFields =

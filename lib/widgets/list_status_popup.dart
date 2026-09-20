@@ -6,11 +6,11 @@ class ListStatusPopup extends StatefulWidget {
   final Function closeOverlayCallback;
 
   const ListStatusPopup(
-      {required this.callback,
+      {super.key, required this.callback,
       required this.stringChoice,
       required this.closeOverlayCallback});
   @override
-  _ListStatusPopupState createState() => _ListStatusPopupState();
+  State<ListStatusPopup> createState() => _ListStatusPopupState();
 }
 
 class _ListStatusPopupState extends State<ListStatusPopup> {
@@ -50,7 +50,7 @@ class _ListStatusPopupState extends State<ListStatusPopup> {
         color: Colors.grey[850],
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: this.buildStatusList(),
+          children: buildStatusList(),
         ),
       ),
     );

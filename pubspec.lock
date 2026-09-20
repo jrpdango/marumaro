@@ -158,14 +158,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.2"
-  flutter_spinkit:
-    dependency: "direct main"
-    description:
-      name: flutter_spinkit
-      sha256: "77850df57c00dc218bfe96071d576a8babec24cf58b2ed121c83cca4a2fdce7f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.2.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -216,14 +208,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
-  infinite_carousel:
-    dependency: "direct main"
-    description:
-      name: infinite_carousel
-      sha256: "572967b028f4803e5f4be9adee5760b6c4834eb6912b0f2292f2d93a51912ba0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   jni:
     dependency: transitive
     description:

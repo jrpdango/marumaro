@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const BackAppBar({Key? key}) : super(key: key);
+  const BackAppBar({super.key});
 
   @override
   Size get preferredSize => Size.fromHeight(72.0);

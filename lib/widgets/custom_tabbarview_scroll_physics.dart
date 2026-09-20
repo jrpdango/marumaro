@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class CustomTabBarViewScrollPhysics extends ScrollPhysics {
-  const CustomTabBarViewScrollPhysics({ScrollPhysics? parent})
-      : super(parent: parent);
+  const CustomTabBarViewScrollPhysics({super.parent});
 
   @override
   CustomTabBarViewScrollPhysics applyTo(ScrollPhysics? ancestor) {

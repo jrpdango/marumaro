@@ -8,7 +8,7 @@ void main() {
 }
 
 class MiruApp extends StatelessWidget {
-  const MiruApp({Key? key, required this.controller}) : super(key: key);
+  const MiruApp({super.key, required this.controller});
 
   final GlobalController controller;
 

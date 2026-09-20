@@ -1,98 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:infinite_carousel/infinite_carousel.dart';
 
 class ScorePopup extends StatefulWidget {
+  const ScorePopup({
+    super.key,
+    required this.closeOverlayCallback,
+    required this.callback,
+    required this.scoreChoice,
+    required this.initialScore,
+  });
+
   final Function closeOverlayCallback;
   final Function callback;
   final Function scoreChoice;
   final int initialScore;
 
-  const ScorePopup(
-      {required this.closeOverlayCallback,
-      required this.callback,
-      required this.scoreChoice,
-      required this.initialScore});
   @override
-  _ScorePopupState createState() => _ScorePopupState();
+  State<ScorePopup> createState() => _ScorePopupState();
 }
 
 class _ScorePopupState extends State<ScorePopup> {
-  List<Column> buildScores() {
-    List<Column> scoreList = [];
-
-    for (int i = 0; i < 10; i++) {
-      scoreList.add(
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              i.toString(),
-              style: TextStyle(
-                fontSize: 30,
-              ),
-            ),
-            Text(
-              "Nice",
-              style: TextStyle(fontSize: 40),
-            ),
-          ],
-        ),
-      );
-    }
-    return scoreList;
-  }
+  late int _currentScore = widget.initialScore;
+  late final FixedExtentScrollController _controller =
+      FixedExtentScrollController(initialItem: widget.initialScore);
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _controller =
-        InfiniteScrollController(initialItem: widget.initialScore);
-    Size size = MediaQuery.of(context).size;
-    int currentScore = widget.initialScore;
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           Container(
-            height: size.height / 6,
-            width: size.width / 1.3,
+            height: 180,
+            width: 120,
             color: Colors.grey[850],
-            child: InfiniteCarousel.builder(
+            child: ListWheelScrollView.useDelegate(
               controller: _controller,
-              loop: false,
-              velocityFactor: 0.4,
-              itemCount: 11,
-              itemExtent: size.width / 1.5,
-              onIndexChanged: (index) {
-                currentScore = index;
-              },
-              itemBuilder: (context, itemIndex, realIndex) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      itemIndex.toString(),
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
-                    ),
-                    Text(
-                      "Nice",
-                      style: TextStyle(fontSize: 40),
-                    ),
-                  ],
-                );
-              },
+              itemExtent: 40,
+              physics: const FixedExtentScrollPhysics(),
+              onSelectedItemChanged: (index) => _currentScore = index,
+              childDelegate: ListWheelChildBuilderDelegate(
+                childCount: 11,
+                builder: (context, index) => Center(
+                  child: Text(
+                    "$index",
+                    style: const TextStyle(fontSize: 24, color: Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
           TextButton(
             onPressed: () {
-              if (widget.initialScore != currentScore) widget.callback(true);
-              widget.scoreChoice(currentScore.toString());
+              if (widget.initialScore != _currentScore) widget.callback(true);
+              widget.scoreChoice(_currentScore.toString());
               widget.closeOverlayCallback();
             },
-            child: Text("Done"),
-          )
+            child: const Text("Done"),
+          ),
         ],
       ),
     );

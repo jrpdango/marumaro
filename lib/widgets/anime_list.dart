@@ -6,10 +6,10 @@ class AnimeList extends StatelessWidget {
   final TabController tabController;
   final List<ListContainer> tabContents;
   const AnimeList({
-    Key? key,
+    super.key,
     required this.tabContents,
     required this.tabController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

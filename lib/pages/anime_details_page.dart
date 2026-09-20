@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/anime_details.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/services/global_controller.dart';
+import 'package:miru/widgets/anime_poster.dart';
 import 'package:miru/widgets/episodes_watched_popup.dart';
 import 'package:miru/widgets/list_status_popup.dart';
 import 'package:miru/widgets/loading_popup.dart';
 import 'package:miru/widgets/score_popup.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
-  const AnimeDetailsPage({Key? key, required this.anime}) : super(key: key);
+  const AnimeDetailsPage({super.key, required this.anime});
 
   final Anime anime;
 
   @override
-  _AnimeDetailsPageState createState() => _AnimeDetailsPageState();
+  State<AnimeDetailsPage> createState() => _AnimeDetailsPageState();
 }
 
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
@@ -114,24 +114,30 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   }
 
   /// Creates the rows displayed for [details].
-  List<Widget> _buildInfoList(AnimeDetails details, Size size) {
+  List<Widget> _buildInfoList(AnimeDetails details) {
     return details.displayRows.map((MapEntry<String, String> row) {
       return SizedBox(
         height: 20.0,
-        width: size.width - 100,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Text>[
-            Text(
-              row.key,
-              style: const TextStyle(color: Colors.white, fontSize: 10.0),
-            ),
-            Text(
-              row.value,
-              style: const TextStyle(color: Colors.white, fontSize: 10.0),
-              overflow: TextOverflow.clip,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  row.key,
+                  style: const TextStyle(color: Colors.white, fontSize: 10.0),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  row.value,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(color: Colors.white, fontSize: 10.0),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }).toList();
@@ -139,7 +145,6 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -155,23 +160,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: FadeInImage.assetNetwork(
-                  fit: BoxFit.cover,
-                  height: 90,
-                  width: 65,
-                  placeholderCacheHeight: 90,
-                  placeholderCacheWidth: 65,
-                  placeholder: "assets/404img.png",
-                  image: _anime.picture.toString(),
-                  imageErrorBuilder: (context, error, stackTrace) => SizedBox(
-                    height: 90,
-                    width: 65,
-                    child: Image.asset("assets/404img.png"),
-                  ),
-                ),
+                child: AnimePoster(picture: _anime.picture),
               ),
-              SizedBox(
-                width: size.width - 85,
+              Expanded(
                 child: Column(
                   children: [
                     Text(
@@ -268,10 +259,15 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
                   return const Text("Error loading data. Please try again later.");
                 }
                 if (!snapshot.hasData) {
-                  return const SpinKitPulse(color: Colors.amber);
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(color: Colors.amber),
+                    ),
+                  );
                 }
                 return Column(
-                  children: _buildInfoList(snapshot.data!, size),
+                  children: _buildInfoList(snapshot.data!),
                 );
               },
             ),

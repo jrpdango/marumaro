@@ -1,109 +1,77 @@
 import 'package:flutter/material.dart';
 
-class ShowDetails extends StatefulWidget {
+/// The title, airing status, progress, and score shown on a list card.
+class ShowDetails extends StatelessWidget {
+  const ShowDetails({
+    super.key,
+    required this.title,
+    required this.progress,
+    required this.score,
+    required this.airingStatus,
+  });
+
   final String title;
   final String progress;
   final String score;
   final String airingStatus;
 
-  const ShowDetails(
-      {Key? key,
-      required this.title,
-      required this.progress,
-      required this.score,
-      required this.airingStatus})
-      : super(key: key);
-
-  @override
-  _ShowDetailsState createState() => _ShowDetailsState();
-}
-
-class _ShowDetailsState extends State<ShowDetails> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  String conciseTitle(String fullTitle) {
+  String _conciseTitle(String fullTitle) {
     if (fullTitle.length >= 24) {
-      return fullTitle.substring(0, 24) + "...";
+      return "${fullTitle.substring(0, 24)}...";
     }
     return fullTitle;
   }
 
-  String cleanStatus(String rawStatus) {
-    if (rawStatus == "finished_airing") {
-      return "Finished Airing";
-    } else if (rawStatus == "currently_airing") {
-      return "Currently Airing";
-    }
-    return rawStatus;
-  }
-
-  Widget build(BuildContext context) => Container(
-        width: 267.0,
-        height: 90.0,
-        // color: Colors.red,
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 90.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Expanded(
-              child: Row(
-                children: [
-                  Text(
-                    "  ${conciseTitle(widget.title)}",
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                  ),
-                ],
-              ),
+            Text(
+              _conciseTitle(title),
+              style: const TextStyle(color: Colors.white, fontSize: 20.0),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            Container(
-              padding: EdgeInsets.only(top: 25.0),
-              child: Row(
-                children: [
-                  SizedBox(height: 5.0),
-                  Text("   Show Status: ${cleanStatus(widget.airingStatus)}",
-                      style: TextStyle(color: Colors.white, fontSize: 13.0)),
-                ],
-              ),
+            Text(
+              "Show Status: $airingStatus",
+              style: const TextStyle(color: Colors.white, fontSize: 13.0),
             ),
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    "   Progress: ${widget.progress}",
-                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Progress: $progress",
+                    style: const TextStyle(color: Colors.white, fontSize: 13.0),
                   ),
-                  Expanded(
+                ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6.0, vertical: 2.0),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(""),
-                      ],
-                    ),
-                  ),
-                  Card(
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 6.0,
-                        ),
                         Text(
-                          "${widget.score}",
-                          style:
-                              TextStyle(color: Colors.black87, fontSize: 13.0),
+                          score,
+                          style: const TextStyle(
+                              color: Colors.black87, fontSize: 13.0),
                         ),
-                        Icon(Icons.star, size: 13.0),
-                        SizedBox(
-                          width: 5.0,
-                        )
+                        const Icon(Icons.star, size: 13.0),
                       ],
                     ),
                   ),
-                ],
-              ),
-            )
+                ),
+              ],
+            ),
           ],
         ),
-      );
+      ),
+    );
+  }
 }

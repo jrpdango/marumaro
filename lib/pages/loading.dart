@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:miru/pages/home.dart';
 import 'package:miru/pages/login.dart';
 import 'package:miru/services/global_controller.dart';
 
 class Loading extends StatefulWidget {
-  const Loading({Key? key}) : super(key: key);
+  const Loading({super.key});
 
   @override
-  _LoadingState createState() => _LoadingState();
+  State<Loading> createState() => _LoadingState();
 }
 
 class _LoadingState extends State<Loading> {
@@ -52,10 +51,8 @@ class _LoadingState extends State<Loading> {
     }
     return Scaffold(
       backgroundColor: Colors.black87,
-      body: Center(
-        child: SpinKitThreeBounce(
-          color: Colors.white60,
-        ),
+      body: const Center(
+        child: CircularProgressIndicator(color: Colors.white60),
       ),
     );
   }
