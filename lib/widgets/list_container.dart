@@ -1,4 +1,3 @@
-// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
@@ -30,7 +29,6 @@ class _ListContainerState extends State<ListContainer> {
 
   Future<void> refreshList(_limit) async {
     Map newMap = Map();
-    // bool hasConnection = await DataConnectionChecker().hasConnection;
     Map result = await _client.getAnimeList(
       AnimeListRequest(limit: _limit),
     );
@@ -50,7 +48,6 @@ class _ListContainerState extends State<ListContainer> {
     }
     setState(() {
       _animeList = result[widget.listType];
-      // this.netConnected = hasConnection;
     });
   }
 

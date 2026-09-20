@@ -10,7 +10,6 @@ import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/more.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/schedule.dart';
-// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
