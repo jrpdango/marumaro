@@ -53,7 +53,7 @@ class ShowDetails extends StatelessWidget {
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 6.0, vertical: 2.0),
+                        horizontal: 6.0, vertical: 1.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
