@@ -256,6 +256,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       body: _buildCurrentPage(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _tabIndex,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white60,
         onTap: (index) {
           setState(() {
             _tabIndex = index;
