@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:get/get.dart';
 
@@ -12,48 +10,49 @@ class MALWebView extends StatefulWidget {
 }
 
 class _MALWebViewState extends State<MALWebView> {
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  late final WebViewController _controller;
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
+    final Map? content = Get.arguments;
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            // User is redirected here
+            if (url.startsWith("http://localhost/oauth")) {
+              setState(() {
+                loading = true;
+              });
+              Get.back(
+                result: {
+                  "accessCode": Uri.parse(url),
+                },
+              );
+            }
+          },
+        ),
+      );
+    final String? url = content?["url"]?.toString();
+    if (url != null && url.isNotEmpty) {
+      _controller.loadRequest(Uri.parse(url));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map? content = Get.arguments;
     return Scaffold(
-      body: Builder(
-        builder: (BuildContext context) => Stack(
-          children: <Widget>[
-            WebView(
-              javascriptMode: JavascriptMode.unrestricted,
-              initialUrl: content?["url"].toString(),
-              onWebViewCreated: (WebViewController webViewController) {
-                _controller.complete(webViewController);
-              },
-              onPageStarted: (String url) {
-                // User is redirected here
-                if (url.startsWith("http://localhost/oauth")) {
-                  setState(() {
-                    loading = true;
-                  });
-                  Get.back(
-                    result: {
-                      "accessCode": Uri.parse(url),
-                    },
-                  );
-                }
-              },
+      body: Stack(
+        children: <Widget>[
+          WebViewWidget(controller: _controller),
+          if (loading)
+            Container(
+              color: Colors.black87,
             ),
-            if (loading)
-              Container(
-                color: Colors.black87,
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
