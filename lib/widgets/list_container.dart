@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/constants.dart' as Constants show limitOfListItems;
 import 'package:miru/models/anime.dart';
-import 'package:miru/models/mal_client.dart';
+import 'package:miru/models/enums.dart';
 import 'package:miru/pages/anime_details_page.dart';
-import 'package:miru/services/anime_list_request.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/show_details.dart';
 
@@ -11,11 +9,11 @@ class ListContainer extends StatefulWidget {
   /// An explicit list to display. When null, the controller's list for
   /// [listType] is shown instead.
   final List<Anime>? animeList;
-  final String listType;
+  final AnimeListStatus? listType;
 
   const ListContainer({
     Key? key,
-    required this.listType,
+    this.listType,
     this.animeList,
   }) : super(key: key);
 
@@ -25,40 +23,24 @@ class ListContainer extends StatefulWidget {
 
 class _ListContainerState extends State<ListContainer> {
   GlobalController? _controller;
-  MALClient? _client;
 
-  List<Anime> get _animeList =>
-      widget.animeList ?? _controller!.lists[widget.listType] ?? const <Anime>[];
+  List<Anime> get _animeList {
+    if (widget.animeList != null) return widget.animeList!;
+    final AnimeListStatus? status = widget.listType;
+    if (status == null) return const <Anime>[];
+    return _controller!.lists[status] ?? const <Anime>[];
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller ??= GlobalControllerScope.of(context);
-    _client ??= _controller!.client;
   }
 
-  Future<void> _refreshList(int limit) async {
+  Future<void> _refreshList() async {
     // Explicit lists (e.g. search results) are not backed by the controller.
     if (widget.animeList != null) return;
-
-    Map<String, dynamic> result =
-        await _client!.getAnimeList(AnimeListRequest(limit: limit));
-    Map<String, dynamic> newMap = Map();
-    while (result["paging"]["next"] != null) {
-      newMap = await _client!.getAnimeList(
-        AnimeListRequest(
-          limit: limit,
-          url: Uri.parse(result["paging"]["next"]),
-        ),
-      );
-      for (String item in newMap.keys) {
-        if (item != "paging" && item != "status_code") {
-          result[item].addAll(newMap[item]);
-        }
-      }
-      result["paging"]["next"] = newMap["paging"]["next"];
-    }
-    _controller!.setAnimeList(result);
+    await _controller!.loadAnimeList();
   }
 
   @override
@@ -69,21 +51,19 @@ class _ListContainerState extends State<ListContainer> {
       builder: (BuildContext context, Widget? child) {
         final List<Anime> animeList = _animeList;
         return RefreshIndicator(
-          onRefresh: () async {
-            await _refreshList(Constants.limitOfListItems);
-          },
+          onRefresh: _refreshList,
           child: SizedBox(
             width: size.width,
             child: ListView.builder(
-              key: PageStorageKey(widget.listType),
+              key: PageStorageKey(widget.listType?.apiValue ?? "search"),
               physics: const AlwaysScrollableScrollPhysics(),
               itemExtent: 106.0,
               itemCount: animeList.length,
               itemBuilder: (context, index) {
                 final Anime anime = animeList[index];
                 return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 10.0),
                   child: SizedBox(
                     width: size.width,
                     child: Card(
@@ -127,7 +107,7 @@ class _ListContainerState extends State<ListContainer> {
                                 progress:
                                     "${anime.userEpisodesWatched}/${anime.totalEpisodes}",
                                 score: "${anime.userScore}",
-                                airingStatus: anime.showStatus,
+                                airingStatus: anime.showStatus?.label ?? "",
                               ),
                             ),
                           ],

@@ -1,5 +1,3 @@
-const int limitOfListItems = 300;
-
 /// MyAnimeList OAuth application credentials.
 ///
 /// The redirect URI must exactly match the value registered for the

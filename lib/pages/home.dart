@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:miru/models/mal_client.dart';
+import 'package:miru/models/enums.dart';
+import 'package:miru/models/user.dart';
 import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search.dart';
 import 'package:miru/services/global_controller.dart';
-import 'package:miru/services/user_data_request.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
@@ -22,25 +21,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  static const List<String> _listTypes = [
-    "watching",
-    "plan_to_watch",
-    "completed",
-    "on_hold",
-    "dropped",
-  ];
-  static const List<String> _tabNames = [
-    "Currently Watching",
-    "Plan To Watch",
-    "Completed",
-    "On Hold",
-    "Dropped",
-  ];
-
   GlobalController? _controller;
-  MALClient? _client;
   late final TabController _tabController;
-  Future<NetworkImage?>? _userImageFuture;
 
   int _tabIndex = 0;
   bool _hasTabBar = true;
@@ -50,24 +32,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    _tabController = TabController(vsync: this, length: _listTypes.length);
+    _tabController =
+        TabController(vsync: this, length: AnimeListStatus.values.length);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller ??= GlobalControllerScope.of(context);
-    _client ??= _controller!.client;
-    _userImageFuture ??= _getUserImage();
   }
 
-  /// Creates tabs for TabBar.
+  /// Creates tabs for the list statuses.
   List<Widget> _createTabs() {
-    return _tabNames
+    return AnimeListStatus.values
         .map(
-          (String name) => SizedBox(
+          (AnimeListStatus status) => SizedBox(
             height: 30,
-            child: Tab(child: Text(name)),
+            child: Tab(child: Text(status.label)),
           ),
         )
         .toList();
@@ -75,8 +56,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   /// Creates the list views shown by each tab.
   List<ListContainer> _createTabContents() {
-    return _listTypes
-        .map((String listType) => ListContainer(listType: listType))
+    return AnimeListStatus.values
+        .map((AnimeListStatus status) => ListContainer(listType: status))
         .toList();
   }
 
@@ -93,16 +74,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         return const Browse();
       default:
         return const More();
-    }
-  }
-
-  Future<NetworkImage?> _getUserImage() async {
-    try {
-      return NetworkImage(
-        (await _client!.getUserData(UserDataRequest(mode: 'MAL')))['picture'],
-      );
-    } catch (e) {
-      return null;
     }
   }
 
@@ -125,7 +96,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
     );
     if (confirmed != true || !mounted) return;
-    await _client!.logout();
+    await _controller!.auth.signOut();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const Loading()),
@@ -133,8 +104,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget _buildAvatar(User? user) {
+    final Uri? picture = user?.picture;
+    if (picture == null) {
+      return const SizedBox(
+        height: 55.0,
+        width: 55.0,
+        child: Icon(Icons.person, color: Colors.white),
+      );
+    }
+    return Image.network(
+      picture.toString(),
+      fit: BoxFit.cover,
+      height: 55.0,
+      width: 55.0,
+      errorBuilder: (context, error, stackTrace) => const SizedBox(
+        height: 55.0,
+        width: 55.0,
+        child: Icon(Icons.person, color: Colors.white),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final User? user = _controller!.user;
     return Scaffold(
       drawer: Drawer(
         backgroundColor: const Color.fromARGB(240, 0, 0, 0),
@@ -160,27 +154,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             horizontal: 15.0, vertical: 20.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(300.0),
-                          child: FutureBuilder<NetworkImage?>(
-                            future: _userImageFuture,
-                            builder: (
-                              BuildContext context,
-                              AsyncSnapshot<NetworkImage?> snapshot,
-                            ) {
-                              if (snapshot.hasData) {
-                                return Image(
-                                  fit: BoxFit.cover,
-                                  image: snapshot.data!,
-                                  height: 55.0,
-                                  width: 55.0,
-                                );
-                              }
-                              return SizedBox(
-                                height: 55.0,
-                                width: 55.0,
-                                child: SpinKitCircle(color: Colors.white),
-                              );
-                            },
-                          ),
+                          child: _buildAvatar(user),
                         ),
                       ),
                       Padding(
@@ -192,7 +166,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               color: Colors.white,
                             ),
                             Text(
-                              _client!.username ?? 'Loading name...',
+                              user?.name ?? 'Loading name...',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -245,7 +219,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         flexibleSpace: Image.asset(
           "assets/city.jpg",
           fit: BoxFit.cover,
-          alignment: _hasTabBar ? const Alignment(0, -0.4) : const Alignment(0, -0.5),
+          alignment:
+              _hasTabBar ? const Alignment(0, -0.4) : const Alignment(0, -0.5),
         ),
         leading: Padding(
           padding: const EdgeInsets.only(top: 20.0),

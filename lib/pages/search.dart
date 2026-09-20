@@ -57,7 +57,6 @@ class _SearchState extends State<Search> {
           ),
           Expanded(
             child: ListContainer(
-              listType: "",
               animeList: _results(),
             ),
           ),

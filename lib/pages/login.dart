@@ -17,7 +17,7 @@ class _LoginState extends State<Login> {
   Future<void> _signIn() async {
     setState(() => _busy = true);
     final bool authenticated =
-        await GlobalControllerScope.of(context).client.auth.signIn();
+        await GlobalControllerScope.of(context).auth.signIn();
     if (!mounted) return;
     if (authenticated) {
       await widget.onSignedIn();
