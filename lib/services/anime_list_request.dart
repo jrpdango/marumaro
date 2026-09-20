@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/mal_client.dart';
 import 'package:http/http.dart' as http;
@@ -39,11 +38,11 @@ class AnimeListRequest {
   ///
   Map<String, dynamic> sortMap(Map rawMap) {
     Map<String, dynamic> animeMap = Map();
-    animeMap["watching"] = <Anime>[].obs;
-    animeMap["completed"] = <Anime>[].obs;
-    animeMap["plan_to_watch"] = <Anime>[].obs;
-    animeMap["on_hold"] = <Anime>[].obs;
-    animeMap["dropped"] = <Anime>[].obs;
+    animeMap["watching"] = <Anime>[];
+    animeMap["completed"] = <Anime>[];
+    animeMap["plan_to_watch"] = <Anime>[];
+    animeMap["on_hold"] = <Anime>[];
+    animeMap["dropped"] = <Anime>[];
     for (Map element in rawMap["data"]) {
       animeMap[element["list_status"]["status"]]!.add(Anime(
         id: element["node"]["id"],

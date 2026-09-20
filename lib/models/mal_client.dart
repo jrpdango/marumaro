@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:miru/services/anime_details_request.dart';
 import 'package:miru/services/anime_list_request.dart';
@@ -13,7 +12,6 @@ class MALClient {
     httpClient: userClient,
     tokenStore: TokenStore(),
   );
-  late RxMap<String, dynamic> clientAnimeList;
   String? username;
 
   String? get accessToken => auth.accessToken;

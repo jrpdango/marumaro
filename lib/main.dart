@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miru/pages/anime_details_page.dart';
-import 'package:miru/pages/home.dart';
 import 'package:miru/pages/loading.dart';
-import 'package:miru/pages/profile.dart';
-import 'package:miru/pages/search.dart';
+import 'package:miru/services/global_controller.dart';
 
 void main() {
-  runApp(
-    GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: "/",
-      routes: {
-        '/': (context) => Loading(),
-        '/home': (context) => Home(),
-        // TODO: maybe rename this to anime_details
-        '/animeDetailsPage': (context) => AnimeDetailsPage(),
-        '/search': (context) => Search(),
-        '/profile': (context) => Profile(),
-      },
-    ),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MiruApp(controller: GlobalController()));
+}
+
+class MiruApp extends StatelessWidget {
+  const MiruApp({Key? key, required this.controller}) : super(key: key);
+
+  final GlobalController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return GlobalControllerScope(
+      controller: controller,
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Loading(),
+      ),
+    );
+  }
 }

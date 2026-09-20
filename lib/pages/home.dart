@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
+import 'package:miru/models/mal_client.dart';
+import 'package:miru/pages/loading.dart';
+import 'package:miru/pages/profile.dart';
+import 'package:miru/pages/search.dart';
+import 'package:miru/services/global_controller.dart';
 import 'package:miru/services/user_data_request.dart';
 import 'package:miru/widgets/anime_list.dart';
 import 'package:miru/widgets/browse.dart';
-import 'package:miru/widgets/more.dart';
-import 'package:miru/services/global_controller.dart';
-import 'package:miru/widgets/schedule.dart';
-import 'package:miru/models/mal_client.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
+import 'package:miru/widgets/more.dart';
+import 'package:miru/widgets/schedule.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -20,93 +22,114 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  MALClient _client = Get.find<GlobalController>().client.value;
-  Map _getArgs = Get.arguments;
-  Rx<int> _tabIndex = 0.obs;
-  late List<ListContainer> _tabContents =
-      getTabContents(_client.clientAnimeList);
-  late bool _netConnected = _getArgs["connStatus"];
-  late TabController _tabController;
-  NetworkImage? _userImage;
-
-  bool _hasTabBar = true;
-  bool _hasSearch = true;
-
-  late List<Widget> tabs = [
-    AnimeList(
-      tabController: _tabController,
-      tabContents: _tabContents,
-    ),
-    Schedule(),
-    Browse(),
-    More(),
+  static const List<String> _listTypes = [
+    "watching",
+    "plan_to_watch",
+    "completed",
+    "on_hold",
+    "dropped",
+  ];
+  static const List<String> _tabNames = [
+    "Currently Watching",
+    "Plan To Watch",
+    "Completed",
+    "On Hold",
+    "Dropped",
   ];
 
-  /// Creates tabs for TabBar.
-  ///
-  List<Widget> createTabs() {
-    List<String> tabNames = [
-      "Currently Watching",
-      "Plan To Watch",
-      "Completed",
-      "On Hold",
-      "Dropped"
-    ];
-    List<Widget> menuTabs = [];
-    for (int i = 0; i < 5; i++) {
-      menuTabs.add(
-        SizedBox(
-          height: 30,
-          child: Tab(
-            child: Text(tabNames[i]),
-          ),
-        ),
-      );
-    }
-    return menuTabs;
-  }
+  GlobalController? _controller;
+  MALClient? _client;
+  late final TabController _tabController;
+  Future<NetworkImage?>? _userImageFuture;
 
-  /// Initializes contents defined by [tabMap] for tabs in TabBar.
-  ///
-  List<ListContainer> getTabContents(Map tabMap) {
-    List<String> tabNames = [
-      "watching",
-      "plan_to_watch",
-      "completed",
-      "on_hold",
-      "dropped"
-    ];
-    List<ListContainer> tabContents = [];
-    for (String tabName in tabNames) {
-      tabContents.add(
-        ListContainer(
-          listType: tabName,
-          connStatus: _netConnected,
-        ),
-      );
-    }
-    return tabContents;
-  }
-
-  Future<NetworkImage?> getUserImage() async {
-    try {
-      _userImage = NetworkImage(
-        (await _client.getUserData(UserDataRequest(mode: 'Jikan')))['data']
-            ['images']['jpg']['image_url'],
-      );
-      return _userImage;
-    } catch (e) {
-      return _userImage ?? null;
-    }
-  }
+  int _tabIndex = 0;
+  bool _hasTabBar = true;
+  bool _hasSearch = true;
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    _tabController = TabController(
-      vsync: this,
-      length: 5,
+    _tabController = TabController(vsync: this, length: _listTypes.length);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller ??= GlobalControllerScope.of(context);
+    _client ??= _controller!.client;
+    _userImageFuture ??= _getUserImage();
+  }
+
+  /// Creates tabs for TabBar.
+  List<Widget> _createTabs() {
+    return _tabNames
+        .map(
+          (String name) => SizedBox(
+            height: 30,
+            child: Tab(child: Text(name)),
+          ),
+        )
+        .toList();
+  }
+
+  /// Creates the list views shown by each tab.
+  List<ListContainer> _createTabContents() {
+    return _listTypes
+        .map((String listType) => ListContainer(listType: listType))
+        .toList();
+  }
+
+  Widget _buildCurrentPage() {
+    switch (_tabIndex) {
+      case 0:
+        return AnimeList(
+          tabController: _tabController,
+          tabContents: _createTabContents(),
+        );
+      case 1:
+        return const Schedule();
+      case 2:
+        return const Browse();
+      default:
+        return const More();
+    }
+  }
+
+  Future<NetworkImage?> _getUserImage() async {
+    try {
+      return NetworkImage(
+        (await _client!.getUserData(UserDataRequest(mode: 'MAL')))['picture'],
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> _confirmLogout() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: const Text('Are you sure you want to logout?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('No'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    await _client!.logout();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const Loading()),
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -114,19 +137,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
-        backgroundColor: Color.fromARGB(240, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(240, 0, 0, 0),
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(7.0),
                 ),
                 color: Colors.grey[900],
                 child: InkWell(
-                  borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                  onTap: () => Get.toNamed('/profile'),
+                  borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const Profile()),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
@@ -135,27 +160,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             horizontal: 15.0, vertical: 20.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(300.0),
-                          child: FutureBuilder(
-                            future: getUserImage(),
+                          child: FutureBuilder<NetworkImage?>(
+                            future: _userImageFuture,
                             builder: (
                               BuildContext context,
-                              AsyncSnapshot<dynamic> snapshot,
+                              AsyncSnapshot<NetworkImage?> snapshot,
                             ) {
                               if (snapshot.hasData) {
                                 return Image(
                                   fit: BoxFit.cover,
-                                  image: snapshot.data,
+                                  image: snapshot.data!,
                                   height: 55.0,
                                   width: 55.0,
                                 );
-                              } else
-                                return Container(
-                                  height: 55.0,
-                                  width: 55.0,
-                                  child: SpinKitCircle(
-                                    color: Colors.white,
-                                  ),
-                                );
+                              }
+                              return SizedBox(
+                                height: 55.0,
+                                width: 55.0,
+                                child: SpinKitCircle(color: Colors.white),
+                              );
                             },
                           ),
                         ),
@@ -164,13 +187,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         padding: const EdgeInsets.only(left: 20.0),
                         child: Column(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.portrait,
                               color: Colors.white,
                             ),
                             Text(
-                              _client.username ?? 'Loading name...',
-                              style: TextStyle(
+                              _client!.username ?? 'Loading name...',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                               ),
@@ -190,35 +213,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextButton.icon(
-                    onPressed: () {
-                      Get.dialog(
-                        AlertDialog(
-                          title: Text('Are you sure you want to logout?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () async {
-                                await _client.logout();
-                                Get.offNamed("/");
-                              },
-                              child: Text('Yes'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              child: Text('No'),
-                            ),
-                          ],
-                        ),
-                        barrierColor: Color.fromRGBO(38, 38, 38, 0.8),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.logout_rounded,
-                    ),
-                    label: Text("Logout"),
+                    onPressed: _confirmLogout,
+                    icon: const Icon(Icons.logout_rounded),
+                    label: const Text("Logout"),
                     style: TextButton.styleFrom(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),
@@ -226,7 +225,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -239,29 +238,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 tabBar: TabBar(
                   controller: _tabController,
                   isScrollable: true,
-                  tabs: createTabs(),
+                  tabs: _createTabs(),
                 ),
               )
             : null,
-        flexibleSpace: _hasTabBar
-            ? Image.asset(
-                "assets/city.jpg",
-                fit: BoxFit.cover,
-                alignment: Alignment(0, -0.4),
-              )
-            : Image.asset(
-                "assets/city.jpg",
-                fit: BoxFit.cover,
-                alignment: Alignment(0, -0.5),
-              ),
+        flexibleSpace: Image.asset(
+          "assets/city.jpg",
+          fit: BoxFit.cover,
+          alignment: _hasTabBar ? const Alignment(0, -0.4) : const Alignment(0, -0.5),
+        ),
         leading: Padding(
           padding: const EdgeInsets.only(top: 20.0),
           child: Builder(
             builder: (context) {
               return IconButton(
-                icon: Icon(
-                  Icons.menu,
-                ),
+                icon: const Icon(Icons.menu),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -274,36 +265,28 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 Padding(
                   padding: const EdgeInsets.only(top: 22.0),
                   child: IconButton(
-                    icon: Icon(
-                      Icons.search,
+                    icon: const Icon(Icons.search),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const Search()),
                     ),
-                    onPressed: () {
-                      Get.toNamed("/search");
-                    },
                   ),
                 ),
               ]
             : <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 22.0),
+                const Padding(
+                  padding: EdgeInsets.only(top: 22.0),
                 ),
               ],
       ),
-      body: tabs[_tabIndex.value],
+      body: _buildCurrentPage(),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _tabIndex,
         onTap: (index) {
-          _tabIndex.value = index;
-          if (index != 0) {
-            setState(() {
-              _hasTabBar = false;
-              _hasSearch = false;
-            });
-          } else {
-            setState(() {
-              _hasTabBar = true;
-              _hasSearch = true;
-            });
-          }
+          setState(() {
+            _tabIndex = index;
+            _hasTabBar = index == 0;
+            _hasSearch = index == 0;
+          });
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

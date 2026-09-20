@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BackAppBar({Key? key}) : super(key: key);
@@ -18,14 +17,10 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       leading: Padding(
         padding: const EdgeInsets.only(top: 10.0),
-        child: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Get.back();
-              },
-            );
+        child: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
           },
         ),
       ),

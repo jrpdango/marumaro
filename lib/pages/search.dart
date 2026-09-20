@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/back_appbar.dart';
@@ -13,53 +12,44 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  GlobalController _controller = Get.find<GlobalController>();
-  RxList<Anime> results = <Anime>[].obs;
+  GlobalController? _controller;
+  String _query = "";
 
-  void search(String query) {
-    results.clear();
-    if (query == "") {
-      results.addAll(_controller.globalAnimeList);
-      return;
-    }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller ??= GlobalControllerScope.of(context);
+  }
 
-    _controller.globalAnimeList.forEach(
-      (element) {
-        if (element.title.toLowerCase().contains(query)) {
-          results.add(element);
-        }
-      },
-    );
+  List<Anime> _results() {
+    final List<Anime> all = _controller!.globalAnimeList;
+    if (_query.isEmpty) return all;
+    final String query = _query.toLowerCase();
+    return all
+        .where((Anime anime) => anime.title.toLowerCase().contains(query))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    results.addAll(_controller.globalAnimeList);
-
     return Scaffold(
-      backgroundColor: Color.fromARGB(240, 0, 0, 0),
+      backgroundColor: const Color.fromARGB(240, 0, 0, 0),
       appBar: BackAppBar(),
       body: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
+            padding: const EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
             child: TextField(
-              onChanged: (q) {
-                search(q);
+              onChanged: (query) {
+                setState(() => _query = query);
               },
-              style: TextStyle(
-                color: Colors.white70,
-              ),
-              decoration: InputDecoration(
+              style: const TextStyle(color: Colors.white70),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
-                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
                 hintText: "Search your anime list...",
-                hintStyle: TextStyle(
-                  color: Colors.white,
-                ),
+                hintStyle: TextStyle(color: Colors.white),
                 fillColor: Colors.blueGrey,
                 filled: true,
               ),
@@ -68,7 +58,7 @@ class _SearchState extends State<Search> {
           Expanded(
             child: ListContainer(
               listType: "",
-              animeList: results,
+              animeList: _results(),
             ),
           ),
         ],

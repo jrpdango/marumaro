@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:miru/services/global_controller.dart';
 
 class Login extends StatefulWidget {
@@ -18,7 +17,7 @@ class _LoginState extends State<Login> {
   Future<void> _signIn() async {
     setState(() => _busy = true);
     final bool authenticated =
-        await Get.find<GlobalController>().client.value.auth.signIn();
+        await GlobalControllerScope.of(context).client.auth.signIn();
     if (!mounted) return;
     if (authenticated) {
       await widget.onSignedIn();
