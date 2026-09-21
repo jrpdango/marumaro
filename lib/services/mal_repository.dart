@@ -3,6 +3,7 @@ import 'package:miru/models/anime_details.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/manga.dart';
 import 'package:miru/models/manga_details.dart';
+import 'package:miru/models/page.dart';
 import 'package:miru/models/user.dart';
 import 'package:miru/services/mal_api_client.dart';
 
@@ -10,19 +11,15 @@ import 'package:miru/services/mal_api_client.dart';
 class MalRepository {
   MalRepository({required this._api});
 
-  static const int _pageSize = 100;
-  static const String _listFields =
-      "list_status,num_episodes,mean,status,rank,popularity,source,studios,"
-      "rating,average_episode_duration,alternative_titles,synopsis,"
-      "start_date,end_date,genres";
+  static const int pageSize = 1000;
+  static const String _listFields = "list_status,num_episodes,status";
   static const String _detailsFields =
       "title,main_picture,alternative_titles,start_date,end_date,synopsis,"
       "mean,rank,popularity,num_list_users,num_scoring_users,media_type,status,"
       "genres,my_list_status,num_episodes,start_season,source,"
       "average_episode_duration,rating";
   static const String _mangaListFields =
-      "list_status,num_chapters,num_volumes,mean,status,rank,popularity,source,"
-      "alternative_titles,synopsis,start_date,end_date,genres";
+      "list_status,num_chapters,num_volumes,status";
   static const String _mangaDetailsFields =
       "title,main_picture,alternative_titles,start_date,end_date,synopsis,"
       "mean,rank,popularity,num_list_users,num_scoring_users,media_type,status,"
@@ -39,7 +36,7 @@ class MalRepository {
         "v2/users/@me/animelist",
         query: <String, String>{
           "fields": _listFields,
-          "limit": "$_pageSize",
+          "limit": "$pageSize",
           "offset": "$offset",
         },
       );
@@ -56,6 +53,36 @@ class MalRepository {
       offset += data.length;
     }
     return anime;
+  }
+
+  /// Fetches one page of the user's anime list, optionally for a single status.
+  Future<PageResult<Anime>> fetchAnimeListPage({
+    required int offset,
+    int limit = pageSize,
+    AnimeListStatus? status,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/users/@me/animelist",
+      query: <String, String>{
+        "fields": _listFields,
+        "limit": "$limit",
+        "offset": "$offset",
+        if (status != null) "status": status.apiValue,
+      },
+    );
+    final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
+    final List<Anime> items = data
+        .map(
+          (dynamic entry) =>
+              Anime.fromListStatusJson((entry as Map).cast<String, dynamic>()),
+        )
+        .toList(growable: false);
+    final Map<String, dynamic>? paging =
+        (page["paging"] as Map?)?.cast<String, dynamic>();
+    return PageResult<Anime>(
+      items: items,
+      hasMore: items.isNotEmpty && paging != null && paging["next"] != null,
+    );
   }
 
   Future<AnimeDetails> fetchAnimeDetails(int animeId) async {
@@ -95,7 +122,7 @@ class MalRepository {
         "v2/users/@me/mangalist",
         query: <String, String>{
           "fields": _mangaListFields,
-          "limit": "$_pageSize",
+          "limit": "$pageSize",
           "offset": "$offset",
         },
       );
@@ -112,6 +139,36 @@ class MalRepository {
       offset += data.length;
     }
     return manga;
+  }
+
+  /// Fetches one page of the user's manga list, optionally for a single status.
+  Future<PageResult<Manga>> fetchMangaListPage({
+    required int offset,
+    int limit = pageSize,
+    MangaListStatus? status,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/users/@me/mangalist",
+      query: <String, String>{
+        "fields": _mangaListFields,
+        "limit": "$limit",
+        "offset": "$offset",
+        if (status != null) "status": status.apiValue,
+      },
+    );
+    final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
+    final List<Manga> items = data
+        .map(
+          (dynamic entry) =>
+              Manga.fromListStatusJson((entry as Map).cast<String, dynamic>()),
+        )
+        .toList(growable: false);
+    final Map<String, dynamic>? paging =
+        (page["paging"] as Map?)?.cast<String, dynamic>();
+    return PageResult<Manga>(
+      items: items,
+      hasMore: items.isNotEmpty && paging != null && paging["next"] != null,
+    );
   }
 
   Future<MangaDetails> fetchMangaDetails(int mangaId) async {
