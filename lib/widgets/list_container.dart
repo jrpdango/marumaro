@@ -45,7 +45,7 @@ class ListContainer extends StatelessWidget {
           pageStorageKey: listType?.apiValue ?? pageStorageKey,
           pageSize: 30,
           itemExtent: 106.0,
-          resetKey: resetKey,
+          resetKey: resetKey ?? (fromStatus ? controller.listSort : null),
           reloadListenable: fromStatus ? controller : null,
           onRefresh: fromStatus ? controller.syncAnime : null,
           emptyMessage: emptyMessage ??

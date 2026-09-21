@@ -11,6 +11,7 @@ class Anime {
     required this.userStatus,
     required this.userEpisodesWatched,
     required this.userScore,
+    required this.updatedAt,
   });
 
   final int id;
@@ -21,6 +22,7 @@ class Anime {
   final AnimeListStatus userStatus;
   final int userEpisodesWatched;
   final int userScore;
+  final DateTime updatedAt;
 
   factory Anime.fromListStatusJson(Map<String, dynamic> json) {
     final Map<String, dynamic> node =
@@ -39,6 +41,10 @@ class Anime {
       userEpisodesWatched:
           (listStatus["num_episodes_watched"] as int?) ?? 0,
       userScore: (listStatus["score"] as int?) ?? 0,
+      updatedAt: DateTime.tryParse(
+            (listStatus["updated_at"] as String?) ?? "",
+          ) ??
+          DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 
@@ -46,6 +52,7 @@ class Anime {
     AnimeListStatus? userStatus,
     int? userEpisodesWatched,
     int? userScore,
+    DateTime? updatedAt,
   }) {
     return Anime(
       id: id,
@@ -56,6 +63,7 @@ class Anime {
       userStatus: userStatus ?? this.userStatus,
       userEpisodesWatched: userEpisodesWatched ?? this.userEpisodesWatched,
       userScore: userScore ?? this.userScore,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

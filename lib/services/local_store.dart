@@ -3,14 +3,16 @@ import 'package:sqflite/sqflite.dart';
 
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/manga.dart';
 
 class LocalStore {
   LocalStore({this._factory, this.path});
 
-  static const int _schemaVersion = 1;
+  static const int _schemaVersion = 2;
   static const String _animeTable = "anime";
   static const String _mangaTable = "manga";
+  static const String _preferencesTable = "preferences";
 
   final DatabaseFactory? _factory;
   final String? path;
@@ -42,7 +44,7 @@ class LocalStore {
         user_status TEXT NOT NULL,
         user_episodes_watched INTEGER NOT NULL,
         user_score INTEGER NOT NULL,
-        sort_order INTEGER NOT NULL,
+        list_updated_at INTEGER NOT NULL,
         synced_at INTEGER NOT NULL
       )
     ''');
@@ -58,15 +60,21 @@ class LocalStore {
         user_chapters_read INTEGER NOT NULL,
         user_volumes_read INTEGER NOT NULL,
         user_score INTEGER NOT NULL,
-        sort_order INTEGER NOT NULL,
+        list_updated_at INTEGER NOT NULL,
         synced_at INTEGER NOT NULL
       )
     ''');
+    batch.execute('''
+      CREATE TABLE IF NOT EXISTS $_preferencesTable (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
     batch.execute(
-      'CREATE INDEX idx_anime_status_order ON $_animeTable(user_status, sort_order)',
+      'CREATE INDEX idx_anime_status_updated ON $_animeTable(user_status, list_updated_at)',
     );
     batch.execute(
-      'CREATE INDEX idx_manga_status_order ON $_mangaTable(user_status, sort_order)',
+      'CREATE INDEX idx_manga_status_updated ON $_mangaTable(user_status, list_updated_at)',
     );
     await batch.commit(noResult: true);
   }
@@ -90,10 +98,10 @@ class LocalStore {
         whereArgs: <String>[status.apiValue],
       );
       final Batch batch = txn.batch();
-      for (int i = 0; i < items.length; i++) {
+      for (final Anime item in items) {
         batch.insert(
           _animeTable,
-          _animeRow(items[i], status, i, syncedAt),
+          _animeRow(item, status, syncedAt),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -114,10 +122,10 @@ class LocalStore {
         whereArgs: <String>[status.apiValue],
       );
       final Batch batch = txn.batch();
-      for (int i = 0; i < items.length; i++) {
+      for (final Manga item in items) {
         batch.insert(
           _mangaTable,
-          _mangaRow(items[i], status, i, syncedAt),
+          _mangaRow(item, status, syncedAt),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -129,13 +137,14 @@ class LocalStore {
     AnimeListStatus status, {
     required int offset,
     required int limit,
+    ListSort sort = ListSort.defaultSort,
   }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.query(
       _animeTable,
       where: 'user_status = ?',
       whereArgs: <String>[status.apiValue],
-      orderBy: 'sort_order ASC',
+      orderBy: _orderBy(sort),
       limit: limit,
       offset: offset,
     );
@@ -170,49 +179,31 @@ class LocalStore {
 
   Future<void> updateAnime(Anime anime) async {
     final Database db = await _db;
-    await db.transaction((Transaction txn) async {
-      final List<Map<String, Object?>> rows = await txn.query(
-        _animeTable,
-        columns: <String>['user_status', 'sort_order'],
-        where: 'id = ?',
-        whereArgs: <int>[anime.id],
-        limit: 1,
-      );
-      if (rows.isEmpty) return;
-      final String previousStatus = rows.first['user_status'] as String;
-      int sortOrder = rows.first['sort_order'] as int;
-      if (previousStatus != anime.userStatus.apiValue) {
-        sortOrder = await _nextTopSortOrder(
-          txn,
-          _animeTable,
-          anime.userStatus.apiValue,
-        );
-      }
-      await txn.update(
-        _animeTable,
-        <String, Object?>{
-          'user_status': anime.userStatus.apiValue,
-          'user_episodes_watched': anime.userEpisodesWatched,
-          'user_score': anime.userScore,
-          'sort_order': sortOrder,
-        },
-        where: 'id = ?',
-        whereArgs: <int>[anime.id],
-      );
-    });
+    await db.update(
+      _animeTable,
+      <String, Object?>{
+        'user_status': anime.userStatus.apiValue,
+        'user_episodes_watched': anime.userEpisodesWatched,
+        'user_score': anime.userScore,
+        'list_updated_at': DateTime.now().millisecondsSinceEpoch,
+      },
+      where: 'id = ?',
+      whereArgs: <int>[anime.id],
+    );
   }
 
   Future<List<Manga>> pageManga(
     MangaListStatus status, {
     required int offset,
     required int limit,
+    ListSort sort = ListSort.defaultSort,
   }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.query(
       _mangaTable,
       where: 'user_status = ?',
       whereArgs: <String>[status.apiValue],
-      orderBy: 'sort_order ASC',
+      orderBy: _orderBy(sort),
       limit: limit,
       offset: offset,
     );
@@ -247,51 +238,51 @@ class LocalStore {
 
   Future<void> updateManga(Manga manga) async {
     final Database db = await _db;
-    await db.transaction((Transaction txn) async {
-      final List<Map<String, Object?>> rows = await txn.query(
-        _mangaTable,
-        columns: <String>['user_status', 'sort_order'],
-        where: 'id = ?',
-        whereArgs: <int>[manga.id],
-        limit: 1,
-      );
-      if (rows.isEmpty) return;
-      final String previousStatus = rows.first['user_status'] as String;
-      int sortOrder = rows.first['sort_order'] as int;
-      if (previousStatus != manga.userStatus.apiValue) {
-        sortOrder = await _nextTopSortOrder(
-          txn,
-          _mangaTable,
-          manga.userStatus.apiValue,
-        );
-      }
-      await txn.update(
-        _mangaTable,
-        <String, Object?>{
-          'user_status': manga.userStatus.apiValue,
-          'user_chapters_read': manga.userChaptersRead,
-          'user_volumes_read': manga.userVolumesRead,
-          'user_score': manga.userScore,
-          'sort_order': sortOrder,
-        },
-        where: 'id = ?',
-        whereArgs: <int>[manga.id],
-      );
-    });
+    await db.update(
+      _mangaTable,
+      <String, Object?>{
+        'user_status': manga.userStatus.apiValue,
+        'user_chapters_read': manga.userChaptersRead,
+        'user_volumes_read': manga.userVolumesRead,
+        'user_score': manga.userScore,
+        'list_updated_at': DateTime.now().millisecondsSinceEpoch,
+      },
+      where: 'id = ?',
+      whereArgs: <int>[manga.id],
+    );
   }
 
-  Future<int> _nextTopSortOrder(
-    Transaction txn,
-    String table,
-    String status,
-  ) async {
-    final List<Map<String, Object?>> rows = await txn.rawQuery(
-      'SELECT COALESCE(MIN(sort_order), 1) AS min_order '
-      'FROM $table WHERE user_status = ?',
-      <String>[status],
+  String _orderBy(ListSort sort) {
+    final String direction = sort.descending ? 'DESC' : 'ASC';
+    switch (sort.field) {
+      case ListSortField.lastUpdated:
+        return 'list_updated_at $direction, id ASC';
+      case ListSortField.score:
+        return 'user_score $direction, id ASC';
+      case ListSortField.title:
+        return 'title COLLATE NOCASE $direction, id ASC';
+    }
+  }
+
+  Future<String?> getPreference(String key) async {
+    final Database db = await _db;
+    final List<Map<String, Object?>> rows = await db.query(
+      _preferencesTable,
+      columns: <String>['value'],
+      where: 'key = ?',
+      whereArgs: <String>[key],
+      limit: 1,
     );
-    final int min = (rows.first['min_order'] as int?) ?? 1;
-    return min - 1;
+    return rows.isEmpty ? null : rows.first['value'] as String?;
+  }
+
+  Future<void> setPreference(String key, String value) async {
+    final Database db = await _db;
+    await db.insert(
+      _preferencesTable,
+      <String, Object?>{'key': key, 'value': value},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<void> clearAll() async {
@@ -313,7 +304,6 @@ class LocalStore {
   Map<String, Object?> _animeRow(
     Anime anime,
     AnimeListStatus status,
-    int sortOrder,
     int syncedAt,
   ) {
     return <String, Object?>{
@@ -325,7 +315,7 @@ class LocalStore {
       'user_status': status.apiValue,
       'user_episodes_watched': anime.userEpisodesWatched,
       'user_score': anime.userScore,
-      'sort_order': sortOrder,
+      'list_updated_at': anime.updatedAt.millisecondsSinceEpoch,
       'synced_at': syncedAt,
     };
   }
@@ -333,7 +323,6 @@ class LocalStore {
   Map<String, Object?> _mangaRow(
     Manga manga,
     MangaListStatus status,
-    int sortOrder,
     int syncedAt,
   ) {
     return <String, Object?>{
@@ -347,7 +336,7 @@ class LocalStore {
       'user_chapters_read': manga.userChaptersRead,
       'user_volumes_read': manga.userVolumesRead,
       'user_score': manga.userScore,
-      'sort_order': sortOrder,
+      'list_updated_at': manga.updatedAt.millisecondsSinceEpoch,
       'synced_at': syncedAt,
     };
   }
@@ -362,6 +351,8 @@ class LocalStore {
       userStatus: AnimeListStatus.fromApiValue(row['user_status'] as String?),
       userEpisodesWatched: row['user_episodes_watched'] as int,
       userScore: row['user_score'] as int,
+      updatedAt:
+          DateTime.fromMillisecondsSinceEpoch(row['list_updated_at'] as int),
     );
   }
 
@@ -378,6 +369,8 @@ class LocalStore {
       userChaptersRead: row['user_chapters_read'] as int,
       userVolumesRead: row['user_volumes_read'] as int,
       userScore: row['user_score'] as int,
+      updatedAt:
+          DateTime.fromMillisecondsSinceEpoch(row['list_updated_at'] as int),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/manga.dart';
 import 'package:miru/models/page.dart';
 import 'package:miru/services/global_controller.dart';
@@ -86,6 +87,7 @@ Anime _anime(int id, AnimeListStatus status) {
     userStatus: status,
     userEpisodesWatched: 0,
     userScore: 0,
+    updatedAt: DateTime.fromMillisecondsSinceEpoch(0),
   );
 }
 
@@ -101,6 +103,7 @@ Manga _manga(int id, MangaListStatus status) {
     userChaptersRead: 0,
     userVolumesRead: 0,
     userScore: 0,
+    updatedAt: DateTime.fromMillisecondsSinceEpoch(0),
   );
 }
 
@@ -182,6 +185,38 @@ void main() {
     expect(completed.first.id, 1);
     expect(completed.first.userScore, 9);
     expect(completed.first.userEpisodesWatched, 12);
+  });
+
+  test("applies the chosen sort to cached pages", () async {
+    await controller.syncAnime();
+
+    await controller.setListSort(
+      const ListSort(field: ListSortField.title, descending: true),
+    );
+
+    final List<Anime> watching = await controller.pageAnime(
+      AnimeListStatus.watching,
+      offset: 0,
+      limit: 10,
+    );
+    expect(watching.map((Anime a) => a.id), <int>[5, 4, 3, 2, 1]);
+  });
+
+  test("persists and restores the chosen sort", () async {
+    await controller.loadSortPreferences();
+    await controller.setListSort(
+      const ListSort(field: ListSortField.score, descending: false),
+    );
+
+    final GlobalController reloaded =
+        GlobalController(store: store, repository: repository);
+    await reloaded.loadSortPreferences();
+
+    expect(
+      reloaded.listSort,
+      const ListSort(field: ListSortField.score, descending: false),
+    );
+    reloaded.dispose();
   });
 
   test("a failed sync leaves previously cached data intact", () async {

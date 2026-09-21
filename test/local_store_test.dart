@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/manga.dart';
 import 'package:miru/services/local_store.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -11,6 +12,7 @@ Anime _anime(
   AnimeListStatus status = AnimeListStatus.watching,
   int episodesWatched = 0,
   int score = 0,
+  DateTime? updatedAt,
 }) {
   return Anime(
     id: id,
@@ -21,6 +23,7 @@ Anime _anime(
     userStatus: status,
     userEpisodesWatched: episodesWatched,
     userScore: score,
+    updatedAt: updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0),
   );
 }
 
@@ -31,6 +34,7 @@ Manga _manga(
   int chaptersRead = 0,
   int volumesRead = 0,
   int score = 0,
+  DateTime? updatedAt,
 }) {
   return Manga(
     id: id,
@@ -43,6 +47,7 @@ Manga _manga(
     userChaptersRead: chaptersRead,
     userVolumesRead: volumesRead,
     userScore: score,
+    updatedAt: updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0),
   );
 }
 
@@ -191,7 +196,7 @@ void main() {
       expect(completed.first.userEpisodesWatched, 12);
     });
 
-    test("keeps position when only progress changes", () async {
+    test("moves an entry to the top when its progress changes", () async {
       await store.replaceAnimeStatus(
         AnimeListStatus.watching,
         <Anime>[_anime(1), _anime(2), _anime(3)],
@@ -204,9 +209,73 @@ void main() {
         offset: 0,
         limit: 10,
       );
-      expect(page.map((Anime a) => a.id), <int>[1, 2, 3]);
-      expect(page[1].userEpisodesWatched, 6);
-      expect(page[1].userScore, 8);
+      expect(page.map((Anime a) => a.id), <int>[2, 1, 3]);
+      expect(page.first.userEpisodesWatched, 6);
+      expect(page.first.userScore, 8);
+    });
+
+    test("sorts by score with the requested direction", () async {
+      await store.replaceAnimeStatus(
+        AnimeListStatus.watching,
+        <Anime>[
+          _anime(1, score: 5),
+          _anime(2, score: 9),
+          _anime(3, score: 7),
+        ],
+      );
+
+      final List<Anime> descending = await store.pageAnime(
+        AnimeListStatus.watching,
+        offset: 0,
+        limit: 10,
+        sort: const ListSort(field: ListSortField.score, descending: true),
+      );
+      expect(descending.map((Anime a) => a.id), <int>[2, 3, 1]);
+
+      final List<Anime> ascending = await store.pageAnime(
+        AnimeListStatus.watching,
+        offset: 0,
+        limit: 10,
+        sort: const ListSort(field: ListSortField.score, descending: false),
+      );
+      expect(ascending.map((Anime a) => a.id), <int>[1, 3, 2]);
+    });
+
+    test("sorts by title case-insensitively", () async {
+      await store.replaceAnimeStatus(
+        AnimeListStatus.watching,
+        <Anime>[
+          _anime(1, title: "banana"),
+          _anime(2, title: "Apple"),
+          _anime(3, title: "cherry"),
+        ],
+      );
+
+      final List<Anime> title = await store.pageAnime(
+        AnimeListStatus.watching,
+        offset: 0,
+        limit: 10,
+        sort: const ListSort(field: ListSortField.title, descending: false),
+      );
+      expect(title.map((Anime a) => a.id), <int>[2, 1, 3]);
+    });
+
+    test("sorts by the stored updated timestamp", () async {
+      await store.replaceAnimeStatus(
+        AnimeListStatus.watching,
+        <Anime>[
+          _anime(1, updatedAt: DateTime.fromMillisecondsSinceEpoch(100)),
+          _anime(2, updatedAt: DateTime.fromMillisecondsSinceEpoch(300)),
+          _anime(3, updatedAt: DateTime.fromMillisecondsSinceEpoch(200)),
+        ],
+      );
+
+      final List<Anime> page = await store.pageAnime(
+        AnimeListStatus.watching,
+        offset: 0,
+        limit: 10,
+      );
+      expect(page.map((Anime a) => a.id), <int>[2, 3, 1]);
     });
   });
 
@@ -254,6 +323,14 @@ void main() {
       expect(moved.userChaptersRead, 30);
       expect(moved.userVolumesRead, 4);
     });
+  });
+
+  test("stores and retrieves preferences", () async {
+    expect(await store.getPreference("anime_sort"), isNull);
+    await store.setPreference("anime_sort", "score:asc");
+    expect(await store.getPreference("anime_sort"), "score:asc");
+    await store.setPreference("anime_sort", "title:desc");
+    expect(await store.getPreference("anime_sort"), "title:desc");
   });
 
   test("clearAll empties both lists", () async {

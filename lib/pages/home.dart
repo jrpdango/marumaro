@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/user.dart';
 import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/profile.dart';
@@ -73,6 +74,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return AnimeListStatus.values
         .map((AnimeListStatus status) => ListContainer(listType: status))
         .toList();
+  }
+
+  /// Applies a sort choice from the app bar menu: re-selecting the active field
+  /// flips its direction, while a new field uses its default direction.
+  void _handleSortSelected(ListSortField field) {
+    final GlobalController controller = _controller!;
+    final ListSort current = controller.listSort;
+    final ListSort next = field == current.field
+        ? current.toggled()
+        : ListSort(field: field, descending: field.defaultDescending);
+    controller.setListSort(next);
   }
 
   Widget _buildCurrentPage() {
@@ -249,25 +261,56 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             },
           ),
         ),
-        actions: _hasSearch
-            ? <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 22.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => Search(manga: _isManga),
+        actions: <Widget>[
+          if (_hasTabBar)
+            Padding(
+              padding: const EdgeInsets.only(top: 22.0),
+              child: PopupMenuButton<ListSortField>(
+                icon: const Icon(Icons.sort),
+                tooltip: "Sort",
+                onSelected: _handleSortSelected,
+                itemBuilder: (BuildContext context) {
+                  final ListSort current = _controller!.listSort;
+                  return ListSortField.values.map((ListSortField field) {
+                    final bool active = field == current.field;
+                    return PopupMenuItem<ListSortField>(
+                      value: field,
+                      child: Row(
+                        children: <Widget>[
+                          Text(field.label),
+                          if (active) ...<Widget>[
+                            const SizedBox(width: 8.0),
+                            Icon(
+                              current.descending
+                                  ? Icons.arrow_downward
+                                  : Icons.arrow_upward,
+                              size: 16.0,
+                            ),
+                          ],
+                        ],
                       ),
-                    ),
+                    );
+                  }).toList();
+                },
+              ),
+            ),
+          if (_hasSearch)
+            Padding(
+              padding: const EdgeInsets.only(top: 22.0),
+              child: IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => Search(manga: _isManga),
                   ),
                 ),
-              ]
-            : <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 22.0),
-                ),
-              ],
+              ),
+            )
+          else
+            const Padding(
+              padding: EdgeInsets.only(top: 22.0),
+            ),
+        ],
       ),
       body: _buildCurrentPage(),
       bottomNavigationBar: BottomNavigationBar(

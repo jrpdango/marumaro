@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/manga.dart';
 import 'package:miru/models/page.dart';
 import 'package:miru/models/user.dart';
@@ -33,7 +34,11 @@ class GlobalController extends ChangeNotifier {
   late final MalRepository repository;
   final LocalStore store;
 
+  static const String _sortKey = "list_sort";
+
   User? user;
+
+  ListSort listSort = ListSort.defaultSort;
 
   bool animeSyncing = false;
   bool animeSynced = false;
@@ -95,8 +100,26 @@ class GlobalController extends ChangeNotifier {
   }
 
   Future<void> syncAll() async {
+    await loadSortPreferences();
     await syncAnime();
     await syncManga();
+  }
+
+  /// Restores the persisted sort choice shared by both lists.
+  Future<void> loadSortPreferences() async {
+    listSort = ListSort.decode(
+      await store.getPreference(_sortKey),
+      fallback: ListSort.defaultSort,
+    );
+    _notifySafely();
+  }
+
+  /// Updates and persists the shared list sort.
+  Future<void> setListSort(ListSort sort) async {
+    if (sort == listSort) return;
+    listSort = sort;
+    notifyListeners();
+    await store.setPreference(_sortKey, sort.encode());
   }
 
   Future<List<Anime>> _allAnime(AnimeListStatus status) async {
@@ -130,7 +153,7 @@ class GlobalController extends ChangeNotifier {
     required int offset,
     required int limit,
   }) {
-    return store.pageAnime(status, offset: offset, limit: limit);
+    return store.pageAnime(status, offset: offset, limit: limit, sort: listSort);
   }
 
   Future<int> countAnime(AnimeListStatus status) {
@@ -150,7 +173,7 @@ class GlobalController extends ChangeNotifier {
     required int offset,
     required int limit,
   }) {
-    return store.pageManga(status, offset: offset, limit: limit);
+    return store.pageManga(status, offset: offset, limit: limit, sort: listSort);
   }
 
   Future<int> countManga(MangaListStatus status) {

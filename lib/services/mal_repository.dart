@@ -39,6 +39,7 @@ class MalRepository {
         "fields": _listFields,
         "limit": "$limit",
         "offset": "$offset",
+        "sort": "list_updated_at",
         if (status != null) "status": status.apiValue,
       },
     );
@@ -97,6 +98,7 @@ class MalRepository {
         "fields": _mangaListFields,
         "limit": "$limit",
         "offset": "$offset",
+        "sort": "list_updated_at",
         if (status != null) "status": status.apiValue,
       },
     );

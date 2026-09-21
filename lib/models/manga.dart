@@ -13,6 +13,7 @@ class Manga {
     required this.userChaptersRead,
     required this.userVolumesRead,
     required this.userScore,
+    required this.updatedAt,
   });
 
   final int id;
@@ -25,6 +26,7 @@ class Manga {
   final int userChaptersRead;
   final int userVolumesRead;
   final int userScore;
+  final DateTime updatedAt;
 
   factory Manga.fromListStatusJson(Map<String, dynamic> json) {
     final Map<String, dynamic> node =
@@ -44,6 +46,10 @@ class Manga {
       userChaptersRead: (listStatus["num_chapters_read"] as int?) ?? 0,
       userVolumesRead: (listStatus["num_volumes_read"] as int?) ?? 0,
       userScore: (listStatus["score"] as int?) ?? 0,
+      updatedAt: DateTime.tryParse(
+            (listStatus["updated_at"] as String?) ?? "",
+          ) ??
+          DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 
@@ -52,6 +58,7 @@ class Manga {
     int? userChaptersRead,
     int? userVolumesRead,
     int? userScore,
+    DateTime? updatedAt,
   }) {
     return Manga(
       id: id,
@@ -64,6 +71,7 @@ class Manga {
       userChaptersRead: userChaptersRead ?? this.userChaptersRead,
       userVolumesRead: userVolumesRead ?? this.userVolumesRead,
       userScore: userScore ?? this.userScore,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
