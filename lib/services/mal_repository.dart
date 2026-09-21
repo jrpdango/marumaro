@@ -27,34 +27,6 @@ class MalRepository {
 
   final MalApiClient _api;
 
-  /// Fetches the entire anime list, following pagination.
-  Future<List<Anime>> fetchAnimeList() async {
-    final List<Anime> anime = <Anime>[];
-    int offset = 0;
-    while (true) {
-      final Map<String, dynamic> page = await _api.get(
-        "v2/users/@me/animelist",
-        query: <String, String>{
-          "fields": _listFields,
-          "limit": "$pageSize",
-          "offset": "$offset",
-        },
-      );
-      final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
-      anime.addAll(
-        data.map(
-          (dynamic entry) =>
-              Anime.fromListStatusJson((entry as Map).cast<String, dynamic>()),
-        ),
-      );
-      final Map<String, dynamic>? paging =
-          (page["paging"] as Map?)?.cast<String, dynamic>();
-      if (data.isEmpty || paging == null || paging["next"] == null) break;
-      offset += data.length;
-    }
-    return anime;
-  }
-
   /// Fetches one page of the user's anime list, optionally for a single status.
   Future<PageResult<Anime>> fetchAnimeListPage({
     required int offset,
@@ -111,34 +83,6 @@ class MalRepository {
         "num_watched_episodes": "$episodesWatched",
       },
     );
-  }
-
-  /// Fetches the entire manga list, following pagination.
-  Future<List<Manga>> fetchMangaList() async {
-    final List<Manga> manga = <Manga>[];
-    int offset = 0;
-    while (true) {
-      final Map<String, dynamic> page = await _api.get(
-        "v2/users/@me/mangalist",
-        query: <String, String>{
-          "fields": _mangaListFields,
-          "limit": "$pageSize",
-          "offset": "$offset",
-        },
-      );
-      final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
-      manga.addAll(
-        data.map(
-          (dynamic entry) =>
-              Manga.fromListStatusJson((entry as Map).cast<String, dynamic>()),
-        ),
-      );
-      final Map<String, dynamic>? paging =
-          (page["paging"] as Map?)?.cast<String, dynamic>();
-      if (data.isEmpty || paging == null || paging["next"] == null) break;
-      offset += data.length;
-    }
-    return manga;
   }
 
   /// Fetches one page of the user's manga list, optionally for a single status.

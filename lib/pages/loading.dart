@@ -24,9 +24,11 @@ class _LoadingState extends State<Loading> {
     await _finishSetup();
   }
 
-  /// Loads the user's list and navigates to the home page.
+  /// Fetches the current user and navigates to the home page.
   Future<void> _finishSetup() async {
-    await _controller!.loadAnimeList();
+    if (_needsLogin) {
+      await _controller!.store.clearAll();
+    }
     _controller!.user = await _controller!.repository.fetchCurrentUser();
 
     if (!mounted) return;

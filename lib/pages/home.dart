@@ -24,6 +24,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   GlobalController? _controller;
   late final TabController _tabController;
 
+  bool _syncStarted = false;
   int _tabIndex = 0;
   bool _hasTabBar = true;
   bool _hasSearch = true;
@@ -42,6 +43,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller ??= GlobalControllerScope.of(context);
+    if (!_syncStarted) {
+      _syncStarted = true;
+      _controller!.syncAll();
+    }
   }
 
   /// Creates tabs for the list statuses.
@@ -105,7 +110,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
     );
     if (confirmed != true || !mounted) return;
-    await _controller!.auth.signOut();
+    await _controller!.signOut();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const Loading()),

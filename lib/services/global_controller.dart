@@ -1,80 +1,171 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/manga.dart';
+import 'package:miru/models/page.dart';
 import 'package:miru/models/user.dart';
 import 'package:miru/services/auth_repository.dart';
+import 'package:miru/services/local_store.dart';
 import 'package:miru/services/mal_api_client.dart';
 import 'package:miru/services/mal_repository.dart';
 import 'package:miru/services/token_store.dart';
 
-/// Application-wide state: authentication, the current user, and their lists.
+/// Application-wide state: authentication, the current user, and a cache of
+/// their lists backed by [LocalStore].
 class GlobalController extends ChangeNotifier {
-  GlobalController() {
+  GlobalController({LocalStore? store, MalRepository? repository})
+      : store = store ?? LocalStore() {
     final http.Client httpClient = http.Client();
     auth = AuthRepository(httpClient: httpClient, tokenStore: TokenStore());
-    repository = MalRepository(
-      api: MalApiClient(
-        httpClient: httpClient,
-        accessTokenProvider: () => auth.accessToken,
-      ),
-    );
+    this.repository = repository ??
+        MalRepository(
+          api: MalApiClient(
+            httpClient: httpClient,
+            accessTokenProvider: () => auth.accessToken,
+          ),
+        );
   }
 
   late final AuthRepository auth;
   late final MalRepository repository;
+  final LocalStore store;
 
   User? user;
 
-  final List<Anime> globalAnimeList = <Anime>[];
-  final Map<AnimeListStatus, List<Anime>> lists = <AnimeListStatus, List<Anime>>{
-    for (final AnimeListStatus status in AnimeListStatus.values)
-      status: <Anime>[],
-  };
+  bool animeSyncing = false;
+  bool animeSynced = false;
+  bool animeSyncFailed = false;
 
-  final List<Manga> globalMangaList = <Manga>[];
-  final Map<MangaListStatus, List<Manga>> mangaLists =
-      <MangaListStatus, List<Manga>>{
-    for (final MangaListStatus status in MangaListStatus.values)
-      status: <Manga>[],
-  };
+  bool mangaSyncing = false;
+  bool mangaSynced = false;
+  bool mangaSyncFailed = false;
 
-  /// Whether [loadMangaList] has completed at least once.
-  bool mangaListLoaded = false;
+  bool _disposed = false;
 
-  /// Loads the user's full anime list and rebuilds the status buckets.
-  Future<void> loadAnimeList() async {
-    final List<Anime> anime = await repository.fetchAnimeList();
-    globalAnimeList
-      ..clear()
-      ..addAll(anime);
-    for (final List<Anime> list in lists.values) {
-      list.clear();
-    }
-    for (final Anime entry in anime) {
-      lists[entry.userStatus]?.add(entry);
-    }
-    notifyListeners();
+  /// Notifies listeners on a later microtask.
+  ///
+  /// Syncs can be kicked off from `didChangeDependencies`, i.e. during the build
+  /// phase, where notifying synchronously would make [GlobalControllerScope]'s
+  /// element call `markNeedsBuild` mid-build.
+  void _notifySafely() {
+    scheduleMicrotask(() {
+      if (!_disposed) notifyListeners();
+    });
   }
 
-  /// Loads the user's full manga list and rebuilds the status buckets.
-  Future<void> loadMangaList() async {
-    final List<Manga> manga = await repository.fetchMangaList();
-    globalMangaList
-      ..clear()
-      ..addAll(manga);
-    for (final List<Manga> list in mangaLists.values) {
-      list.clear();
+  /// Fetches the entire anime list and replaces the cached status buckets.
+  Future<void> syncAnime() async {
+    if (animeSyncing) return;
+    animeSyncing = true;
+    animeSyncFailed = false;
+    _notifySafely();
+    try {
+      for (final AnimeListStatus status in AnimeListStatus.values) {
+        await store.replaceAnimeStatus(status, await _allAnime(status));
+      }
+      animeSynced = true;
+    } catch (_) {
+      animeSyncFailed = true;
+    } finally {
+      animeSyncing = false;
+      _notifySafely();
     }
-    for (final Manga entry in manga) {
-      mangaLists[entry.userStatus]?.add(entry);
-    }
-    mangaListLoaded = true;
-    notifyListeners();
   }
 
-  /// Persists list changes for [anime] and updates local state.
+  /// Fetches the entire manga list and replaces the cached status buckets.
+  Future<void> syncManga() async {
+    if (mangaSyncing) return;
+    mangaSyncing = true;
+    mangaSyncFailed = false;
+    _notifySafely();
+    try {
+      for (final MangaListStatus status in MangaListStatus.values) {
+        await store.replaceMangaStatus(status, await _allManga(status));
+      }
+      mangaSynced = true;
+    } catch (_) {
+      mangaSyncFailed = true;
+    } finally {
+      mangaSyncing = false;
+      _notifySafely();
+    }
+  }
+
+  Future<void> syncAll() async {
+    await syncAnime();
+    await syncManga();
+  }
+
+  Future<List<Anime>> _allAnime(AnimeListStatus status) async {
+    final List<Anime> items = <Anime>[];
+    int offset = 0;
+    while (true) {
+      final PageResult<Anime> page =
+          await repository.fetchAnimeListPage(offset: offset, status: status);
+      items.addAll(page.items);
+      if (!page.hasMore) break;
+      offset += page.items.length;
+    }
+    return items;
+  }
+
+  Future<List<Manga>> _allManga(MangaListStatus status) async {
+    final List<Manga> items = <Manga>[];
+    int offset = 0;
+    while (true) {
+      final PageResult<Manga> page =
+          await repository.fetchMangaListPage(offset: offset, status: status);
+      items.addAll(page.items);
+      if (!page.hasMore) break;
+      offset += page.items.length;
+    }
+    return items;
+  }
+
+  Future<List<Anime>> pageAnime(
+    AnimeListStatus status, {
+    required int offset,
+    required int limit,
+  }) {
+    return store.pageAnime(status, offset: offset, limit: limit);
+  }
+
+  Future<int> countAnime(AnimeListStatus status) {
+    return store.countAnime(status);
+  }
+
+  Future<List<Anime>> searchAnime(
+    String query, {
+    required int offset,
+    required int limit,
+  }) {
+    return store.searchAnime(query, offset: offset, limit: limit);
+  }
+
+  Future<List<Manga>> pageManga(
+    MangaListStatus status, {
+    required int offset,
+    required int limit,
+  }) {
+    return store.pageManga(status, offset: offset, limit: limit);
+  }
+
+  Future<int> countManga(MangaListStatus status) {
+    return store.countManga(status);
+  }
+
+  Future<List<Manga>> searchManga(
+    String query, {
+    required int offset,
+    required int limit,
+  }) {
+    return store.searchManga(query, offset: offset, limit: limit);
+  }
+
+  /// Persists list changes for [anime] and updates the cache.
   Future<void> updateAnime({
     required Anime anime,
     required AnimeListStatus status,
@@ -88,29 +179,17 @@ class GlobalController extends ChangeNotifier {
       episodesWatched: episodesWatched,
     );
 
-    final Anime updated = anime.copyWith(
-      userStatus: status,
-      userScore: score,
-      userEpisodesWatched: episodesWatched,
+    await store.updateAnime(
+      anime.copyWith(
+        userStatus: status,
+        userScore: score,
+        userEpisodesWatched: episodesWatched,
+      ),
     );
-
-    final int globalIndex =
-        globalAnimeList.indexWhere((Anime a) => a.id == anime.id);
-    if (globalIndex != -1) globalAnimeList[globalIndex] = updated;
-
-    if (anime.userStatus != status) {
-      lists[anime.userStatus]?.removeWhere((Anime a) => a.id == anime.id);
-      lists.putIfAbsent(status, () => <Anime>[]).insert(0, updated);
-    } else {
-      final List<Anime>? list = lists[status];
-      final int index =
-          list?.indexWhere((Anime a) => a.id == anime.id) ?? -1;
-      if (index != -1) list![index] = updated;
-    }
     notifyListeners();
   }
 
-  /// Persists list changes for [manga] and updates local state.
+  /// Persists list changes for [manga] and updates the cache.
   Future<void> updateManga({
     required Manga manga,
     required MangaListStatus status,
@@ -126,27 +205,33 @@ class GlobalController extends ChangeNotifier {
       volumesRead: volumesRead,
     );
 
-    final Manga updated = manga.copyWith(
-      userStatus: status,
-      userScore: score,
-      userChaptersRead: chaptersRead,
-      userVolumesRead: volumesRead,
+    await store.updateManga(
+      manga.copyWith(
+        userStatus: status,
+        userScore: score,
+        userChaptersRead: chaptersRead,
+        userVolumesRead: volumesRead,
+      ),
     );
-
-    final int globalIndex =
-        globalMangaList.indexWhere((Manga m) => m.id == manga.id);
-    if (globalIndex != -1) globalMangaList[globalIndex] = updated;
-
-    if (manga.userStatus != status) {
-      mangaLists[manga.userStatus]?.removeWhere((Manga m) => m.id == manga.id);
-      mangaLists.putIfAbsent(status, () => <Manga>[]).insert(0, updated);
-    } else {
-      final List<Manga>? list = mangaLists[status];
-      final int index =
-          list?.indexWhere((Manga m) => m.id == manga.id) ?? -1;
-      if (index != -1) list![index] = updated;
-    }
     notifyListeners();
+  }
+
+  /// Signs out and clears the cached lists.
+  Future<void> signOut() async {
+    await auth.signOut();
+    await store.clearAll();
+    user = null;
+    animeSynced = false;
+    mangaSynced = false;
+    animeSyncFailed = false;
+    mangaSyncFailed = false;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }
 

@@ -5,6 +5,7 @@ import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
 import 'package:miru/widgets/manga_list_container.dart';
+import 'package:miru/widgets/paged_list.dart';
 
 class Search extends StatefulWidget {
   final bool manga;
@@ -25,26 +26,9 @@ class _SearchState extends State<Search> {
     _controller ??= GlobalControllerScope.of(context);
   }
 
-  List<Anime> _animeResults() {
-    final List<Anime> all = _controller!.globalAnimeList;
-    if (_query.isEmpty) return all;
-    final String query = _query.toLowerCase();
-    return all
-        .where((Anime anime) => anime.title.toLowerCase().contains(query))
-        .toList();
-  }
-
-  List<Manga> _mangaResults() {
-    final List<Manga> all = _controller!.globalMangaList;
-    if (_query.isEmpty) return all;
-    final String query = _query.toLowerCase();
-    return all
-        .where((Manga manga) => manga.title.toLowerCase().contains(query))
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final GlobalController controller = _controller!;
     return Scaffold(
       backgroundColor: const Color.fromARGB(240, 0, 0, 0),
       appBar: BackAppBar(),
@@ -72,11 +56,39 @@ class _SearchState extends State<Search> {
           ),
           Expanded(
             child: widget.manga
-                ? MangaListContainer(mangaList: _mangaResults())
-                : ListContainer(animeList: _animeResults()),
+                ? _buildMangaResults(controller)
+                : _buildAnimeResults(controller),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAnimeResults(GlobalController controller) {
+    return ListContainer(
+      pageStorageKey: "search_anime",
+      resetKey: _query,
+      source: DelegatePagedSource<Anime>(
+        ({required int offset, required int limit}) =>
+            controller.searchAnime(_query, offset: offset, limit: limit),
+      ),
+      emptyMessage: controller.animeSyncing
+          ? "Syncing your anime list..."
+          : "No matches.",
+    );
+  }
+
+  Widget _buildMangaResults(GlobalController controller) {
+    return MangaListContainer(
+      pageStorageKey: "search_manga",
+      resetKey: _query,
+      source: DelegatePagedSource<Manga>(
+        ({required int offset, required int limit}) =>
+            controller.searchManga(_query, offset: offset, limit: limit),
+      ),
+      emptyMessage: controller.mangaSyncing
+          ? "Syncing your manga list..."
+          : "No matches.",
     );
   }
 }
