@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/anime_details.dart';
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/user_list_status.dart';
+import 'package:miru/pages/edit_list_page.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/anime_poster.dart';
 import 'package:miru/widgets/media_progress_popup.dart';
@@ -58,6 +60,74 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
       // Dismiss the loading overlay.
       if (mounted) Navigator.of(context).pop();
     }
+  }
+
+  /// Builds the starting status for the edit form from the current in-progress
+  /// values (carrying over unsaved popup edits) plus the server's advanced
+  /// fields.
+  UserListStatus _initialStatus(AnimeDetails details) {
+    final UserListStatus? server = details.myListStatus;
+    return UserListStatus(
+      status: _chosenStatus.apiValue,
+      score: _chosenScore,
+      progress: _chosenEpsWatched,
+      startDate: server?.startDate,
+      finishDate: server?.finishDate,
+      isRewatching: server?.isRewatching ?? false,
+      timesRewatched: server?.timesRewatched ?? 0,
+      rewatchValue: server?.rewatchValue ?? 0,
+      priority: server?.priority ?? 0,
+      tags: server?.tags ?? "",
+      comments: server?.comments ?? "",
+    );
+  }
+
+  /// Opens the full edit form, then applies the result locally.
+  Future<void> _openEdit() async {
+    final Future<AnimeDetails>? future = _animeDetails;
+    if (future == null) return;
+    final AnimeDetails details;
+    try {
+      details = await future;
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Error loading data. Please try again later.")),
+        );
+      }
+      return;
+    }
+    if (!mounted) return;
+
+    final UserListStatus? updated =
+        await Navigator.of(context).push<UserListStatus>(
+      MaterialPageRoute<UserListStatus>(
+        builder: (_) => EditListPage(
+          title: _anime.title,
+          kind: MediaKind.anime,
+          initial: _initialStatus(details),
+          baseline: details.myListStatus,
+          progressTotal: _anime.totalEpisodes,
+          onSave: (UserListStatus status, Map<String, String> patch) =>
+              _controller!.updateAnimeUserListStatus(
+            anime: _anime,
+            status: status,
+            patch: patch,
+          ),
+        ),
+      ),
+    );
+    if (updated == null || !mounted) return;
+
+    setState(() {
+      _chosenStatus = AnimeListStatus.fromApiValue(updated.status);
+      _chosenScore = updated.score;
+      _chosenEpsWatched = updated.progress;
+      _detailChanged = false;
+      _animeDetails =
+          _controller!.repository.fetchAnimeDetails(widget.anime.id);
+    });
   }
 
   /// Shows an overlaying widget depending on the given [type].
@@ -157,6 +227,12 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back),
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: _openEdit,
+            icon: const Icon(Icons.edit),
+          ),
+        ],
       ),
       backgroundColor: Colors.black,
       body: Column(

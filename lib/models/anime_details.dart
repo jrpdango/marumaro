@@ -1,4 +1,5 @@
 import 'package:miru/models/enums.dart';
+import 'package:miru/models/user_list_status.dart';
 
 /// Detailed information about an anime.
 class AnimeDetails {
@@ -13,6 +14,7 @@ class AnimeDetails {
     required this.source,
     required this.rating,
     required this.averageEpisodeDuration,
+    this.myListStatus,
   });
 
   final double meanScore;
@@ -26,7 +28,12 @@ class AnimeDetails {
   final String? rating;
   final int? averageEpisodeDuration;
 
+  /// The current user's editable list status, when the anime is on their list.
+  final UserListStatus? myListStatus;
+
   factory AnimeDetails.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic>? myListStatus =
+        (json["my_list_status"] as Map?)?.cast<String, dynamic>();
     return AnimeDetails(
       meanScore: ((json["mean"] as num?) ?? 0).toDouble(),
       numEpisodes: (json["num_episodes"] as int?) ?? 0,
@@ -38,6 +45,9 @@ class AnimeDetails {
       source: json["source"] as String?,
       rating: json["rating"] as String?,
       averageEpisodeDuration: json["average_episode_duration"] as int?,
+      myListStatus: myListStatus == null
+          ? null
+          : UserListStatus.fromJson(myListStatus, MediaKind.anime),
     );
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/manga.dart';
 import 'package:miru/models/manga_details.dart';
+import 'package:miru/models/user_list_status.dart';
+import 'package:miru/pages/edit_list_page.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/anime_poster.dart';
 import 'package:miru/widgets/list_status_popup.dart';
@@ -60,6 +62,77 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
       // Dismiss the loading overlay.
       if (mounted) Navigator.of(context).pop();
     }
+  }
+
+  /// Builds the starting status for the edit form from the current in-progress
+  /// values (carrying over unsaved popup edits) plus the server's advanced
+  /// fields.
+  UserListStatus _initialStatus(MangaDetails details) {
+    final UserListStatus? server = details.myListStatus;
+    return UserListStatus(
+      status: _chosenStatus.apiValue,
+      score: _chosenScore,
+      progress: _chosenChaptersRead,
+      volumeProgress: _chosenVolumesRead,
+      startDate: server?.startDate,
+      finishDate: server?.finishDate,
+      isRewatching: server?.isRewatching ?? false,
+      timesRewatched: server?.timesRewatched ?? 0,
+      rewatchValue: server?.rewatchValue ?? 0,
+      priority: server?.priority ?? 0,
+      tags: server?.tags ?? "",
+      comments: server?.comments ?? "",
+    );
+  }
+
+  /// Opens the full edit form, then applies the result locally.
+  Future<void> _openEdit() async {
+    final Future<MangaDetails>? future = _mangaDetails;
+    if (future == null) return;
+    final MangaDetails details;
+    try {
+      details = await future;
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Error loading data. Please try again later.")),
+        );
+      }
+      return;
+    }
+    if (!mounted) return;
+
+    final UserListStatus? updated =
+        await Navigator.of(context).push<UserListStatus>(
+      MaterialPageRoute<UserListStatus>(
+        builder: (_) => EditListPage(
+          title: _manga.title,
+          kind: MediaKind.manga,
+          initial: _initialStatus(details),
+          baseline: details.myListStatus,
+          progressTotal: _manga.totalChapters,
+          volumeTotal: _manga.totalVolumes,
+          onSave: (UserListStatus status, Map<String, String> patch) =>
+              _controller!.updateMangaUserListStatus(
+            manga: _manga,
+            status: status,
+            patch: patch,
+          ),
+        ),
+      ),
+    );
+    if (updated == null || !mounted) return;
+
+    setState(() {
+      _chosenStatus = MangaListStatus.fromApiValue(updated.status);
+      _chosenScore = updated.score;
+      _chosenChaptersRead = updated.progress;
+      _chosenVolumesRead = updated.volumeProgress ?? _chosenVolumesRead;
+      _detailChanged = false;
+      _mangaDetails =
+          _controller!.repository.fetchMangaDetails(widget.manga.id);
+    });
   }
 
   /// Shows an overlaying widget depending on the given [type].
@@ -174,6 +247,12 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back),
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: _openEdit,
+            icon: const Icon(Icons.edit),
+          ),
+        ],
       ),
       backgroundColor: Colors.black,
       body: Column(

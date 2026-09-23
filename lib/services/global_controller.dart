@@ -8,6 +8,7 @@ import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/manga.dart';
 import 'package:miru/models/page.dart';
 import 'package:miru/models/user.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/services/auth_repository.dart';
 import 'package:miru/services/local_store.dart';
 import 'package:miru/services/mal_api_client.dart';
@@ -234,6 +235,51 @@ class GlobalController extends ChangeNotifier {
         userScore: score,
         userChaptersRead: chaptersRead,
         userVolumesRead: volumesRead,
+      ),
+    );
+    notifyListeners();
+  }
+
+  /// Persists a full set of anime list changes and updates the cache.
+  ///
+  /// [patch] contains only the fields that changed; [status] is the resulting
+  /// state used to refresh the cached basic fields.
+  Future<void> updateAnimeUserListStatus({
+    required Anime anime,
+    required UserListStatus status,
+    required Map<String, String> patch,
+  }) async {
+    await repository.updateAnimeUserListStatus(animeId: anime.id, body: patch);
+
+    await store.updateAnime(
+      anime.copyWith(
+        userStatus: AnimeListStatus.fromApiValue(status.status),
+        userScore: status.score,
+        userEpisodesWatched: status.progress,
+        updatedAt: DateTime.now(),
+      ),
+    );
+    notifyListeners();
+  }
+
+  /// Persists a full set of manga list changes and updates the cache.
+  ///
+  /// [patch] contains only the fields that changed; [status] is the resulting
+  /// state used to refresh the cached basic fields.
+  Future<void> updateMangaUserListStatus({
+    required Manga manga,
+    required UserListStatus status,
+    required Map<String, String> patch,
+  }) async {
+    await repository.updateMangaUserListStatus(mangaId: manga.id, body: patch);
+
+    await store.updateManga(
+      manga.copyWith(
+        userStatus: MangaListStatus.fromApiValue(status.status),
+        userScore: status.score,
+        userChaptersRead: status.progress,
+        userVolumesRead: status.volumeProgress ?? manga.userVolumesRead,
+        updatedAt: DateTime.now(),
       ),
     );
     notifyListeners();
