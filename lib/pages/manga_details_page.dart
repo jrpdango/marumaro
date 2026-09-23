@@ -92,6 +92,7 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
             progressChoice: (choice) =>
                 setState(() => _chosenChaptersRead = int.parse(choice)),
             total: _manga.totalChapters,
+            initialProgress: _chosenChaptersRead,
             label: "Total Chapters",
             closeOverlayCallback: () => Navigator.of(context).pop(),
           ),
@@ -106,6 +107,7 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
             progressChoice: (choice) =>
                 setState(() => _chosenVolumesRead = int.parse(choice)),
             total: _manga.totalVolumes,
+            initialProgress: _chosenVolumesRead,
             label: "Total Volumes",
             closeOverlayCallback: () => Navigator.of(context).pop(),
           ),

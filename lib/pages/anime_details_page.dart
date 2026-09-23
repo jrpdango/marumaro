@@ -90,6 +90,7 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             progressChoice: (choice) =>
                 setState(() => _chosenEpsWatched = int.parse(choice)),
             total: _anime.totalEpisodes,
+            initialProgress: _chosenEpsWatched,
             label: "Total Episodes",
             closeOverlayCallback: () => Navigator.of(context).pop(),
           ),

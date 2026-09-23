@@ -7,6 +7,7 @@ class MediaProgressPopup extends StatefulWidget {
   final Function callback;
   final Function progressChoice;
   final int total;
+  final int initialProgress;
   final String label;
 
   const MediaProgressPopup(
@@ -15,6 +16,7 @@ class MediaProgressPopup extends StatefulWidget {
       required this.callback,
       required this.progressChoice,
       required this.total,
+      required this.initialProgress,
       required this.label});
 
   @override
@@ -25,6 +27,18 @@ class _MediaProgressPopupState extends State<MediaProgressPopup> {
   final TextEditingController _controller = TextEditingController();
   bool progressChanged = false;
   String currentProgress = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = widget.initialProgress.toString();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +60,26 @@ class _MediaProgressPopupState extends State<MediaProgressPopup> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
                 onChanged: (String value) {
-                  if (value != widget.total.toString() && value != "") {
-                    setState(() {
-                      progressChanged = true;
-                    });
-                    currentProgress = value;
-                  } else {
+                  final int? parsed = int.tryParse(value);
+                  final bool isValid = parsed != null &&
+                      (widget.total == 0 || parsed <= widget.total);
+                  if (!isValid) {
                     setState(() {
                       progressChanged = false;
                     });
+                    if (value.isNotEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("The maximum is ${widget.total}."),
+                        ),
+                      );
+                    }
                     return;
                   }
+                  setState(() {
+                    progressChanged = parsed != widget.initialProgress;
+                  });
+                  currentProgress = value;
                 },
               ),
             ),
