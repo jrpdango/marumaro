@@ -238,12 +238,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 tabBar: TabBar(
                   controller: _tabController,
                   isScrollable: true,
+                  dividerColor: Colors.transparent,
                   tabs: _createTabs(),
                 ),
               )
             : null,
         flexibleSpace: Image.asset(
-          "assets/city.jpg",
+          "assets/moon.webp",
           fit: BoxFit.cover,
           alignment:
               _hasTabBar ? const Alignment(0, -0.4) : const Alignment(0, -0.5),
