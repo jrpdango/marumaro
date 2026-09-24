@@ -179,6 +179,37 @@ void main() {
     expect(completed.first.userEpisodesWatched, 12);
   });
 
+  test("updateAnime caches a title that was not on the list", () async {
+    await controller.syncAnime();
+
+    await controller.updateAnime(
+      anime: _anime(99, AnimeListStatus.planToWatch),
+      status: AnimeListStatus.planToWatch,
+      score: 0,
+      episodesWatched: 0,
+    );
+
+    final Map<int, Anime> byId = await controller.animeById();
+    expect(byId[99]?.userStatus, AnimeListStatus.planToWatch);
+    expect(await controller.countAnime(AnimeListStatus.planToWatch), 1);
+  });
+
+  test("updateManga caches a title that was not on the list", () async {
+    await controller.syncManga();
+
+    await controller.updateManga(
+      manga: _manga(98, MangaListStatus.planToRead),
+      status: MangaListStatus.planToRead,
+      score: 0,
+      chaptersRead: 0,
+      volumesRead: 0,
+    );
+
+    final Map<int, Manga> byId = await controller.mangaById();
+    expect(byId[98]?.userStatus, MangaListStatus.planToRead);
+    expect(await controller.countManga(MangaListStatus.planToRead), 1);
+  });
+
   test("applies the chosen sort to cached pages", () async {
     await controller.syncAnime();
 

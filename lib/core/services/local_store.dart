@@ -190,17 +190,29 @@ class LocalStore {
 
   Future<void> updateAnime(Anime anime) async {
     final Database db = await _db;
-    await db.update(
+    final int now = DateTime.now().millisecondsSinceEpoch;
+    final int changed = await db.update(
       _animeTable,
       <String, Object?>{
         'user_status': anime.userStatus.apiValue,
         'user_episodes_watched': anime.userEpisodesWatched,
         'user_score': anime.userScore,
-        'list_updated_at': DateTime.now().millisecondsSinceEpoch,
+        'list_updated_at': now,
       },
       where: 'id = ?',
       whereArgs: <int>[anime.id],
     );
+    if (changed == 0) {
+      await db.insert(
+        _animeTable,
+        _animeRow(
+          anime.copyWith(updatedAt: DateTime.fromMillisecondsSinceEpoch(now)),
+          anime.userStatus,
+          now,
+        ),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   Future<void> deleteAnime(int id) async {
@@ -264,18 +276,30 @@ class LocalStore {
 
   Future<void> updateManga(Manga manga) async {
     final Database db = await _db;
-    await db.update(
+    final int now = DateTime.now().millisecondsSinceEpoch;
+    final int changed = await db.update(
       _mangaTable,
       <String, Object?>{
         'user_status': manga.userStatus.apiValue,
         'user_chapters_read': manga.userChaptersRead,
         'user_volumes_read': manga.userVolumesRead,
         'user_score': manga.userScore,
-        'list_updated_at': DateTime.now().millisecondsSinceEpoch,
+        'list_updated_at': now,
       },
       where: 'id = ?',
       whereArgs: <int>[manga.id],
     );
+    if (changed == 0) {
+      await db.insert(
+        _mangaTable,
+        _mangaRow(
+          manga.copyWith(updatedAt: DateTime.fromMillisecondsSinceEpoch(now)),
+          manga.userStatus,
+          now,
+        ),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   Future<void> deleteManga(int id) async {

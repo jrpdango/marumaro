@@ -332,6 +332,42 @@ void main() {
     expect(all.keys.toSet(), <int>{4, 5});
   });
 
+  test("updateAnime inserts an entry that is not cached yet", () async {
+    await store.updateAnime(
+      _anime(
+        42,
+        title: "Brand New",
+        status: AnimeListStatus.completed,
+        score: 7,
+        episodesWatched: 12,
+      ),
+    );
+
+    expect(await store.countAnime(AnimeListStatus.completed), 1);
+    final Anime cached = (await store.allAnime())[42]!;
+    expect(cached.title, "Brand New");
+    expect(cached.userStatus, AnimeListStatus.completed);
+    expect(cached.userScore, 7);
+    expect(cached.userEpisodesWatched, 12);
+  });
+
+  test("updateManga inserts an entry that is not cached yet", () async {
+    await store.updateManga(
+      _manga(
+        43,
+        title: "Brand New Manga",
+        status: MangaListStatus.planToRead,
+        chaptersRead: 4,
+      ),
+    );
+
+    expect(await store.countManga(MangaListStatus.planToRead), 1);
+    final Manga cached = (await store.allManga())[43]!;
+    expect(cached.title, "Brand New Manga");
+    expect(cached.userStatus, MangaListStatus.planToRead);
+    expect(cached.userChaptersRead, 4);
+  });
+
   test("clearAll empties both lists", () async {
     await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
       _anime(1),
