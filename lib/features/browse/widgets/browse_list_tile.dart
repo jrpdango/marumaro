@@ -13,7 +13,7 @@ class BrowseListTile extends StatelessWidget {
     this.score,
     this.rank,
     this.mediaType,
-    this.inList = false,
+    this.statusLabel,
   });
 
   static const double posterHeight = 96.0;
@@ -25,8 +25,8 @@ class BrowseListTile extends StatelessWidget {
   final int? rank;
   final String? mediaType;
 
-  /// Whether the media is on the user's list, shown as a trailing check.
-  final bool inList;
+  /// The user's list status, shown as a chip when the media is on their list.
+  final String? statusLabel;
   final VoidCallback onTap;
 
   @override
@@ -57,27 +57,16 @@ class BrowseListTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              title,
-                              style: text.titleSmall,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (inList) ...<Widget>[
-                            const SizedBox(width: AppTokens.spaceSm),
-                            Icon(
-                              Icons.check_circle,
-                              size: 16.0,
-                              color: scheme.primary,
-                            ),
-                          ],
-                        ],
+                      Text(
+                        title,
+                        style: text.titleSmall,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      if (statusLabel != null) ...<Widget>[
+                        const SizedBox(height: AppTokens.spaceXs),
+                        StatusChip(label: statusLabel!, dense: true),
+                      ],
                       const Spacer(),
                       Row(
                         children: <Widget>[

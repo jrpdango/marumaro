@@ -178,14 +178,14 @@ class LocalStore {
     return rows.map(_animeFromRow).toList(growable: false);
   }
 
-  /// The ids of every cached anime, across all statuses.
-  Future<Set<int>> allAnimeIds() async {
+  /// Every cached anime, keyed by id, across all statuses.
+  Future<Map<int, Anime>> allAnime() async {
     final Database db = await _db;
-    final List<Map<String, Object?>> rows = await db.query(
-      _animeTable,
-      columns: <String>['id'],
-    );
-    return rows.map((Map<String, Object?> row) => row['id'] as int).toSet();
+    final List<Map<String, Object?>> rows = await db.query(_animeTable);
+    return <int, Anime>{
+      for (final Map<String, Object?> row in rows)
+        row['id'] as int: _animeFromRow(row),
+    };
   }
 
   Future<void> updateAnime(Anime anime) async {
@@ -252,14 +252,14 @@ class LocalStore {
     return rows.map(_mangaFromRow).toList(growable: false);
   }
 
-  /// The ids of every cached manga, across all statuses.
-  Future<Set<int>> allMangaIds() async {
+  /// Every cached manga, keyed by id, across all statuses.
+  Future<Map<int, Manga>> allManga() async {
     final Database db = await _db;
-    final List<Map<String, Object?>> rows = await db.query(
-      _mangaTable,
-      columns: <String>['id'],
-    );
-    return rows.map((Map<String, Object?> row) => row['id'] as int).toSet();
+    final List<Map<String, Object?>> rows = await db.query(_mangaTable);
+    return <int, Manga>{
+      for (final Map<String, Object?> row in rows)
+        row['id'] as int: _mangaFromRow(row),
+    };
   }
 
   Future<void> updateManga(Manga manga) async {

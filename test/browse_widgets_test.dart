@@ -29,13 +29,12 @@ void main() {
     expect(find.text("Poster Title"), findsOneWidget);
     expect(find.text("#2"), findsOneWidget);
     expect(find.text("8.4"), findsOneWidget);
-    expect(find.byIcon(Icons.check), findsNothing);
 
     await tester.tap(find.text("Poster Title"));
     expect(taps, 1);
   });
 
-  testWidgets("MediaPosterCard marks items already on the list", (
+  testWidgets("MediaPosterCard shows the list status when tracked", (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -45,7 +44,7 @@ void main() {
           body: MediaPosterCard(
             picture: Uri.parse(""),
             title: "Tracked",
-            inList: true,
+            statusLabel: "Watching",
             onTap: () {},
           ),
         ),
@@ -53,7 +52,7 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byIcon(Icons.check), findsOneWidget);
+    expect(find.text("Watching"), findsOneWidget);
   });
 
   testWidgets("BrowseListTile renders metadata and fires onTap", (
@@ -81,13 +80,12 @@ void main() {
     expect(find.text("#5"), findsOneWidget);
     expect(find.text("7.2"), findsOneWidget);
     expect(find.text("TV"), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle), findsNothing);
 
     await tester.tap(find.text("Tile Title"));
     expect(taps, 1);
   });
 
-  testWidgets("BrowseListTile marks items already on the list", (
+  testWidgets("BrowseListTile shows the list status when tracked", (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -97,7 +95,7 @@ void main() {
           body: BrowseListTile(
             picture: Uri.parse(""),
             title: "Tracked",
-            inList: true,
+            statusLabel: "Plan To Watch",
             onTap: () {},
           ),
         ),
@@ -105,7 +103,7 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    expect(find.text("Plan To Watch"), findsOneWidget);
   });
 
   testWidgets("BrowseListPage reloads when a selector changes", (

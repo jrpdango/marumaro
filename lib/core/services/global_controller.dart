@@ -216,14 +216,14 @@ class GlobalController extends ChangeNotifier {
     return store.countManga(status);
   }
 
-  /// The ids of every cached anime, for list-membership checks.
-  Future<Set<int>> animeListIds() {
-    return store.allAnimeIds();
+  /// Every cached anime, keyed by id, for list-membership and status lookups.
+  Future<Map<int, Anime>> animeById() {
+    return store.allAnime();
   }
 
-  /// The ids of every cached manga, for list-membership checks.
-  Future<Set<int>> mangaListIds() {
-    return store.allMangaIds();
+  /// Every cached manga, keyed by id, for list-membership and status lookups.
+  Future<Map<int, Manga>> mangaById() {
+    return store.allManga();
   }
 
   Future<List<Manga>> searchManga(

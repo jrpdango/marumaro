@@ -306,25 +306,30 @@ void main() {
     expect(await store.getPreference("anime_sort"), "title:desc");
   });
 
-  test("allAnimeIds returns ids across every status", () async {
+  test("allAnime returns every entry keyed by id", () async {
     await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
-      _anime(1),
-      _anime(2),
+      _anime(1, title: "A"),
+      _anime(2, title: "B"),
     ]);
     await store.replaceAnimeStatus(AnimeListStatus.completed, <Anime>[
-      _anime(3),
+      _anime(3, title: "C", score: 9),
     ]);
 
-    expect(await store.allAnimeIds(), <int>{1, 2, 3});
+    final Map<int, Anime> all = await store.allAnime();
+    expect(all.keys.toSet(), <int>{1, 2, 3});
+    expect(all[1]!.title, "A");
+    expect(all[3]!.userStatus, AnimeListStatus.completed);
+    expect(all[3]!.userScore, 9);
   });
 
-  test("allMangaIds returns ids across every status", () async {
+  test("allManga returns every entry keyed by id", () async {
     await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[_manga(4)]);
     await store.replaceMangaStatus(MangaListStatus.completed, <Manga>[
       _manga(5),
     ]);
 
-    expect(await store.allMangaIds(), <int>{4, 5});
+    final Map<int, Manga> all = await store.allManga();
+    expect(all.keys.toSet(), <int>{4, 5});
   });
 
   test("clearAll empties both lists", () async {

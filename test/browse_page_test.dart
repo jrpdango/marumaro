@@ -62,15 +62,15 @@ class _FakeRepository extends MalRepository {
 }
 
 class _FakeStore extends LocalStore {
-  _FakeStore({this.animeIds = const <int>{}});
+  _FakeStore({this.cachedAnime = const <int, Anime>{}});
 
-  final Set<int> animeIds;
-
-  @override
-  Future<Set<int>> allAnimeIds() async => animeIds;
+  final Map<int, Anime> cachedAnime;
 
   @override
-  Future<Set<int>> allMangaIds() async => const <int>{};
+  Future<Map<int, Anime>> allAnime() async => cachedAnime;
+
+  @override
+  Future<Map<int, Manga>> allManga() async => const <int, Manga>{};
 }
 
 Anime _anime(int id, String title) {
@@ -173,11 +173,18 @@ void main() {
     expect(find.text("Top Airing Anime"), findsOneWidget);
   });
 
-  testWidgets("marks cached list members with a check", (
+  testWidgets("shows the list status for cached members", (
     WidgetTester tester,
   ) async {
     final GlobalController controller = GlobalController(
-      store: _FakeStore(animeIds: const <int>{1}),
+      store: _FakeStore(
+        cachedAnime: <int, Anime>{
+          1: _anime(
+            1,
+            "Seasonal Anime",
+          ).copyWith(inList: true, userStatus: AnimeListStatus.watching),
+        },
+      ),
       repository: _FakeRepository(),
     );
     addTearDown(controller.dispose);
@@ -185,8 +192,8 @@ void main() {
     await tester.pumpWidget(_host(controller));
     await _pumpLoaded(tester);
 
-    // The seasonal anime (id 1) is cached, so its poster shows a check; the
-    // ranked anime (id 2) is not.
-    expect(find.byIcon(Icons.check), findsOneWidget);
+    // The seasonal anime (id 1) is cached as watching, so its poster shows the
+    // short status chip; the ranked anime (id 2) is not cached.
+    expect(find.text("Watching"), findsOneWidget);
   });
 }

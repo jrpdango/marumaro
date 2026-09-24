@@ -1,18 +1,21 @@
 /// The user's status for an anime in their list.
 enum AnimeListStatus {
-  watching("watching", "Currently Watching"),
-  planToWatch("plan_to_watch", "Plan To Watch"),
-  completed("completed", "Completed"),
-  onHold("on_hold", "On Hold"),
-  dropped("dropped", "Dropped");
+  watching("watching", "Currently Watching", "Watching"),
+  planToWatch("plan_to_watch", "Plan To Watch", "Planning"),
+  completed("completed", "Completed", "Completed"),
+  onHold("on_hold", "On Hold", "On Hold"),
+  dropped("dropped", "Dropped", "Dropped");
 
-  const AnimeListStatus(this.apiValue, this.label);
+  const AnimeListStatus(this.apiValue, this.label, this.shortLabel);
 
   /// The value used by the MAL API.
   final String apiValue;
 
   /// A human-readable label.
   final String label;
+
+  /// A compact label for tight spaces like browse poster cards.
+  final String shortLabel;
 
   static AnimeListStatus fromApiValue(String? value) {
     return values.firstWhere(
@@ -24,19 +27,22 @@ enum AnimeListStatus {
 
 /// The user's status for a manga in their list.
 enum MangaListStatus {
-  reading("reading", "Currently Reading"),
-  planToRead("plan_to_read", "Plan To Read"),
-  completed("completed", "Completed"),
-  onHold("on_hold", "On Hold"),
-  dropped("dropped", "Dropped");
+  reading("reading", "Currently Reading", "Reading"),
+  planToRead("plan_to_read", "Plan To Read", "Planning"),
+  completed("completed", "Completed", "Completed"),
+  onHold("on_hold", "On Hold", "On Hold"),
+  dropped("dropped", "Dropped", "Dropped");
 
-  const MangaListStatus(this.apiValue, this.label);
+  const MangaListStatus(this.apiValue, this.label, this.shortLabel);
 
   /// The value used by the MAL API.
   final String apiValue;
 
   /// A human-readable label.
   final String label;
+
+  /// A compact label for tight spaces like browse poster cards.
+  final String shortLabel;
 
   static MangaListStatus fromApiValue(String? value) {
     return values.firstWhere(

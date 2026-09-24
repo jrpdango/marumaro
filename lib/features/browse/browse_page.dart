@@ -33,8 +33,8 @@ class _BrowsePageState extends State<BrowsePage> {
   Future<List<Manga>>? _topManga;
   Future<List<Manga>>? _topNovels;
 
-  Set<int> _animeIds = const <int>{};
-  Set<int> _mangaIds = const <int>{};
+  Map<int, Anime> _animeById = const <int, Anime>{};
+  Map<int, Manga> _mangaById = const <int, Manga>{};
 
   @override
   void didChangeDependencies() {
@@ -105,39 +105,70 @@ class _BrowsePageState extends State<BrowsePage> {
     await _loadMembership();
   }
 
-  /// Loads the ids on the user's cached lists so browse cards can show whether
-  /// an item is already tracked.
+  /// Loads the user's cached list entries so browse cards can show their list
+  /// status and details can open with the known stats.
   Future<void> _loadMembership() async {
     final GlobalController controller = _controller!;
     try {
-      final List<Set<int>> ids = await Future.wait(<Future<Set<int>>>[
-        controller.animeListIds(),
-        controller.mangaListIds(),
-      ]);
+      final List<Map<int, Object>> entries = await Future.wait(
+        <Future<Map<int, Object>>>[
+          controller.animeById(),
+          controller.mangaById(),
+        ],
+      );
       if (!mounted) return;
       setState(() {
-        _animeIds = ids[0];
-        _mangaIds = ids[1];
+        _animeById = entries[0].cast<int, Anime>();
+        _mangaById = entries[1].cast<int, Manga>();
       });
     } catch (_) {}
   }
 
+  /// Merges the cached list entry (status, score, progress) into a browse node
+  /// so the details page opens with the correct state.
+  Anime _seedAnime(Anime anime) {
+    final Anime? cached = _animeById[anime.id];
+    if (cached == null) return anime;
+    return anime.copyWith(
+      inList: true,
+      userStatus: cached.userStatus,
+      userScore: cached.userScore,
+      userEpisodesWatched: cached.userEpisodesWatched,
+    );
+  }
+
+  Manga _seedManga(Manga manga) {
+    final Manga? cached = _mangaById[manga.id];
+    if (cached == null) return manga;
+    return manga.copyWith(
+      inList: true,
+      userStatus: cached.userStatus,
+      userScore: cached.userScore,
+      userChaptersRead: cached.userChaptersRead,
+      userVolumesRead: cached.userVolumesRead,
+    );
+  }
+
   Future<void> _openAnime(Anime anime) async {
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => AnimeDetailsPage(anime: anime)),
+      MaterialPageRoute<void>(
+        builder: (_) => AnimeDetailsPage(anime: _seedAnime(anime)),
+      ),
     );
     if (mounted) _loadMembership();
   }
 
   Future<void> _openManga(Manga manga) async {
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => MangaDetailsPage(manga: manga)),
+      MaterialPageRoute<void>(
+        builder: (_) => MangaDetailsPage(manga: _seedManga(manga)),
+      ),
     );
     if (mounted) _loadMembership();
   }
 
-  void _openSeasonal() {
-    Navigator.of(context).push(
+  Future<void> _openSeasonal() async {
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BrowseListPage<Anime>(
           title: "Seasonal Anime",
@@ -172,10 +203,11 @@ class _BrowsePageState extends State<BrowsePage> {
         ),
       ),
     );
+    if (mounted) _loadMembership();
   }
 
-  void _openSuggestions() {
-    Navigator.of(context).push(
+  Future<void> _openSuggestions() async {
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BrowseListPage<Anime>(
           title: "For You",
@@ -193,10 +225,11 @@ class _BrowsePageState extends State<BrowsePage> {
         ),
       ),
     );
+    if (mounted) _loadMembership();
   }
 
-  void _openAnimeRanking(AnimeRankingType initial) {
-    Navigator.of(context).push(
+  Future<void> _openAnimeRanking(AnimeRankingType initial) async {
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BrowseListPage<Anime>(
           title: initial.label,
@@ -225,10 +258,11 @@ class _BrowsePageState extends State<BrowsePage> {
         ),
       ),
     );
+    if (mounted) _loadMembership();
   }
 
-  void _openMangaRanking(MangaRankingType initial) {
-    Navigator.of(context).push(
+  Future<void> _openMangaRanking(MangaRankingType initial) async {
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BrowseListPage<Manga>(
           title: initial.label,
@@ -257,6 +291,7 @@ class _BrowsePageState extends State<BrowsePage> {
         ),
       ),
     );
+    if (mounted) _loadMembership();
   }
 
   Widget _buildAnimeTile(BuildContext context, Anime anime) {
@@ -268,7 +303,7 @@ class _BrowsePageState extends State<BrowsePage> {
         score: anime.meanScore,
         rank: anime.rank,
         mediaType: anime.mediaType,
-        inList: _animeIds.contains(anime.id),
+        statusLabel: _animeById[anime.id]?.userStatus.label,
         onTap: () => _openAnime(anime),
       ),
     );
@@ -283,7 +318,7 @@ class _BrowsePageState extends State<BrowsePage> {
         score: manga.meanScore,
         rank: manga.rank,
         mediaType: manga.mediaType,
-        inList: _mangaIds.contains(manga.id),
+        statusLabel: _mangaById[manga.id]?.userStatus.label,
         onTap: () => _openManga(manga),
       ),
     );
@@ -365,7 +400,7 @@ class _BrowsePageState extends State<BrowsePage> {
       title: anime.title,
       score: anime.meanScore,
       rank: anime.rank,
-      inList: _animeIds.contains(anime.id),
+      statusLabel: _animeById[anime.id]?.userStatus.shortLabel,
       onTap: () => _openAnime(anime),
     );
   }
@@ -376,7 +411,7 @@ class _BrowsePageState extends State<BrowsePage> {
       title: manga.title,
       score: manga.meanScore,
       rank: manga.rank,
-      inList: _mangaIds.contains(manga.id),
+      statusLabel: _mangaById[manga.id]?.userStatus.shortLabel,
       onTap: () => _openManga(manga),
     );
   }
