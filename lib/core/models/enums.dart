@@ -106,3 +106,117 @@ enum AnimeAiringStatus {
     return null;
   }
 }
+
+/// A season of the year used by the MAL seasonal anime endpoint.
+enum MediaSeason {
+  winter("winter", "Winter"),
+  spring("spring", "Spring"),
+  summer("summer", "Summer"),
+  fall("fall", "Fall");
+
+  const MediaSeason(this.apiValue, this.label);
+
+  /// The value used by the MAL API.
+  final String apiValue;
+
+  /// A human-readable label.
+  final String label;
+
+  /// The season [date] falls in.
+  static MediaSeason current(DateTime date) {
+    final int month = date.month;
+    if (month <= 3) return MediaSeason.winter;
+    if (month <= 6) return MediaSeason.spring;
+    if (month <= 9) return MediaSeason.summer;
+    return MediaSeason.fall;
+  }
+
+  static MediaSeason fromApiValue(String? value) {
+    return values.firstWhere(
+      (MediaSeason season) => season.apiValue == value,
+      orElse: () => MediaSeason.winter,
+    );
+  }
+}
+
+/// A year and season pair, e.g. Fall 2026.
+class SeasonRef {
+  const SeasonRef({required this.year, required this.season});
+
+  final int year;
+  final MediaSeason season;
+
+  /// The season containing [now], or the current season by default.
+  factory SeasonRef.current([DateTime? now]) {
+    final DateTime date = now ?? DateTime.now();
+    return SeasonRef(year: date.year, season: MediaSeason.current(date));
+  }
+
+  String get label => "${season.label} $year";
+
+  @override
+  bool operator ==(Object other) =>
+      other is SeasonRef && other.year == year && other.season == season;
+
+  @override
+  int get hashCode => Object.hash(year, season);
+
+  @override
+  String toString() => label;
+}
+
+/// The sort order for the MAL seasonal anime endpoint.
+enum AnimeSeasonSort {
+  score("anime_score", "By Score"),
+  popularity("anime_num_list_users", "By Popularity");
+
+  const AnimeSeasonSort(this.apiValue, this.label);
+
+  /// The value used by the MAL API.
+  final String apiValue;
+
+  /// A human-readable label.
+  final String label;
+}
+
+/// A ranking category for the MAL anime ranking endpoint.
+enum AnimeRankingType {
+  all("all", "Top Anime"),
+  airing("airing", "Top Airing"),
+  upcoming("upcoming", "Top Upcoming"),
+  tv("tv", "Top TV Series"),
+  ova("ova", "Top OVA Series"),
+  movie("movie", "Top Movies"),
+  special("special", "Top Specials"),
+  bypopularity("bypopularity", "Most Popular"),
+  favorite("favorite", "Most Favorited");
+
+  const AnimeRankingType(this.apiValue, this.label);
+
+  /// The value used by the MAL API.
+  final String apiValue;
+
+  /// A human-readable label.
+  final String label;
+}
+
+/// A ranking category for the MAL manga ranking endpoint.
+enum MangaRankingType {
+  all("all", "All"),
+  manga("manga", "Top Manga"),
+  novels("novels", "Top Novels"),
+  oneshots("oneshots", "Top One-shots"),
+  doujin("doujin", "Top Doujinshi"),
+  manhwa("manhwa", "Top Manhwa"),
+  manhua("manhua", "Top Manhua"),
+  bypopularity("bypopularity", "Most Popular"),
+  favorite("favorite", "Most Favorited");
+
+  const MangaRankingType(this.apiValue, this.label);
+
+  /// The value used by the MAL API.
+  final String apiValue;
+
+  /// A human-readable label.
+  final String label;
+}
