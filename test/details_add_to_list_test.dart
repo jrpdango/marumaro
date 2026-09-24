@@ -5,7 +5,7 @@ import 'package:miru/core/core.dart';
 import 'package:miru/features/media_details/media_details.dart';
 
 class _FakeRepository extends MalRepository {
-  _FakeRepository()
+  _FakeRepository({this.myListStatus})
       : super(
           api: MalApiClient(
             httpClient: http.Client(),
@@ -13,6 +13,7 @@ class _FakeRepository extends MalRepository {
           ),
         );
 
+  final Map<String, dynamic>? myListStatus;
   int updateCalls = 0;
 
   @override
@@ -22,6 +23,7 @@ class _FakeRepository extends MalRepository {
       "num_episodes": 12,
       "status": "finished_airing",
       "main_picture": <String, dynamic>{"large": ""},
+      if (myListStatus != null) "my_list_status": myListStatus,
     });
   }
 
@@ -62,10 +64,24 @@ Anime _listedAnime() {
   );
 }
 
-Future<void> _pumpDetails(WidgetTester tester, Anime anime) async {
+/// Pumps the details page for [anime] with a fake repository and returns it.
+Future<_FakeRepository> _pumpDetails(
+  WidgetTester tester,
+  Anime anime, {
+  Map<String, dynamic>? myListStatus,
+}) async {
+  final _FakeRepository repository = _FakeRepository(
+    myListStatus: myListStatus,
+  );
+  final GlobalController controller = GlobalController(
+    store: _FakeStore(),
+    repository: repository,
+  );
+  addTearDown(controller.dispose);
+
   await tester.pumpWidget(
     GlobalControllerScope(
-      controller: _controller,
+      controller: controller,
       child: MaterialApp(
         theme: AppTheme.dark,
         home: AnimeDetailsPage(anime: anime),
@@ -74,28 +90,14 @@ Future<void> _pumpDetails(WidgetTester tester, Anime anime) async {
   );
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 100));
+  return repository;
 }
 
-late _FakeRepository _repository;
-late GlobalController _controller;
-
 void main() {
-  setUp(() {
-    _repository = _FakeRepository();
-    _controller = GlobalController(
-      store: _FakeStore(),
-      repository: _repository,
-    );
-  });
-
-  tearDown(() {
-    _controller.dispose();
-  });
-
   testWidgets("a non-list anime is added after tapping Add to List", (
     WidgetTester tester,
   ) async {
-    await _pumpDetails(tester, _browseAnime());
+    final _FakeRepository repository = await _pumpDetails(tester, _browseAnime());
 
     expect(find.text("Add to List"), findsOneWidget);
     expect(find.text("Save changes"), findsNothing);
@@ -113,17 +115,40 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(_repository.updateCalls, 1);
+    expect(repository.updateCalls, 1);
     expect(find.text("Save changes"), findsNothing);
   });
 
-  testWidgets("a listed anime opens with its stats and no Add button", (
+  testWidgets("a stale cached status is cleared when the server has none", (
     WidgetTester tester,
   ) async {
     await _pumpDetails(tester, _listedAnime());
 
+    expect(find.text("Add to List"), findsOneWidget);
+    expect(find.text("Currently Watching"), findsNothing);
+
+    await tester.tap(find.text("Add to List"));
+    await tester.pump();
+
+    expect(find.text("Plan To Watch"), findsOneWidget);
+  });
+
+  testWidgets("the server status is shown for browse entries on the list", (
+    WidgetTester tester,
+  ) async {
+    await _pumpDetails(
+      tester,
+      _browseAnime(),
+      myListStatus: <String, dynamic>{
+        "status": "watching",
+        "score": 8,
+        "num_episodes_watched": 3,
+      },
+    );
+
     expect(find.text("Add to List"), findsNothing);
     expect(find.text("Currently Watching"), findsOneWidget);
+    expect(find.byTooltip("Increase Episodes"), findsOneWidget);
     expect(find.text("Save changes"), findsNothing);
   });
 }

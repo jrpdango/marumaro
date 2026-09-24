@@ -96,6 +96,46 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     setState(() => _adding = true);
   }
 
+  /// The status used when adding untracked media.
+  String get _defaultStatusValue => kind == MediaKind.anime
+      ? AnimeListStatus.planToWatch.apiValue
+      : MangaListStatus.planToRead.apiValue;
+
+  /// Loads details and reconciles the list state with the server before the
+  /// future resolves, so the view never renders a stale add/stats state.
+  Future<TDetails> _loadAndSync() {
+    return loadDetails().then((TDetails details) {
+      _applyServerStatus(details);
+      return details;
+    });
+  }
+
+  /// Reconciles the displayed list status/score/progress with the server's
+  /// `my_list_status`. This fixes browse entries, whose list membership is
+  /// unknown until the details request returns. Skipped while the user has
+  /// pending edits.
+  void _applyServerStatus(TDetails details) {
+    final UserListStatus? server = serverStatus(details);
+    if (server == null) {
+      if (_inList && !_dirty) {
+        _inList = false;
+        _persistedStatus = _chosenStatus = _defaultStatusValue;
+        _persistedScore = _chosenScore = 0;
+        _persistedProgress = _chosenProgress = 0;
+        _persistedVolumes = _chosenVolumes = kind == MediaKind.manga ? 0 : null;
+      }
+      return;
+    }
+    if (_dirty) return;
+    _inList = true;
+    _persistedStatus = _chosenStatus = server.status;
+    _persistedScore = _chosenScore = server.score;
+    _persistedProgress = _chosenProgress = server.progress;
+    if (kind == MediaKind.manga) {
+      _persistedVolumes = _chosenVolumes = server.volumeProgress;
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -107,7 +147,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     _persistedProgress = _chosenProgress = initialProgress;
     _persistedVolumes = _chosenVolumes =
         kind == MediaKind.manga ? initialVolumeProgress : null;
-    _detailsFuture = loadDetails();
+    _detailsFuture = _loadAndSync();
   }
 
   /// Sends the pending changes to MAL and updates local state.
@@ -259,7 +299,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
       _persistedScore = _chosenScore;
       _persistedProgress = _chosenProgress;
       _persistedVolumes = _chosenVolumes;
-      _detailsFuture = loadDetails();
+      _detailsFuture = _loadAndSync();
     });
   }
 
@@ -307,7 +347,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
         if (snapshot.hasError) {
           return MediaDetailsError(
             title: mediaTitle,
-            onRetry: () => setState(() => _detailsFuture = loadDetails()),
+            onRetry: () => setState(() => _detailsFuture = _loadAndSync()),
           );
         }
         if (!snapshot.hasData) {
