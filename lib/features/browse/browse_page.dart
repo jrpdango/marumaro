@@ -148,6 +148,27 @@ class _BrowsePageState extends State<BrowsePage> {
     );
   }
 
+  void _openSuggestions() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BrowseListPage<Anime>(
+          title: "For You",
+          selectors: const <BrowseSelector>[],
+          loader:
+              (
+                List<Object> selected, {
+                required int offset,
+                required int limit,
+              }) => _repository
+                  .fetchSuggestedAnime(offset: offset, limit: limit)
+                  .then((PageResult<Anime> page) => page.items),
+          itemBuilder: _buildAnimeTile,
+          emptyMessage: "No suggestions yet.",
+        ),
+      ),
+    );
+  }
+
   void _openAnimeRanking(AnimeRankingType initial) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -263,7 +284,7 @@ class _BrowsePageState extends State<BrowsePage> {
           _BrowseSection<Anime>(
             title: "For You",
             future: _forYou,
-            onViewMore: () => _openAnimeRanking(AnimeRankingType.all),
+            onViewMore: _openSuggestions,
             onRetry: _refresh,
             hideWhenEmpty: true,
             itemBuilder: (BuildContext context, Anime anime) =>
