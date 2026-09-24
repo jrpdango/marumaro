@@ -285,6 +285,20 @@ class GlobalController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Removes an anime from the user's list on MAL and from the cache.
+  Future<void> removeAnime(Anime anime) async {
+    await repository.deleteAnimeListStatus(anime.id);
+    await store.deleteAnime(anime.id);
+    notifyListeners();
+  }
+
+  /// Removes a manga from the user's list on MAL and from the cache.
+  Future<void> removeManga(Manga manga) async {
+    await repository.deleteMangaListStatus(manga.id);
+    await store.deleteManga(manga.id);
+    notifyListeners();
+  }
+
   /// Signs out and clears the cached lists.
   Future<void> signOut() async {
     await auth.signOut();

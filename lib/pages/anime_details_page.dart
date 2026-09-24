@@ -5,11 +5,8 @@ import 'package:miru/models/enums.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/pages/edit_list_page.dart';
 import 'package:miru/services/global_controller.dart';
-import 'package:miru/widgets/anime_poster.dart';
-import 'package:miru/widgets/media_progress_popup.dart';
-import 'package:miru/widgets/list_status_popup.dart';
-import 'package:miru/widgets/loading_popup.dart';
-import 'package:miru/widgets/score_popup.dart';
+import 'package:miru/widgets/media_details_view.dart';
+import 'package:miru/widgets/quick_edit_sheets.dart';
 
 class AnimeDetailsPage extends StatefulWidget {
   const AnimeDetailsPage({super.key, required this.anime});
@@ -23,13 +20,23 @@ class AnimeDetailsPage extends StatefulWidget {
 class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   GlobalController? _controller;
 
-  bool _detailChanged = false;
+  late AnimeListStatus _persistedStatus = widget.anime.userStatus;
+  late int _persistedScore = widget.anime.userScore;
+  late int _persistedEpsWatched = widget.anime.userEpisodesWatched;
+
   late AnimeListStatus _chosenStatus = widget.anime.userStatus;
   late int _chosenScore = widget.anime.userScore;
   late int _chosenEpsWatched = widget.anime.userEpisodesWatched;
+
+  bool _saving = false;
   Future<AnimeDetails>? _animeDetails;
 
   Anime get _anime => widget.anime;
+
+  bool get _dirty =>
+      _chosenStatus != _persistedStatus ||
+      _chosenScore != _persistedScore ||
+      _chosenEpsWatched != _persistedEpsWatched;
 
   @override
   void didChangeDependencies() {
@@ -40,8 +47,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
   }
 
   /// Sends the pending changes to MAL and updates local state.
-  Future<void> _updateItem() async {
-    _showOverlay("loading");
+  Future<void> _save() async {
+    setState(() => _saving = true);
     try {
       await _controller!.updateAnime(
         anime: _anime,
@@ -49,17 +56,69 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
         score: _chosenScore,
         episodesWatched: _chosenEpsWatched,
       );
-      if (mounted) setState(() => _detailChanged = false);
-    } catch (e) {
       if (mounted) {
+        setState(() {
+          _persistedStatus = _chosenStatus;
+          _persistedScore = _chosenScore;
+          _persistedEpsWatched = _chosenEpsWatched;
+          _saving = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to update list.")),
         );
       }
-    } finally {
-      // Dismiss the loading overlay.
-      if (mounted) Navigator.of(context).pop();
     }
+  }
+
+  /// Reverts staged changes back to the last persisted values.
+  void _discard() {
+    setState(() {
+      _chosenStatus = _persistedStatus;
+      _chosenScore = _persistedScore;
+      _chosenEpsWatched = _persistedEpsWatched;
+    });
+  }
+
+  void _adjustProgress(int delta) {
+    final int total = _anime.totalEpisodes;
+    setState(() {
+      final int next = _chosenEpsWatched + delta;
+      _chosenEpsWatched =
+          total > 0 ? next.clamp(0, total) : (next < 0 ? 0 : next);
+    });
+  }
+
+  void _showStatus() {
+    showStatusSheet(
+      context,
+      kind: MediaKind.anime,
+      current: _chosenStatus.apiValue,
+      onSelected: (String value) => setState(
+        () => _chosenStatus = AnimeListStatus.fromApiValue(value),
+      ),
+    );
+  }
+
+  void _showScore() {
+    showScoreSheet(
+      context,
+      initial: _chosenScore,
+      onChanged: (int value) => setState(() => _chosenScore = value),
+    );
+  }
+
+  void _showEpisodes() {
+    showProgressSheet(
+      context,
+      label: "Episodes Watched",
+      total: _anime.totalEpisodes,
+      initial: _chosenEpsWatched,
+      onChanged: (int value) => setState(() => _chosenEpsWatched = value),
+    );
   }
 
   /// Builds the starting status for the edit form from the current in-progress
@@ -100,9 +159,8 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
     }
     if (!mounted) return;
 
-    final UserListStatus? updated =
-        await Navigator.of(context).push<UserListStatus>(
-      MaterialPageRoute<UserListStatus>(
+    final Object? result = await Navigator.of(context).push<Object>(
+      MaterialPageRoute<Object>(
         builder: (_) => EditListPage(
           title: _anime.title,
           kind: MediaKind.anime,
@@ -115,246 +173,107 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage> {
             status: status,
             patch: patch,
           ),
+          onRemove: () => _controller!.removeAnime(_anime),
         ),
       ),
     );
-    if (updated == null || !mounted) return;
+    if (result == null || !mounted) return;
+    if (result is EditListRemoved) {
+      Navigator.of(context).pop();
+      return;
+    }
+    final UserListStatus updated = result as UserListStatus;
 
     setState(() {
       _chosenStatus = AnimeListStatus.fromApiValue(updated.status);
       _chosenScore = updated.score;
       _chosenEpsWatched = updated.progress;
-      _detailChanged = false;
+      _persistedStatus = _chosenStatus;
+      _persistedScore = _chosenScore;
+      _persistedEpsWatched = _chosenEpsWatched;
       _animeDetails =
           _controller!.repository.fetchAnimeDetails(widget.anime.id);
     });
   }
 
-  /// Shows an overlaying widget depending on the given [type].
-  void _showOverlay(String type) {
-    switch (type) {
-      case 'status':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => ListStatusPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            options: AnimeListStatus.values
-                .map((AnimeListStatus status) => status.label)
-                .toList(),
-            stringChoice: (choice) => setState(
-              () => _chosenStatus = AnimeListStatus.fromApiValue(
-                choice.replaceAll(" ", "_").toLowerCase(),
-              ),
-            ),
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'episodes':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => MediaProgressPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            progressChoice: (choice) =>
-                setState(() => _chosenEpsWatched = int.parse(choice)),
-            total: _anime.totalEpisodes,
-            initialProgress: _chosenEpsWatched,
-            label: "Total Episodes",
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'score':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => ScorePopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            scoreChoice: (choice) =>
-                setState(() => _chosenScore = int.parse(choice)),
-            initialScore: _chosenScore,
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'loading':
-        showDialog(
-          context: context,
-          builder: (_) => const LoadingPopup(),
-        );
-        break;
-    }
-  }
-
-  /// Creates the rows displayed for [details].
-  List<Widget> _buildInfoList(AnimeDetails details) {
-    return details.displayRows.map((MapEntry<String, String> row) {
-      return SizedBox(
-        height: 20.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  row.key,
-                  style: const TextStyle(color: Colors.white, fontSize: 10.0),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  row.value,
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(color: Colors.white, fontSize: 10.0),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+  /// Confirms and removes the anime from the user's list.
+  Future<void> _remove() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: const Text("Remove from list?"),
+        content: const Text(
+          "This deletes your progress, score, and dates for this title on "
+          "MyAnimeList. This cannot be undone.",
         ),
-      );
-    }).toList();
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text("Cancel"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text("Remove"),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      await _controller!.removeAnime(_anime);
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to remove from list.")),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back),
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: _openEdit,
-            icon: const Icon(Icons.edit),
+    return FutureBuilder<AnimeDetails>(
+      future: _animeDetails,
+      builder: (BuildContext context, AsyncSnapshot<AnimeDetails> snapshot) {
+        if (snapshot.hasError) {
+          return MediaDetailsError(
+            title: _anime.title,
+            onRetry: () => setState(() {
+              _animeDetails =
+                  _controller!.repository.fetchAnimeDetails(widget.anime.id);
+            }),
+          );
+        }
+        if (!snapshot.hasData) {
+          return MediaDetailsLoading(
+            title: _anime.title,
+            poster: _anime.picture,
+          );
+        }
+        return MediaDetailsView(
+          data: snapshot.data!.toViewData(
+            id: _anime.id,
+            title: _anime.title,
+            poster: _anime.picture,
           ),
-        ],
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: AnimePoster(picture: _anime.picture),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      _anime.title,
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 20.0),
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    FutureBuilder<AnimeDetails>(
-                      future: _animeDetails,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<AnimeDetails> snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            "Mean Score: ${snapshot.data!.meanScore}",
-                            style: const TextStyle(
-                                color: Colors.amber, fontSize: 15.0),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return const Text(
-                              "Error loading data. Please try again later.");
-                        }
-                        return const Text("");
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay('status'),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.bar_chart, color: Colors.white),
-                      Text(
-                        _chosenStatus.label,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay("episodes"),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.remove_red_eye, color: Colors.white),
-                      Text(
-                        "$_chosenEpsWatched/${_anime.totalEpisodes}",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay("score"),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.star, color: Colors.white),
-                      Text(
-                        "$_chosenScore",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Display a button if a change was made to update list item
-          _detailChanged
-              ? TextButton(
-                  onPressed: _updateItem,
-                  child: const Text("Update List"),
-                )
-              : const SizedBox(height: 0, width: 0),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: FutureBuilder<AnimeDetails>(
-              future: _animeDetails,
-              builder:
-                  (BuildContext context, AsyncSnapshot<AnimeDetails> snapshot) {
-                if (snapshot.hasError) {
-                  return const Text("Error loading data. Please try again later.");
-                }
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(color: Colors.amber),
-                    ),
-                  );
-                }
-                return Column(
-                  children: _buildInfoList(snapshot.data!),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+          statusLabel: _chosenStatus.label,
+          score: _chosenScore,
+          progress: _chosenEpsWatched,
+          progressTotal: _anime.totalEpisodes,
+          progressLabel: "Episodes",
+          dirty: _dirty,
+          saving: _saving,
+          onStatusTap: _showStatus,
+          onScoreTap: _showScore,
+          onProgressTap: _showEpisodes,
+          onEditTap: _openEdit,
+          onProgressDelta: _adjustProgress,
+          onSave: _save,
+          onDiscard: _discard,
+          onRemove: _remove,
+        );
+      },
     );
   }
 }

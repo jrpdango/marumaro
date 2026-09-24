@@ -192,6 +192,11 @@ class LocalStore {
     );
   }
 
+  Future<void> deleteAnime(int id) async {
+    final Database db = await _db;
+    await db.delete(_animeTable, where: 'id = ?', whereArgs: <int>[id]);
+  }
+
   Future<List<Manga>> pageManga(
     MangaListStatus status, {
     required int offset,
@@ -250,6 +255,11 @@ class LocalStore {
       where: 'id = ?',
       whereArgs: <int>[manga.id],
     );
+  }
+
+  Future<void> deleteManga(int id) async {
+    final Database db = await _db;
+    await db.delete(_mangaTable, where: 'id = ?', whereArgs: <int>[id]);
   }
 
   String _orderBy(ListSort sort) {
