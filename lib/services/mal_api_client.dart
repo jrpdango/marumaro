@@ -41,6 +41,14 @@ class MalApiClient {
     return _decode(response);
   }
 
+  Future<void> delete(String path) async {
+    final http.Response response = await _httpClient.delete(
+      _uri(path),
+      headers: _headers(json: false),
+    );
+    _decode(response);
+  }
+
   Uri _uri(String path, [Map<String, String>? query]) =>
       Uri.https(_host, path, query);
 

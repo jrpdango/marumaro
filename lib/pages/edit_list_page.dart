@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/user_list_status.dart';
+import 'package:miru/theme/app_colors.dart';
 import 'package:miru/widgets/loading_popup.dart';
+
+/// Returned by [EditListPage] when the user removed the item from their list.
+class EditListRemoved {
+  const EditListRemoved();
+}
 
 /// A full-screen form for editing every field of a list status entry.
 ///
@@ -15,6 +21,7 @@ class EditListPage extends StatefulWidget {
     required this.kind,
     required this.initial,
     required this.onSave,
+    required this.onRemove,
     this.baseline,
     this.progressTotal,
     this.volumeTotal,
@@ -43,6 +50,9 @@ class EditListPage extends StatefulWidget {
   final Future<void> Function(UserListStatus updated, Map<String, String> patch)
       onSave;
 
+  /// Removes the item from the user's list on MAL and in the cache.
+  final Future<void> Function() onRemove;
+
   @override
   State<EditListPage> createState() => _EditListPageState();
 }
@@ -67,6 +77,8 @@ class _EditListPageState extends State<EditListPage> {
   late final TextEditingController _comments =
       TextEditingController(text: widget.initial.comments);
   late final UserListStatus _baseline = widget.baseline ?? widget.initial;
+
+  bool _busy = false;
 
   bool get _isAnime => widget.kind == MediaKind.anime;
 
@@ -106,6 +118,16 @@ class _EditListPageState extends State<EditListPage> {
         : MangaListStatus.reading.apiValue;
   }
 
+  List<MapEntry<String, String>> get _statusOptions {
+    return _isAnime
+        ? AnimeListStatus.values
+            .map((AnimeListStatus s) => MapEntry(s.apiValue, s.label))
+            .toList()
+        : MangaListStatus.values
+            .map((MangaListStatus s) => MapEntry(s.apiValue, s.label))
+            .toList();
+  }
+
   UserListStatus _buildUpdated() {
     return UserListStatus(
       status: _status,
@@ -133,20 +155,57 @@ class _EditListPageState extends State<EditListPage> {
         updated.changedPatch(widget.kind, _baseline);
     if (patch.isEmpty) return;
 
-    showDialog(
-      context: context,
-      builder: (_) => const LoadingPopup(),
-    );
+    setState(() => _busy = true);
     try {
       await widget.onSave(updated, patch);
       if (!mounted) return;
-      Navigator.of(context).pop();
       Navigator.of(context).pop(updated);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to update list.")),
+      );
+    }
+  }
+
+  Future<void> _remove() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: const Text("Remove from list?"),
+        content: const Text(
+          "This deletes your progress, score, and dates for this title on "
+          "MyAnimeList. This cannot be undone.",
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text("Cancel"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text("Remove"),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    showDialog<void>(
+      context: context,
+      builder: (_) => const LoadingPopup(message: "Removing"),
+    );
+    try {
+      await widget.onRemove();
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      Navigator.of(context).pop(const EditListRemoved());
     } catch (_) {
       if (!mounted) return;
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to update list.")),
+        const SnackBar(content: Text("Failed to remove from list.")),
       );
     }
   }
@@ -170,71 +229,14 @@ class _EditListPageState extends State<EditListPage> {
     });
   }
 
-  List<DropdownMenuItem<String>> get _statusItems {
-    final List<MapEntry<String, String>> options = _isAnime
-        ? AnimeListStatus.values
-            .map((AnimeListStatus s) => MapEntry(s.apiValue, s.label))
-            .toList()
-        : MangaListStatus.values
-            .map((MangaListStatus s) => MapEntry(s.apiValue, s.label))
-            .toList();
-    return options
-        .map((MapEntry<String, String> option) =>
-            _item<String>(option.key, option.value))
-        .toList();
-  }
-
-  DropdownMenuItem<T> _item<T>(T value, String label) {
-    return DropdownMenuItem<T>(
-      value: value,
-      child: Text(label, style: const TextStyle(color: Colors.white)),
-    );
-  }
-
-  Widget _dropdown<T>({
-    required T value,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T?> onChanged,
-  }) {
-    return DropdownButton<T>(
-      value: value,
-      isExpanded: true,
-      dropdownColor: Colors.grey[850],
-      underline: const SizedBox.shrink(),
-      style: const TextStyle(color: Colors.white),
-      items: items,
-      onChanged: onChanged,
-    );
-  }
-
-  Widget _labeled(String label, Widget child) {
+  Widget _section(String title, Widget child) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(color: Colors.white, fontSize: 14.0),
-            ),
-          ),
-          Expanded(child: child),
-        ],
-      ),
-    );
-  }
-
-  Widget _stacked(String label, Widget child) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12.0),
+      padding: const EdgeInsets.only(bottom: AppTokens.spaceXl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 14.0),
-          ),
-          const SizedBox(height: 6.0),
+          Text(title, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: AppTokens.spaceMd),
           child,
         ],
       ),
@@ -250,30 +252,32 @@ class _EditListPageState extends State<EditListPage> {
         FilteringTextInputFormatter.digitsOnly,
       ],
       textAlign: TextAlign.right,
-      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        isDense: true,
         hintText: "0",
         suffixText: showTotal ? "/ $total" : null,
-        suffixStyle: const TextStyle(color: Colors.white70),
       ),
     );
   }
 
   Widget _dateField({required bool start}) {
     final DateTime? date = start ? _startDate : _finishDate;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        TextButton(
-          onPressed: () => _pickDate(start: start),
-          child: Text(
-            date == null ? "Not set" : UserListStatus.serializeDate(date)!,
+        Expanded(
+          child: TextButton(
+            onPressed: () => _pickDate(start: start),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                date == null ? "Not set" : UserListStatus.serializeDate(date)!,
+              ),
+            ),
           ),
         ),
         if (date != null)
           IconButton(
-            icon: const Icon(Icons.clear, color: Colors.white70, size: 18.0),
+            icon: Icon(Icons.clear, color: scheme.onSurfaceVariant, size: 18.0),
             onPressed: () => setState(() {
               if (start) {
                 _startDate = null;
@@ -288,111 +292,218 @@ class _EditListPageState extends State<EditListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasChanges = _patch.isNotEmpty;
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back),
-        ),
         title: Text(widget.title, overflow: TextOverflow.ellipsis),
         actions: <Widget>[
-          TextButton(
-            onPressed: _patch.isEmpty ? null : _save,
-            child: const Text("Save"),
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              if (value == "remove") _remove();
+            },
+            itemBuilder: (BuildContext context) =>
+                const <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: "remove",
+                child: Text("Remove from list"),
+              ),
+            ],
           ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.all(AppTokens.spaceLg),
         children: <Widget>[
-          _labeled(
+          _section(
             "Status",
-            _dropdown<String>(
-              value: _status,
-              items: _statusItems,
-              onChanged: (String? value) =>
-                  setState(() => _status = value ?? _status),
+            Wrap(
+              spacing: AppTokens.spaceSm,
+              runSpacing: AppTokens.spaceSm,
+              children: _statusOptions
+                  .map(
+                    (MapEntry<String, String> option) => ChoiceChip(
+                      label: Text(option.value),
+                      selected: _status == option.key,
+                      onSelected: (_) =>
+                          setState(() => _status = option.key),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
-          _labeled(
+          _section(
             "Score",
-            _dropdown<int>(
-              value: _score,
-              items: List<DropdownMenuItem<int>>.generate(
-                11,
-                (int index) => _item<int>(index, "$index"),
-              ),
-              onChanged: (int? value) =>
-                  setState(() => _score = value ?? _score),
-            ),
-          ),
-          _labeled(
-            _isAnime ? "Episodes Watched" : "Chapters Read",
-            _numberField(_progress, total: widget.progressTotal),
-          ),
-          if (!_isAnime)
-            _labeled(
-              "Volumes Read",
-              _numberField(_volumes, total: widget.volumeTotal),
-            ),
-          _labeled("Start Date", _dateField(start: true)),
-          _labeled("Finish Date", _dateField(start: false)),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(_isAnime ? "Rewatching" : "Rereading"),
-            value: _isRewatching,
-            onChanged: (bool value) => setState(() => _isRewatching = value),
-          ),
-          _labeled(
-            _isAnime ? "Times Rewatched" : "Times Reread",
-            _numberField(_times),
-          ),
-          _labeled(
-            _isAnime ? "Rewatch Value" : "Reread Value",
-            _dropdown<int>(
-              value: _rewatchValue,
-              items: List<DropdownMenuItem<int>>.generate(
-                6,
-                (int index) => _item<int>(index, "$index"),
-              ),
-              onChanged: (int? value) =>
-                  setState(() => _rewatchValue = value ?? _rewatchValue),
-            ),
-          ),
-          _labeled(
-            "Priority",
-            _dropdown<int>(
-              value: _priority,
-              items: <DropdownMenuItem<int>>[
-                _item<int>(0, "Low"),
-                _item<int>(1, "Medium"),
-                _item<int>(2, "High"),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    const Spacer(),
+                    Text(
+                      "$_score",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
+                ),
+                Slider(
+                  value: _score.toDouble(),
+                  min: 0,
+                  max: 10,
+                  divisions: 10,
+                  label: "$_score",
+                  onChanged: (double value) =>
+                      setState(() => _score = value.round()),
+                ),
               ],
-              onChanged: (int? value) =>
-                  setState(() => _priority = value ?? _priority),
             ),
           ),
-          _stacked(
-            "Tags (comma-separated)",
-            TextField(
-              controller: _tags,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(isDense: true),
+          _section(
+            "Progress",
+            Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(_isAnime
+                          ? "Episodes Watched"
+                          : "Chapters Read"),
+                    ),
+                    SizedBox(
+                      width: 120.0,
+                      child: _numberField(_progress,
+                          total: widget.progressTotal),
+                    ),
+                  ],
+                ),
+                if (!_isAnime) ...<Widget>[
+                  const SizedBox(height: AppTokens.spaceSm),
+                  Row(
+                    children: <Widget>[
+                      const Expanded(child: Text("Volumes Read")),
+                      SizedBox(
+                        width: 120.0,
+                        child: _numberField(_volumes,
+                            total: widget.volumeTotal),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
-          _stacked(
-            "Comments",
+          _section(
+            "Dates",
+            Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    const SizedBox(width: 96.0, child: Text("Start")),
+                    Expanded(child: _dateField(start: true)),
+                  ],
+                ),
+                const SizedBox(height: AppTokens.spaceSm),
+                Row(
+                  children: <Widget>[
+                    const SizedBox(width: 96.0, child: Text("Finish")),
+                    Expanded(child: _dateField(start: false)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          _section(
+            _isAnime ? "Rewatch" : "Reread",
+            Column(
+              children: <Widget>[
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(_isAnime ? "Rewatching" : "Rereading"),
+                  value: _isRewatching,
+                  onChanged: (bool value) =>
+                      setState(() => _isRewatching = value),
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                          _isAnime ? "Times Rewatched" : "Times Reread"),
+                    ),
+                    SizedBox(
+                      width: 120.0,
+                      child: _numberField(_times),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTokens.spaceSm),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                          _isAnime ? "Rewatch Value" : "Reread Value"),
+                    ),
+                    Text("$_rewatchValue"),
+                  ],
+                ),
+                Slider(
+                  value: _rewatchValue.toDouble(),
+                  min: 0,
+                  max: 5,
+                  divisions: 5,
+                  label: "$_rewatchValue",
+                  onChanged: (double value) =>
+                      setState(() => _rewatchValue = value.round()),
+                ),
+              ],
+            ),
+          ),
+          _section(
+            "Organization",
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text("Priority"),
+                const SizedBox(height: AppTokens.spaceSm),
+                SegmentedButton<int>(
+                  segments: const <ButtonSegment<int>>[
+                    ButtonSegment<int>(value: 0, label: Text("Low")),
+                    ButtonSegment<int>(value: 1, label: Text("Medium")),
+                    ButtonSegment<int>(value: 2, label: Text("High")),
+                  ],
+                  selected: <int>{_priority},
+                  showSelectedIcon: false,
+                  onSelectionChanged: (Set<int> selection) =>
+                      setState(() => _priority = selection.first),
+                ),
+                const SizedBox(height: AppTokens.spaceLg),
+                TextField(
+                  controller: _tags,
+                  decoration: const InputDecoration(
+                    labelText: "Tags (comma-separated)",
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _section(
+            "Notes",
             TextField(
               controller: _comments,
               maxLines: 4,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(isDense: true),
+              decoration: const InputDecoration(
+                hintText: "Your comments",
+              ),
             ),
           ),
-          const SizedBox(height: 24.0),
         ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppTokens.spaceLg),
+          child: FilledButton(
+            onPressed: hasChanges && !_busy ? _save : null,
+            child: Text(hasChanges ? "Save changes" : "No changes"),
+          ),
+        ),
       ),
     );
   }

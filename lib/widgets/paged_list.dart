@@ -191,7 +191,7 @@ class _PagedListViewState<T> extends State<PagedListView<T>> {
     if (_items.isEmpty) {
       if (_loading) {
         return const Center(
-          child: CircularProgressIndicator(color: Colors.white60),
+          child: CircularProgressIndicator(),
         );
       }
       if (_error != null) {
@@ -199,10 +199,7 @@ class _PagedListViewState<T> extends State<PagedListView<T>> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Text(
-                "Failed to load.",
-                style: TextStyle(color: Colors.white),
-              ),
+              const Text("Failed to load."),
               TextButton(
                 onPressed: _reset,
                 child: const Text("Retry"),
@@ -221,7 +218,9 @@ class _PagedListViewState<T> extends State<PagedListView<T>> {
             Center(
               child: Text(
                 widget.emptyMessage,
-                style: const TextStyle(color: Colors.white54),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ],
@@ -259,10 +258,7 @@ class _PagedListViewState<T> extends State<PagedListView<T>> {
         child: SizedBox(
           height: 22.0,
           width: 22.0,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.0,
-            color: Colors.white60,
-          ),
+          child: CircularProgressIndicator(strokeWidth: 2.0),
         ),
       );
     }

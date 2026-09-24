@@ -52,9 +52,8 @@ class _LoadingState extends State<Loading> {
       return Login(onSignedIn: _finishSetup);
     }
     return Scaffold(
-      backgroundColor: Colors.black87,
       body: const Center(
-        child: CircularProgressIndicator(color: Colors.white60),
+        child: CircularProgressIndicator(),
       ),
     );
   }

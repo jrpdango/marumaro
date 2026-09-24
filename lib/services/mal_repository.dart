@@ -21,16 +21,17 @@ class MalRepository {
       "is_rereading,priority,num_times_reread,reread_value,tags,comments";
   static const String _detailsFields =
       "title,main_picture,alternative_titles,start_date,end_date,synopsis,"
-      "mean,rank,popularity,num_list_users,num_scoring_users,media_type,status,"
-      "genres,my_list_status{$_animeListStatusFields},num_episodes,start_season,"
-      "source,average_episode_duration,rating";
+      "background,mean,rank,popularity,num_list_users,num_scoring_users,"
+      "media_type,status,genres,my_list_status{$_animeListStatusFields},"
+      "num_episodes,start_season,source,average_episode_duration,rating,"
+      "studios,broadcast";
   static const String _mangaListFields =
       "list_status,num_chapters,num_volumes,status";
   static const String _mangaDetailsFields =
       "title,main_picture,alternative_titles,start_date,end_date,synopsis,"
-      "mean,rank,popularity,num_list_users,num_scoring_users,media_type,status,"
-      "genres,my_list_status{$_mangaListStatusFields},num_chapters,num_volumes,"
-      "source";
+      "background,mean,rank,popularity,num_list_users,num_scoring_users,"
+      "media_type,status,genres,my_list_status{$_mangaListStatusFields},"
+      "num_chapters,num_volumes,source,authors";
 
   final MalApiClient _api;
 
@@ -101,6 +102,11 @@ class MalRepository {
     await _api.patch("v2/anime/$animeId/my_list_status", body: body);
   }
 
+  /// Removes an anime from the user's list entirely.
+  Future<void> deleteAnimeListStatus(int animeId) async {
+    await _api.delete("v2/anime/$animeId/my_list_status");
+  }
+
   /// Fetches one page of the user's manga list, optionally for a single status.
   Future<PageResult<Manga>> fetchMangaListPage({
     required int offset,
@@ -164,5 +170,10 @@ class MalRepository {
     required Map<String, String> body,
   }) async {
     await _api.patch("v2/manga/$mangaId/my_list_status", body: body);
+  }
+
+  /// Removes a manga from the user's list entirely.
+  Future<void> deleteMangaListStatus(int mangaId) async {
+    await _api.delete("v2/manga/$mangaId/my_list_status");
   }
 }

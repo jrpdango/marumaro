@@ -1,16 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:miru/models/anime.dart';
 import 'package:miru/models/manga.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/services/global_controller.dart';
+import 'package:miru/theme/app_colors.dart';
 import 'package:miru/widgets/back_appbar.dart';
 import 'package:miru/widgets/list_container.dart';
 import 'package:miru/widgets/manga_list_container.dart';
 import 'package:miru/widgets/paged_list.dart';
 
+/// Unified search over the user's cached anime and manga lists.
 class Search extends StatefulWidget {
-  final bool manga;
+  const Search({super.key, this.initialKind = MediaKind.anime});
 
-  const Search({super.key, this.manga = false});
+  final MediaKind initialKind;
 
   @override
   State<Search> createState() => _SearchState();
@@ -18,7 +23,11 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   GlobalController? _controller;
+  final TextEditingController _searchController = TextEditingController();
+
+  late MediaKind _kind = widget.initialKind;
   String _query = "";
+  Timer? _debounce;
 
   @override
   void didChangeDependencies() {
@@ -27,37 +36,91 @@ class _SearchState extends State<Search> {
   }
 
   @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onQueryChanged(String value) {
+    setState(() {});
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 250), () {
+      if (mounted) setState(() => _query = value);
+    });
+  }
+
+  void _clear() {
+    _debounce?.cancel();
+    _searchController.clear();
+    setState(() => _query = "");
+  }
+
+  @override
   Widget build(BuildContext context) {
     final GlobalController controller = _controller!;
+    final bool isAnime = _kind == MediaKind.anime;
     return Scaffold(
-      backgroundColor: const Color.fromARGB(240, 0, 0, 0),
       appBar: BackAppBar(),
       body: Column(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 10.0),
-            child: TextField(
-              onChanged: (query) {
-                setState(() => _query = query);
-              },
-              style: const TextStyle(color: Colors.white70),
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppTokens.spaceLg,
+              AppTokens.spaceLg,
+              AppTokens.spaceLg,
+              AppTokens.spaceSm,
+            ),
+            child: SegmentedButton<MediaKind>(
+              segments: const <ButtonSegment<MediaKind>>[
+                ButtonSegment<MediaKind>(
+                  value: MediaKind.anime,
+                  label: Text("Anime"),
+                  icon: Icon(Icons.movie_outlined),
                 ),
-                hintText: widget.manga
-                    ? "Search your manga list..."
-                    : "Search your anime list...",
-                hintStyle: const TextStyle(color: Colors.white),
-                fillColor: Colors.blueGrey,
-                filled: true,
+                ButtonSegment<MediaKind>(
+                  value: MediaKind.manga,
+                  label: Text("Manga"),
+                  icon: Icon(Icons.menu_book_outlined),
+                ),
+              ],
+              selected: <MediaKind>{_kind},
+              showSelectedIcon: false,
+              onSelectionChanged: (Set<MediaKind> selection) =>
+                  setState(() => _kind = selection.first),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppTokens.spaceLg,
+              0,
+              AppTokens.spaceLg,
+              AppTokens.spaceSm,
+            ),
+            child: TextField(
+              controller: _searchController,
+              autofocus: true,
+              textInputAction: TextInputAction.search,
+              onChanged: _onQueryChanged,
+              decoration: InputDecoration(
+                hintText: isAnime
+                    ? "Search your anime list..."
+                    : "Search your manga list...",
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.clear),
+                        tooltip: "Clear",
+                        onPressed: _clear,
+                      ),
               ),
             ),
           ),
           Expanded(
-            child: widget.manga
-                ? _buildMangaResults(controller)
-                : _buildAnimeResults(controller),
+            child: isAnime
+                ? _buildAnimeResults(controller)
+                : _buildMangaResults(controller),
           ),
         ],
       ),

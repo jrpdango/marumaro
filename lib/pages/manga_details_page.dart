@@ -5,11 +5,8 @@ import 'package:miru/models/manga_details.dart';
 import 'package:miru/models/user_list_status.dart';
 import 'package:miru/pages/edit_list_page.dart';
 import 'package:miru/services/global_controller.dart';
-import 'package:miru/widgets/anime_poster.dart';
-import 'package:miru/widgets/list_status_popup.dart';
-import 'package:miru/widgets/loading_popup.dart';
-import 'package:miru/widgets/media_progress_popup.dart';
-import 'package:miru/widgets/score_popup.dart';
+import 'package:miru/widgets/media_details_view.dart';
+import 'package:miru/widgets/quick_edit_sheets.dart';
 
 class MangaDetailsPage extends StatefulWidget {
   const MangaDetailsPage({super.key, required this.manga});
@@ -23,14 +20,26 @@ class MangaDetailsPage extends StatefulWidget {
 class _MangaDetailsPageState extends State<MangaDetailsPage> {
   GlobalController? _controller;
 
-  bool _detailChanged = false;
+  late MangaListStatus _persistedStatus = widget.manga.userStatus;
+  late int _persistedScore = widget.manga.userScore;
+  late int _persistedChapters = widget.manga.userChaptersRead;
+  late int _persistedVolumes = widget.manga.userVolumesRead;
+
   late MangaListStatus _chosenStatus = widget.manga.userStatus;
   late int _chosenScore = widget.manga.userScore;
-  late int _chosenChaptersRead = widget.manga.userChaptersRead;
-  late int _chosenVolumesRead = widget.manga.userVolumesRead;
+  late int _chosenChapters = widget.manga.userChaptersRead;
+  late int _chosenVolumes = widget.manga.userVolumesRead;
+
+  bool _saving = false;
   Future<MangaDetails>? _mangaDetails;
 
   Manga get _manga => widget.manga;
+
+  bool get _dirty =>
+      _chosenStatus != _persistedStatus ||
+      _chosenScore != _persistedScore ||
+      _chosenChapters != _persistedChapters ||
+      _chosenVolumes != _persistedVolumes;
 
   @override
   void didChangeDependencies() {
@@ -41,27 +50,82 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
   }
 
   /// Sends the pending changes to MAL and updates local state.
-  Future<void> _updateItem() async {
-    _showOverlay("loading");
+  Future<void> _save() async {
+    setState(() => _saving = true);
     try {
       await _controller!.updateManga(
         manga: _manga,
         status: _chosenStatus,
         score: _chosenScore,
-        chaptersRead: _chosenChaptersRead,
-        volumesRead: _chosenVolumesRead,
+        chaptersRead: _chosenChapters,
+        volumesRead: _chosenVolumes,
       );
-      if (mounted) setState(() => _detailChanged = false);
-    } catch (e) {
       if (mounted) {
+        setState(() {
+          _persistedStatus = _chosenStatus;
+          _persistedScore = _chosenScore;
+          _persistedChapters = _chosenChapters;
+          _persistedVolumes = _chosenVolumes;
+          _saving = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to update list.")),
         );
       }
-    } finally {
-      // Dismiss the loading overlay.
-      if (mounted) Navigator.of(context).pop();
     }
+  }
+
+  /// Reverts staged changes back to the last persisted values.
+  void _discard() {
+    setState(() {
+      _chosenStatus = _persistedStatus;
+      _chosenScore = _persistedScore;
+      _chosenChapters = _persistedChapters;
+      _chosenVolumes = _persistedVolumes;
+    });
+  }
+
+  int _clamp(int value, int total) {
+    if (total > 0) return value.clamp(0, total);
+    return value < 0 ? 0 : value;
+  }
+
+  void _adjustChapters(int delta) {
+    setState(() =>
+        _chosenChapters = _clamp(_chosenChapters + delta, _manga.totalChapters));
+  }
+
+  void _showStatus() {
+    showStatusSheet(
+      context,
+      kind: MediaKind.manga,
+      current: _chosenStatus.apiValue,
+      onSelected: (String value) => setState(
+        () => _chosenStatus = MangaListStatus.fromApiValue(value),
+      ),
+    );
+  }
+
+  void _showScore() {
+    showScoreSheet(
+      context,
+      initial: _chosenScore,
+      onChanged: (int value) => setState(() => _chosenScore = value),
+    );
+  }
+
+  void _showChapters() {
+    showProgressSheet(
+      context,
+      label: "Chapters Read",
+      total: _manga.totalChapters,
+      initial: _chosenChapters,
+      onChanged: (int value) => setState(() => _chosenChapters = value),
+    );
   }
 
   /// Builds the starting status for the edit form from the current in-progress
@@ -72,8 +136,8 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
     return UserListStatus(
       status: _chosenStatus.apiValue,
       score: _chosenScore,
-      progress: _chosenChaptersRead,
-      volumeProgress: _chosenVolumesRead,
+      progress: _chosenChapters,
+      volumeProgress: _chosenVolumes,
       startDate: server?.startDate,
       finishDate: server?.finishDate,
       isRewatching: server?.isRewatching ?? false,
@@ -103,9 +167,8 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
     }
     if (!mounted) return;
 
-    final UserListStatus? updated =
-        await Navigator.of(context).push<UserListStatus>(
-      MaterialPageRoute<UserListStatus>(
+    final Object? result = await Navigator.of(context).push<Object>(
+      MaterialPageRoute<Object>(
         builder: (_) => EditListPage(
           title: _manga.title,
           kind: MediaKind.manga,
@@ -119,277 +182,109 @@ class _MangaDetailsPageState extends State<MangaDetailsPage> {
             status: status,
             patch: patch,
           ),
+          onRemove: () => _controller!.removeManga(_manga),
         ),
       ),
     );
-    if (updated == null || !mounted) return;
+    if (result == null || !mounted) return;
+    if (result is EditListRemoved) {
+      Navigator.of(context).pop();
+      return;
+    }
+    final UserListStatus updated = result as UserListStatus;
 
     setState(() {
       _chosenStatus = MangaListStatus.fromApiValue(updated.status);
       _chosenScore = updated.score;
-      _chosenChaptersRead = updated.progress;
-      _chosenVolumesRead = updated.volumeProgress ?? _chosenVolumesRead;
-      _detailChanged = false;
+      _chosenChapters = updated.progress;
+      _chosenVolumes = updated.volumeProgress ?? _chosenVolumes;
+      _persistedStatus = _chosenStatus;
+      _persistedScore = _chosenScore;
+      _persistedChapters = _chosenChapters;
+      _persistedVolumes = _chosenVolumes;
       _mangaDetails =
           _controller!.repository.fetchMangaDetails(widget.manga.id);
     });
   }
 
-  /// Shows an overlaying widget depending on the given [type].
-  void _showOverlay(String type) {
-    switch (type) {
-      case 'status':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => ListStatusPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            options: MangaListStatus.values
-                .map((MangaListStatus status) => status.label)
-                .toList(),
-            stringChoice: (choice) => setState(
-              () => _chosenStatus = MangaListStatus.fromApiValue(
-                choice.replaceAll(" ", "_").toLowerCase(),
-              ),
-            ),
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'chapters':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => MediaProgressPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            progressChoice: (choice) =>
-                setState(() => _chosenChaptersRead = int.parse(choice)),
-            total: _manga.totalChapters,
-            initialProgress: _chosenChaptersRead,
-            label: "Total Chapters",
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'volumes':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => MediaProgressPopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            progressChoice: (choice) =>
-                setState(() => _chosenVolumesRead = int.parse(choice)),
-            total: _manga.totalVolumes,
-            initialProgress: _chosenVolumesRead,
-            label: "Total Volumes",
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'score':
-        showDialog(
-          context: context,
-          barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
-          builder: (_) => ScorePopup(
-            callback: (val) => setState(() => _detailChanged = val),
-            scoreChoice: (choice) =>
-                setState(() => _chosenScore = int.parse(choice)),
-            initialScore: _chosenScore,
-            closeOverlayCallback: () => Navigator.of(context).pop(),
-          ),
-        );
-        break;
-      case 'loading':
-        showDialog(
-          context: context,
-          builder: (_) => const LoadingPopup(),
-        );
-        break;
-    }
-  }
-
-  /// Creates the rows displayed for [details].
-  List<Widget> _buildInfoList(MangaDetails details) {
-    return details.displayRows.map((MapEntry<String, String> row) {
-      return SizedBox(
-        height: 20.0,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  row.key,
-                  style: const TextStyle(color: Colors.white, fontSize: 10.0),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  row.value,
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(color: Colors.white, fontSize: 10.0),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+  /// Confirms and removes the manga from the user's list.
+  Future<void> _remove() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: const Text("Remove from list?"),
+        content: const Text(
+          "This deletes your progress, score, and dates for this title on "
+          "MyAnimeList. This cannot be undone.",
         ),
-      );
-    }).toList();
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text("Cancel"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text("Remove"),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      await _controller!.removeManga(_manga);
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to remove from list.")),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back),
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: _openEdit,
-            icon: const Icon(Icons.edit),
+    return FutureBuilder<MangaDetails>(
+      future: _mangaDetails,
+      builder: (BuildContext context, AsyncSnapshot<MangaDetails> snapshot) {
+        if (snapshot.hasError) {
+          return MediaDetailsError(
+            title: _manga.title,
+            onRetry: () => setState(() {
+              _mangaDetails =
+                  _controller!.repository.fetchMangaDetails(widget.manga.id);
+            }),
+          );
+        }
+        if (!snapshot.hasData) {
+          return MediaDetailsLoading(
+            title: _manga.title,
+            poster: _manga.picture,
+          );
+        }
+        return MediaDetailsView(
+          data: snapshot.data!.toViewData(
+            id: _manga.id,
+            title: _manga.title,
+            poster: _manga.picture,
           ),
-        ],
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: AnimePoster(picture: _manga.picture),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      _manga.title,
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 20.0),
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    FutureBuilder<MangaDetails>(
-                      future: _mangaDetails,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<MangaDetails> snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            "Mean Score: ${snapshot.data!.meanScore}",
-                            style: const TextStyle(
-                                color: Colors.amber, fontSize: 15.0),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return const Text(
-                              "Error loading data. Please try again later.");
-                        }
-                        return const Text("");
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay('status'),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.bar_chart, color: Colors.white),
-                      Text(
-                        _chosenStatus.label,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay("chapters"),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.menu_book, color: Colors.white),
-                      Text(
-                        "$_chosenChaptersRead/${_manga.totalChapters}",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay("volumes"),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.library_books, color: Colors.white),
-                      Text(
-                        "$_chosenVolumesRead/${_manga.totalVolumes}",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => _showOverlay("score"),
-                  child: Column(
-                    children: <Widget>[
-                      const Icon(Icons.star, color: Colors.white),
-                      Text(
-                        "$_chosenScore",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Display a button if a change was made to update list item
-          _detailChanged
-              ? TextButton(
-                  onPressed: _updateItem,
-                  child: const Text("Update List"),
-                )
-              : const SizedBox(height: 0, width: 0),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
-            child: FutureBuilder<MangaDetails>(
-              future: _mangaDetails,
-              builder:
-                  (BuildContext context, AsyncSnapshot<MangaDetails> snapshot) {
-                if (snapshot.hasError) {
-                  return const Text("Error loading data. Please try again later.");
-                }
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(color: Colors.amber),
-                    ),
-                  );
-                }
-                return Column(
-                  children: _buildInfoList(snapshot.data!),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+          statusLabel: _chosenStatus.label,
+          score: _chosenScore,
+          progress: _chosenChapters,
+          progressTotal: _manga.totalChapters,
+          progressLabel: "Chapters",
+          dirty: _dirty,
+          saving: _saving,
+          onStatusTap: _showStatus,
+          onScoreTap: _showScore,
+          onProgressTap: _showChapters,
+          onEditTap: _openEdit,
+          onProgressDelta: _adjustChapters,
+          onSave: _save,
+          onDiscard: _discard,
+          onRemove: _remove,
+        );
+      },
     );
   }
 }

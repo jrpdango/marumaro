@@ -65,6 +65,29 @@ enum MangaPublishingStatus {
   }
 }
 
+/// The user's selected color theme.
+enum AppThemeMode {
+  system("system", "System"),
+  light("light", "Light"),
+  dark("dark", "Dark"),
+  amoled("amoled", "AMOLED Dark");
+
+  const AppThemeMode(this.storageValue, this.label);
+
+  /// The value persisted in the local store.
+  final String storageValue;
+
+  /// A human-readable label.
+  final String label;
+
+  static AppThemeMode fromStorageValue(String? value) {
+    return values.firstWhere(
+      (AppThemeMode mode) => mode.storageValue == value,
+      orElse: () => AppThemeMode.system,
+    );
+  }
+}
+
 /// The airing status of an anime as reported by the MAL API.
 enum AnimeAiringStatus {
   finishedAiring("finished_airing", "Finished Airing"),

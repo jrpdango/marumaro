@@ -348,4 +348,38 @@ void main() {
     expect(await store.countAnime(AnimeListStatus.watching), 0);
     expect(await store.countManga(MangaListStatus.reading), 0);
   });
+
+  test("deleteAnime removes a single entry", () async {
+    await store.replaceAnimeStatus(
+      AnimeListStatus.watching,
+      <Anime>[_anime(1), _anime(2)],
+    );
+
+    await store.deleteAnime(1);
+
+    expect(await store.countAnime(AnimeListStatus.watching), 1);
+    final List<Anime> remaining = await store.pageAnime(
+      AnimeListStatus.watching,
+      offset: 0,
+      limit: 10,
+    );
+    expect(remaining.single.id, 2);
+  });
+
+  test("deleteManga removes a single entry", () async {
+    await store.replaceMangaStatus(
+      MangaListStatus.reading,
+      <Manga>[_manga(1), _manga(2)],
+    );
+
+    await store.deleteManga(1);
+
+    expect(await store.countManga(MangaListStatus.reading), 1);
+    final List<Manga> remaining = await store.pageManga(
+      MangaListStatus.reading,
+      offset: 0,
+      limit: 10,
+    );
+    expect(remaining.single.id, 2);
+  });
 }

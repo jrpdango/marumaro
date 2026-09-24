@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
+import 'package:miru/models/enums.dart';
 import 'package:miru/pages/loading.dart';
 import 'package:miru/services/global_controller.dart';
+import 'package:miru/theme/app_colors.dart';
+import 'package:miru/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,24 +19,25 @@ class MiruApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlobalControllerScope(
       controller: controller,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          colorScheme: const ColorScheme.dark(surface: Colors.black),
-          scaffoldBackgroundColor: Colors.black,
-          canvasColor: Colors.black,
-          pageTransitionsTheme: const PageTransitionsTheme(
-            builders: {
-              TargetPlatform.android: ZoomPageTransitionsBuilder(
-                backgroundColor: Colors.black,
-              ),
-              TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      child: ListenableBuilder(
+        listenable: controller,
+        builder: (BuildContext context, Widget? child) {
+          final AppThemeMode mode = controller.themeMode;
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            darkTheme:
+                mode == AppThemeMode.amoled ? AppTheme.amoled : AppTheme.dark,
+            themeMode: switch (mode) {
+              AppThemeMode.light => ThemeMode.light,
+              AppThemeMode.dark => ThemeMode.dark,
+              AppThemeMode.amoled => ThemeMode.dark,
+              AppThemeMode.system => ThemeMode.system,
             },
-          ),
-        ),
-        themeMode: ThemeMode.dark,
-        home: const Loading(),
+            themeAnimationDuration: AppTokens.medium,
+            home: const Loading(),
+          );
+        },
       ),
     );
   }

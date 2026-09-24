@@ -3,16 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/user.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search.dart';
+import 'package:miru/pages/settings.dart';
 import 'package:miru/services/global_controller.dart';
+import 'package:miru/theme/app_colors.dart';
 import 'package:miru/widgets/browse.dart';
 import 'package:miru/widgets/colored_tab_bar.dart';
 import 'package:miru/widgets/list_container.dart';
 import 'package:miru/widgets/manga_page.dart';
 import 'package:miru/widgets/media_list_pager.dart';
-import 'package:miru/widgets/more.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -99,14 +101,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       case 2:
         return const Browse();
       default:
-        return const More();
+        return const Settings();
     }
   }
 
   Future<void> _confirmLogout() async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      barrierColor: const Color.fromRGBO(38, 38, 38, 0.8),
       builder: (BuildContext dialogContext) => AlertDialog(
         title: const Text('Are you sure you want to logout?'),
         actions: <Widget>[
@@ -130,13 +131,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildAvatar(User? user) {
+  Widget _buildAvatar(User? user, ColorScheme scheme) {
     final Uri? picture = user?.picture;
     if (picture == null) {
-      return const SizedBox(
+      return SizedBox(
         height: 55.0,
         width: 55.0,
-        child: Icon(Icons.person, color: Colors.white),
+        child: Icon(Icons.person, color: scheme.onSurfaceVariant),
       );
     }
     return Image.network(
@@ -144,10 +145,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       fit: BoxFit.cover,
       height: 55.0,
       width: 55.0,
-      errorBuilder: (context, error, stackTrace) => const SizedBox(
+      errorBuilder: (context, error, stackTrace) => SizedBox(
         height: 55.0,
         width: 55.0,
-        child: Icon(Icons.person, color: Colors.white),
+        child: Icon(Icons.person, color: scheme.onSurfaceVariant),
       ),
     );
   }
@@ -155,20 +156,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final User? user = _controller!.user;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Scaffold(
       drawer: Drawer(
-        backgroundColor: const Color.fromARGB(240, 0, 0, 0),
+        backgroundColor: scheme.surface,
         child: Column(
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(5.0),
               child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                color: Colors.grey[900],
+                color: scheme.surfaceContainer,
                 child: InkWell(
-                  borderRadius: const BorderRadius.all(Radius.circular(7.0)),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusMd),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const Profile()),
                   ),
@@ -180,21 +179,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             horizontal: 15.0, vertical: 20.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(300.0),
-                          child: _buildAvatar(user),
+                          child: _buildAvatar(user, scheme),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0),
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.portrait,
-                              color: Colors.white,
+                              color: scheme.onSurface,
                             ),
                             Text(
                               user?.name ?? 'Loading name...',
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: scheme.onSurface,
                                 fontSize: 20,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -229,12 +228,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      backgroundColor: Colors.black,
       appBar: AppBar(
         toolbarHeight: _hasTabBar ? null : 80.0,
+        title: switch (_tabIndex) {
+          2 => const Text("Browse"),
+          3 => const Text("Settings"),
+          _ => null,
+        },
         bottom: _hasTabBar
             ? ColoredTabBar(
-                color: Colors.grey[900]!,
+                color: scheme.surfaceContainer,
                 tabBar: TabBar(
                   controller: _tabController,
                   isScrollable: true,
@@ -243,11 +246,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               )
             : null,
-        flexibleSpace: Image.asset(
-          "assets/moon.webp",
-          fit: BoxFit.cover,
-          alignment:
-              _hasTabBar ? const Alignment(0, -0.4) : const Alignment(0, -0.5),
+        flexibleSpace: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            Image.asset(
+              "assets/moon.webp",
+              fit: BoxFit.cover,
+              alignment: _hasTabBar
+                  ? const Alignment(0, -0.4)
+                  : const Alignment(0, -0.5),
+            ),
+            ColoredBox(color: scheme.surface.withValues(alpha: 0.45)),
+          ],
         ),
         leading: Padding(
           padding: const EdgeInsets.only(top: 20.0),
@@ -302,7 +312,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 icon: const Icon(Icons.search),
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => Search(manga: _isManga),
+                    builder: (_) => Search(
+                      initialKind:
+                          _isManga ? MediaKind.manga : MediaKind.anime,
+                    ),
                   ),
                 ),
               ),
@@ -314,34 +327,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ],
       ),
       body: _buildCurrentPage(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _tabIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white60,
-        onTap: (index) {
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tabIndex,
+        onDestinationSelected: (index) {
           setState(() {
             _tabIndex = index;
             _hasTabBar = index == 0 || index == 1;
             _hasSearch = index == 0 || index == 1;
           });
         },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              backgroundColor: Colors.black87,
-              label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.auto_stories),
-              backgroundColor: Colors.black87,
-              label: "Manga"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.compass_calibration_rounded),
-              backgroundColor: Colors.black87,
-              label: "Browse"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.more),
-              backgroundColor: Colors.black87,
-              label: "More"),
+        destinations: const <NavigationDestination>[
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: "Home",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.auto_stories_outlined),
+            selectedIcon: Icon(Icons.auto_stories),
+            label: "Manga",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore),
+            label: "Browse",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: "Settings",
+          ),
         ],
       ),
     );

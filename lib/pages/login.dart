@@ -32,7 +32,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +43,6 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Hello, and welcome to miru! To get started, log in with your MyAnimeList account.",
-                    style: TextStyle(),
                     textAlign: TextAlign.center,
                   ),
                 ),

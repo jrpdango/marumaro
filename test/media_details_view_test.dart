@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:miru/models/media_details_data.dart';
+import 'package:miru/models/user_list_status.dart';
+import 'package:miru/theme/app_theme.dart';
+import 'package:miru/widgets/media_details_view.dart';
+
+MediaDetailsData _data() {
+  return MediaDetailsData(
+    kind: MediaKind.anime,
+    id: 1,
+    title: "Test Anime",
+    poster: Uri.parse(""),
+    backdrop: Uri.parse(""),
+    meanScore: 8.5,
+    statusLabel: "Currently Airing",
+    infoRows: const <MapEntry<String, String>>[
+      MapEntry<String, String>("Episodes", "12"),
+      MapEntry<String, String>("Rank", "5"),
+    ],
+    rank: 5,
+    genres: const <String>["Action", "Adventure"],
+    synopsis: "A short synopsis.",
+  );
+}
+
+Widget _host({
+  bool dirty = false,
+  int progress = 3,
+  int progressTotal = 12,
+  VoidCallback? onStatusTap,
+  VoidCallback? onScoreTap,
+  VoidCallback? onEditTap,
+  ValueChanged<int>? onProgressDelta,
+  VoidCallback? onSave,
+  VoidCallback? onDiscard,
+  VoidCallback? onRemove,
+}) {
+  return MaterialApp(
+    theme: AppTheme.dark,
+    home: MediaDetailsView(
+      data: _data(),
+      statusLabel: "Watching",
+      score: 7,
+      progress: progress,
+      progressTotal: progressTotal,
+      progressLabel: "Episodes",
+      dirty: dirty,
+      onStatusTap: onStatusTap ?? () {},
+      onScoreTap: onScoreTap ?? () {},
+      onEditTap: onEditTap ?? () {},
+      onProgressDelta: onProgressDelta ?? (_) {},
+      onSave: onSave ?? () {},
+      onDiscard: onDiscard ?? () {},
+      onRemove: onRemove ?? () {},
+    ),
+  );
+}
+
+void main() {
+  testWidgets("renders the header and all sections", (WidgetTester tester) async {
+    await tester.pumpWidget(_host());
+    await tester.pump();
+
+    expect(find.text("Test Anime"), findsWidgets);
+    expect(find.text("Synopsis"), findsOneWidget);
+    expect(find.text("A short synopsis."), findsOneWidget);
+    expect(find.text("Genres"), findsOneWidget);
+    expect(find.text("Action"), findsOneWidget);
+    expect(find.text("Adventure"), findsOneWidget);
+    expect(find.text("Information"), findsOneWidget);
+    expect(find.text("12"), findsWidgets);
+  });
+
+  testWidgets("does not show a save bar when clean", (WidgetTester tester) async {
+    await tester.pumpWidget(_host());
+    await tester.pump();
+
+    expect(find.text("Save changes"), findsNothing);
+    expect(find.byTooltip("Discard changes"), findsNothing);
+    expect(find.text("Watching"), findsWidgets);
+  });
+
+  testWidgets("shows the save bar when dirty and saves", (WidgetTester tester) async {
+    int saves = 0;
+    int discards = 0;
+    await tester.pumpWidget(_host(
+      dirty: true,
+      onSave: () => saves++,
+      onDiscard: () => discards++,
+    ));
+    await tester.pump();
+
+    expect(find.text("Save changes"), findsOneWidget);
+
+    await tester.tap(find.text("Save changes"));
+    await tester.tap(find.byTooltip("Discard changes"));
+
+    expect(saves, 1);
+    expect(discards, 1);
+  });
+
+  testWidgets("quick actions invoke their callbacks", (WidgetTester tester) async {
+    int statuses = 0;
+    int scores = 0;
+    int edits = 0;
+    final List<int> deltas = <int>[];
+    await tester.pumpWidget(_host(
+      onStatusTap: () => statuses++,
+      onScoreTap: () => scores++,
+      onEditTap: () => edits++,
+      onProgressDelta: deltas.add,
+    ));
+    await tester.pump();
+
+    await tester.tap(find.text("Status"));
+    await tester.tap(find.text("Score"));
+    await tester.tap(find.byIcon(Icons.edit_outlined));
+    await tester.tap(find.byTooltip("Increase Episodes"));
+
+    expect(statuses, 1);
+    expect(scores, 1);
+    expect(edits, 1);
+    expect(deltas, <int>[1]);
+  });
+
+  testWidgets("inline stepper stays enabled at the bounds", (WidgetTester tester) async {
+    final List<int> deltas = <int>[];
+
+    await tester.pumpWidget(_host(progress: 0, onProgressDelta: deltas.add));
+    await tester.pump();
+    await tester.tap(find.byTooltip("Decrease Episodes"));
+
+    await tester.pumpWidget(
+      _host(progress: 12, progressTotal: 12, onProgressDelta: deltas.add),
+    );
+    await tester.pump();
+    await tester.tap(find.byTooltip("Increase Episodes"));
+
+    expect(deltas, <int>[-1, 1]);
+  });
+
+  testWidgets("remove is offered via the overflow menu", (WidgetTester tester) async {
+    int removals = 0;
+    await tester.pumpWidget(_host(onRemove: () => removals++));
+    await tester.pump();
+
+    await tester.tap(find.byType(PopupMenuButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Remove from list"));
+    await tester.pumpAndSettle();
+
+    expect(removals, 1);
+  });
+}
