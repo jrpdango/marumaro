@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/list_sort.dart';
 import 'package:miru/models/user.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/pages/loading.dart';
 import 'package:miru/pages/profile.dart';
 import 'package:miru/pages/search.dart';
@@ -311,7 +312,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 icon: const Icon(Icons.search),
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => Search(manga: _isManga),
+                    builder: (_) => Search(
+                      initialKind:
+                          _isManga ? MediaKind.manga : MediaKind.anime,
+                    ),
                   ),
                 ),
               ),
