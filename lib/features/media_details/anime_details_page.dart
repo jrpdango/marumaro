@@ -46,6 +46,9 @@ class _AnimeDetailsPageState extends State<AnimeDetailsPage>
   int get initialVolumeProgress => 0;
 
   @override
+  bool get initialInList => _anime.inList;
+
+  @override
   int get mediaId => _anime.id;
 
   @override

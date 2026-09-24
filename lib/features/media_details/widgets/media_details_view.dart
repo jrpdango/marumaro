@@ -31,10 +31,15 @@ class MediaDetailsView extends StatelessWidget {
     required this.onDiscard,
     required this.onRemove,
     this.onProgressTap,
+    this.inList = true,
     this.saving = false,
   });
 
   final MediaDetailsData data;
+
+  /// Whether the media is on the user's list. When false, the status card
+  /// prompts to add it and the remove action is hidden.
+  final bool inList;
   final String statusLabel;
   final int score;
   final int progress;
@@ -63,6 +68,7 @@ class MediaDetailsView extends StatelessWidget {
         slivers: <Widget>[
           _DetailsHeader(
             data: data,
+            inList: inList,
             onEditTap: onEditTap,
             onRemove: onRemove,
           ),
@@ -80,6 +86,7 @@ class MediaDetailsView extends StatelessWidget {
                   _PosterRow(data: data),
                   const SizedBox(height: AppTokens.spaceLg),
                   _StatusCard(
+                    inList: inList,
                     statusLabel: statusLabel,
                     score: score,
                     progress: progress,

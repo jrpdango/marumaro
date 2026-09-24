@@ -4,6 +4,7 @@ part of 'media_details_view.dart';
 /// progress stepper.
 class _StatusCard extends StatelessWidget {
   const _StatusCard({
+    required this.inList,
     required this.statusLabel,
     required this.score,
     required this.progress,
@@ -15,6 +16,7 @@ class _StatusCard extends StatelessWidget {
     this.onProgressTap,
   });
 
+  final bool inList;
   final String statusLabel;
   final int score;
   final int progress;
@@ -40,7 +42,7 @@ class _StatusCard extends StatelessWidget {
                   Expanded(
                     child: _TappableStat(
                       label: "Status",
-                      value: statusLabel,
+                      value: inList ? statusLabel : "Add to list",
                       onTap: onStatusTap,
                     ),
                   ),

@@ -14,6 +14,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     on State<TWidget> {
   bool _initialized = false;
   bool _saving = false;
+  bool _inList = true;
   Future<TDetails>? _detailsFuture;
 
   late String _persistedStatus;
@@ -46,6 +47,9 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
   int get initialScore;
   int get initialProgress;
   int get initialVolumeProgress;
+
+  /// Whether the media is on the user's list when the page opens.
+  bool get initialInList;
   int get mediaId;
   String get mediaTitle;
   Uri get mediaPicture;
@@ -68,7 +72,14 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
 
   // --- Shared state. ---
 
+  /// Whether the media is currently on the user's list. Starts from
+  /// [initialInList] and flips to true once an edit has been saved.
+  bool get inList => _inList;
+
+  /// Media not yet on the list is always dirty so the save bar (which adds it)
+  /// is available immediately.
   bool get _dirty =>
+      !_inList ||
       _chosenStatus != _persistedStatus ||
       _chosenScore != _persistedScore ||
       _chosenProgress != _persistedProgress ||
@@ -79,6 +90,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     super.didChangeDependencies();
     if (_initialized) return;
     _initialized = true;
+    _inList = initialInList;
     _persistedStatus = _chosenStatus = initialStatusValue;
     _persistedScore = _chosenScore = initialScore;
     _persistedProgress = _chosenProgress = initialProgress;
@@ -99,6 +111,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
       );
       if (!mounted) return;
       setState(() {
+        _inList = true;
         _persistedStatus = _chosenStatus;
         _persistedScore = _chosenScore;
         _persistedProgress = _chosenProgress;
@@ -221,6 +234,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     final UserListStatus updated = result as UserListStatus;
 
     setState(() {
+      _inList = true;
       _chosenStatus = updated.status;
       _chosenScore = updated.score;
       _chosenProgress = updated.progress;
@@ -290,6 +304,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
         }
         return MediaDetailsView(
           data: buildViewData(snapshot.data as TDetails),
+          inList: inList,
           statusLabel: statusLabel(_chosenStatus),
           score: _chosenScore,
           progress: _chosenProgress,

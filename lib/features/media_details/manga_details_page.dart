@@ -46,6 +46,9 @@ class _MangaDetailsPageState extends State<MangaDetailsPage>
   int get initialVolumeProgress => _manga.userVolumesRead;
 
   @override
+  bool get initialInList => _manga.inList;
+
+  @override
   int get mediaId => _manga.id;
 
   @override

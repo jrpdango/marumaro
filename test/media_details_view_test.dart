@@ -24,6 +24,7 @@ MediaDetailsData _data() {
 
 Widget _host({
   bool dirty = false,
+  bool inList = true,
   int progress = 3,
   int progressTotal = 12,
   VoidCallback? onStatusTap,
@@ -38,6 +39,7 @@ Widget _host({
     theme: AppTheme.dark,
     home: MediaDetailsView(
       data: _data(),
+      inList: inList,
       statusLabel: "Watching",
       score: 7,
       progress: progress,
@@ -136,6 +138,15 @@ void main() {
     await tester.tap(find.byTooltip("Increase Episodes"));
 
     expect(deltas, <int>[-1, 1]);
+  });
+
+  testWidgets("prompts to add and hides remove when not on the list",
+      (WidgetTester tester) async {
+    await tester.pumpWidget(_host(inList: false));
+    await tester.pump();
+
+    expect(find.text("Add to list"), findsOneWidget);
+    expect(find.byType(PopupMenuButton<String>), findsNothing);
   });
 
   testWidgets("remove is offered via the overflow menu", (WidgetTester tester) async {
