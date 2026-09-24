@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const BackAppBar({super.key});
+  const BackAppBar({super.key, this.title, this.actions});
+
+  /// An optional title shown next to the back button.
+  final String? title;
+
+  /// Optional trailing actions.
+  final List<Widget>? actions;
 
   @override
   Size get preferredSize => Size.fromHeight(72.0);
@@ -11,6 +17,10 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return AppBar(
       toolbarHeight: 72.0,
+      title: title == null
+          ? null
+          : Text(title!, overflow: TextOverflow.ellipsis),
+      actions: actions,
       flexibleSpace: Stack(
         fit: StackFit.expand,
         children: <Widget>[
