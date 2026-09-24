@@ -13,6 +13,7 @@ class BrowseListTile extends StatelessWidget {
     this.score,
     this.rank,
     this.mediaType,
+    this.inList = false,
   });
 
   static const double posterHeight = 96.0;
@@ -23,6 +24,9 @@ class BrowseListTile extends StatelessWidget {
   final double? score;
   final int? rank;
   final String? mediaType;
+
+  /// Whether the media is on the user's list, shown as a trailing check.
+  final bool inList;
   final VoidCallback onTap;
 
   @override
@@ -53,11 +57,26 @@ class BrowseListTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        title,
-                        style: text.titleSmall,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              title,
+                              style: text.titleSmall,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (inList) ...<Widget>[
+                            const SizedBox(width: AppTokens.spaceSm),
+                            Icon(
+                              Icons.check_circle,
+                              size: 16.0,
+                              color: scheme.primary,
+                            ),
+                          ],
+                        ],
                       ),
                       const Spacer(),
                       Row(

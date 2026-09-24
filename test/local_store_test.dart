@@ -62,14 +62,11 @@ void main() {
 
   group("anime", () {
     test("pages entries in insertion order and counts them", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[
-          _anime(1, title: "A"),
-          _anime(2, title: "B"),
-          _anime(3, title: "C"),
-        ],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1, title: "A"),
+        _anime(2, title: "B"),
+        _anime(3, title: "C"),
+      ]);
 
       expect(await store.countAnime(AnimeListStatus.watching), 3);
 
@@ -89,14 +86,13 @@ void main() {
     });
 
     test("keeps statuses separate", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[_anime(1)],
-      );
-      await store.replaceAnimeStatus(
-        AnimeListStatus.completed,
-        <Anime>[_anime(2), _anime(3)],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1),
+      ]);
+      await store.replaceAnimeStatus(AnimeListStatus.completed, <Anime>[
+        _anime(2),
+        _anime(3),
+      ]);
 
       expect(await store.countAnime(AnimeListStatus.watching), 1);
       expect(await store.countAnime(AnimeListStatus.completed), 2);
@@ -104,14 +100,14 @@ void main() {
     });
 
     test("replaces the previous contents of a status", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[_anime(1), _anime(2), _anime(3)],
-      );
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[_anime(9)],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1),
+        _anime(2),
+        _anime(3),
+      ]);
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(9),
+      ]);
 
       expect(await store.countAnime(AnimeListStatus.watching), 1);
       final List<Anime> page = await store.pageAnime(
@@ -123,17 +119,15 @@ void main() {
     });
 
     test("round-trips every field", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.onHold,
-        <Anime>[_anime(7, title: "Round Trip", episodesWatched: 5, score: 9)],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.onHold, <Anime>[
+        _anime(7, title: "Round Trip", episodesWatched: 5, score: 9),
+      ]);
 
       final Anime anime = (await store.pageAnime(
         AnimeListStatus.onHold,
         offset: 0,
         limit: 1,
-      ))
-          .single;
+      )).single;
       expect(anime.title, "Round Trip");
       expect(anime.picture, Uri.parse("https://example.com/7.jpg"));
       expect(anime.totalEpisodes, 12);
@@ -144,14 +138,11 @@ void main() {
     });
 
     test("searches titles case-insensitively", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[
-          _anime(1, title: "Fullmetal Alchemist"),
-          _anime(2, title: "Steins;Gate"),
-          _anime(3, title: "Full Metal Panic"),
-        ],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1, title: "Fullmetal Alchemist"),
+        _anime(2, title: "Steins;Gate"),
+        _anime(3, title: "Full Metal Panic"),
+      ]);
 
       final List<Anime> results = await store.searchAnime(
         "fullmetal",
@@ -169,14 +160,13 @@ void main() {
     });
 
     test("moves an entry to the top when its status changes", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[_anime(1), _anime(2)],
-      );
-      await store.replaceAnimeStatus(
-        AnimeListStatus.completed,
-        <Anime>[_anime(3)],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1),
+        _anime(2),
+      ]);
+      await store.replaceAnimeStatus(AnimeListStatus.completed, <Anime>[
+        _anime(3),
+      ]);
 
       await store.updateAnime(
         _anime(2, status: AnimeListStatus.completed, episodesWatched: 12),
@@ -193,10 +183,11 @@ void main() {
     });
 
     test("moves an entry to the top when its progress changes", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[_anime(1), _anime(2), _anime(3)],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1),
+        _anime(2),
+        _anime(3),
+      ]);
 
       await store.updateAnime(_anime(2, episodesWatched: 6, score: 8));
 
@@ -211,14 +202,11 @@ void main() {
     });
 
     test("sorts by score with the requested direction", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[
-          _anime(1, score: 5),
-          _anime(2, score: 9),
-          _anime(3, score: 7),
-        ],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1, score: 5),
+        _anime(2, score: 9),
+        _anime(3, score: 7),
+      ]);
 
       final List<Anime> descending = await store.pageAnime(
         AnimeListStatus.watching,
@@ -238,14 +226,11 @@ void main() {
     });
 
     test("sorts by title case-insensitively", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[
-          _anime(1, title: "banana"),
-          _anime(2, title: "Apple"),
-          _anime(3, title: "cherry"),
-        ],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1, title: "banana"),
+        _anime(2, title: "Apple"),
+        _anime(3, title: "cherry"),
+      ]);
 
       final List<Anime> title = await store.pageAnime(
         AnimeListStatus.watching,
@@ -257,14 +242,11 @@ void main() {
     });
 
     test("sorts by the stored updated timestamp", () async {
-      await store.replaceAnimeStatus(
-        AnimeListStatus.watching,
-        <Anime>[
-          _anime(1, updatedAt: DateTime.fromMillisecondsSinceEpoch(100)),
-          _anime(2, updatedAt: DateTime.fromMillisecondsSinceEpoch(300)),
-          _anime(3, updatedAt: DateTime.fromMillisecondsSinceEpoch(200)),
-        ],
-      );
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1, updatedAt: DateTime.fromMillisecondsSinceEpoch(100)),
+        _anime(2, updatedAt: DateTime.fromMillisecondsSinceEpoch(300)),
+        _anime(3, updatedAt: DateTime.fromMillisecondsSinceEpoch(200)),
+      ]);
 
       final List<Anime> page = await store.pageAnime(
         AnimeListStatus.watching,
@@ -277,17 +259,13 @@ void main() {
 
   group("manga", () {
     test("pages, counts, searches and updates", () async {
-      await store.replaceMangaStatus(
-        MangaListStatus.reading,
-        <Manga>[
-          _manga(1, title: "Berserk"),
-          _manga(2, title: "Vagabond"),
-        ],
-      );
-      await store.replaceMangaStatus(
-        MangaListStatus.planToRead,
-        <Manga>[_manga(3, title: "Berserk of Gluttony")],
-      );
+      await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[
+        _manga(1, title: "Berserk"),
+        _manga(2, title: "Vagabond"),
+      ]);
+      await store.replaceMangaStatus(MangaListStatus.planToRead, <Manga>[
+        _manga(3, title: "Berserk of Gluttony"),
+      ]);
 
       expect(await store.countManga(MangaListStatus.reading), 2);
 
@@ -313,8 +291,7 @@ void main() {
         MangaListStatus.completed,
         offset: 0,
         limit: 1,
-      ))
-          .single;
+      )).single;
       expect(moved.id, 2);
       expect(moved.userChaptersRead, 30);
       expect(moved.userVolumesRead, 4);
@@ -329,15 +306,32 @@ void main() {
     expect(await store.getPreference("anime_sort"), "title:desc");
   });
 
+  test("allAnimeIds returns ids across every status", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1),
+      _anime(2),
+    ]);
+    await store.replaceAnimeStatus(AnimeListStatus.completed, <Anime>[
+      _anime(3),
+    ]);
+
+    expect(await store.allAnimeIds(), <int>{1, 2, 3});
+  });
+
+  test("allMangaIds returns ids across every status", () async {
+    await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[_manga(4)]);
+    await store.replaceMangaStatus(MangaListStatus.completed, <Manga>[
+      _manga(5),
+    ]);
+
+    expect(await store.allMangaIds(), <int>{4, 5});
+  });
+
   test("clearAll empties both lists", () async {
-    await store.replaceAnimeStatus(
-      AnimeListStatus.watching,
-      <Anime>[_anime(1)],
-    );
-    await store.replaceMangaStatus(
-      MangaListStatus.reading,
-      <Manga>[_manga(1)],
-    );
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1),
+    ]);
+    await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[_manga(1)]);
 
     await store.clearAll();
 
@@ -346,10 +340,10 @@ void main() {
   });
 
   test("deleteAnime removes a single entry", () async {
-    await store.replaceAnimeStatus(
-      AnimeListStatus.watching,
-      <Anime>[_anime(1), _anime(2)],
-    );
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1),
+      _anime(2),
+    ]);
 
     await store.deleteAnime(1);
 
@@ -363,10 +357,10 @@ void main() {
   });
 
   test("deleteManga removes a single entry", () async {
-    await store.replaceMangaStatus(
-      MangaListStatus.reading,
-      <Manga>[_manga(1), _manga(2)],
-    );
+    await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[
+      _manga(1),
+      _manga(2),
+    ]);
 
     await store.deleteManga(1);
 

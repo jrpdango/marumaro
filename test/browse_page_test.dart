@@ -61,7 +61,17 @@ class _FakeRepository extends MalRepository {
   }
 }
 
-class _FakeStore extends LocalStore {}
+class _FakeStore extends LocalStore {
+  _FakeStore({this.animeIds = const <int>{}});
+
+  final Set<int> animeIds;
+
+  @override
+  Future<Set<int>> allAnimeIds() async => animeIds;
+
+  @override
+  Future<Set<int>> allMangaIds() async => const <int>{};
+}
 
 Anime _anime(int id, String title) {
   return Anime.fromNodeJson(<String, dynamic>{
@@ -161,5 +171,22 @@ void main() {
 
     expect(find.text("For You"), findsNothing);
     expect(find.text("Top Airing Anime"), findsOneWidget);
+  });
+
+  testWidgets("marks cached list members with a check", (
+    WidgetTester tester,
+  ) async {
+    final GlobalController controller = GlobalController(
+      store: _FakeStore(animeIds: const <int>{1}),
+      repository: _FakeRepository(),
+    );
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(_host(controller));
+    await _pumpLoaded(tester);
+
+    // The seasonal anime (id 1) is cached, so its poster shows a check; the
+    // ranked anime (id 2) is not.
+    expect(find.byIcon(Icons.check), findsOneWidget);
   });
 }

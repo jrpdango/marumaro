@@ -33,11 +33,17 @@ class _BrowsePageState extends State<BrowsePage> {
   Future<List<Manga>>? _topManga;
   Future<List<Manga>>? _topNovels;
 
+  Set<int> _animeIds = const <int>{};
+  Set<int> _mangaIds = const <int>{};
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _controller ??= GlobalControllerScope.of(context);
-    if (_season == null) _assignFutures();
+    if (_season == null) {
+      _assignFutures();
+      _loadMembership();
+    }
   }
 
   MalRepository get _repository => _controller!.repository;
@@ -96,18 +102,38 @@ class _BrowsePageState extends State<BrowsePage> {
         _topNovels!,
       ].map((Future<Object?> future) => future.then((_) {}).catchError((_) {})),
     );
+    await _loadMembership();
   }
 
-  void _openAnime(Anime anime) {
-    Navigator.of(context).push(
+  /// Loads the ids on the user's cached lists so browse cards can show whether
+  /// an item is already tracked.
+  Future<void> _loadMembership() async {
+    final GlobalController controller = _controller!;
+    try {
+      final List<Set<int>> ids = await Future.wait(<Future<Set<int>>>[
+        controller.animeListIds(),
+        controller.mangaListIds(),
+      ]);
+      if (!mounted) return;
+      setState(() {
+        _animeIds = ids[0];
+        _mangaIds = ids[1];
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _openAnime(Anime anime) async {
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => AnimeDetailsPage(anime: anime)),
     );
+    if (mounted) _loadMembership();
   }
 
-  void _openManga(Manga manga) {
-    Navigator.of(context).push(
+  Future<void> _openManga(Manga manga) async {
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => MangaDetailsPage(manga: manga)),
     );
+    if (mounted) _loadMembership();
   }
 
   void _openSeasonal() {
@@ -242,6 +268,7 @@ class _BrowsePageState extends State<BrowsePage> {
         score: anime.meanScore,
         rank: anime.rank,
         mediaType: anime.mediaType,
+        inList: _animeIds.contains(anime.id),
         onTap: () => _openAnime(anime),
       ),
     );
@@ -256,6 +283,7 @@ class _BrowsePageState extends State<BrowsePage> {
         score: manga.meanScore,
         rank: manga.rank,
         mediaType: manga.mediaType,
+        inList: _mangaIds.contains(manga.id),
         onTap: () => _openManga(manga),
       ),
     );
@@ -337,6 +365,7 @@ class _BrowsePageState extends State<BrowsePage> {
       title: anime.title,
       score: anime.meanScore,
       rank: anime.rank,
+      inList: _animeIds.contains(anime.id),
       onTap: () => _openAnime(anime),
     );
   }
@@ -347,6 +376,7 @@ class _BrowsePageState extends State<BrowsePage> {
       title: manga.title,
       score: manga.meanScore,
       rank: manga.rank,
+      inList: _mangaIds.contains(manga.id),
       onTap: () => _openManga(manga),
     );
   }

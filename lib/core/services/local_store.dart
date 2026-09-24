@@ -21,7 +21,8 @@ class LocalStore {
   Future<Database> get _db => _database ??= _open();
 
   Future<Database> _open() async {
-    final String path = this.path ?? p.join(await getDatabasesPath(), "miru.db");
+    final String path =
+        this.path ?? p.join(await getDatabasesPath(), "miru.db");
     return (_factory ?? databaseFactory).openDatabase(
       path,
       options: OpenDatabaseOptions(
@@ -177,6 +178,16 @@ class LocalStore {
     return rows.map(_animeFromRow).toList(growable: false);
   }
 
+  /// The ids of every cached anime, across all statuses.
+  Future<Set<int>> allAnimeIds() async {
+    final Database db = await _db;
+    final List<Map<String, Object?>> rows = await db.query(
+      _animeTable,
+      columns: <String>['id'],
+    );
+    return rows.map((Map<String, Object?> row) => row['id'] as int).toSet();
+  }
+
   Future<void> updateAnime(Anime anime) async {
     final Database db = await _db;
     await db.update(
@@ -241,6 +252,16 @@ class LocalStore {
     return rows.map(_mangaFromRow).toList(growable: false);
   }
 
+  /// The ids of every cached manga, across all statuses.
+  Future<Set<int>> allMangaIds() async {
+    final Database db = await _db;
+    final List<Map<String, Object?>> rows = await db.query(
+      _mangaTable,
+      columns: <String>['id'],
+    );
+    return rows.map((Map<String, Object?> row) => row['id'] as int).toSet();
+  }
+
   Future<void> updateManga(Manga manga) async {
     final Database db = await _db;
     await db.update(
@@ -288,11 +309,10 @@ class LocalStore {
 
   Future<void> setPreference(String key, String value) async {
     final Database db = await _db;
-    await db.insert(
-      _preferencesTable,
-      <String, Object?>{'key': key, 'value': value},
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert(_preferencesTable, <String, Object?>{
+      'key': key,
+      'value': value,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> clearAll() async {
@@ -361,8 +381,9 @@ class LocalStore {
       userStatus: AnimeListStatus.fromApiValue(row['user_status'] as String?),
       userEpisodesWatched: row['user_episodes_watched'] as int,
       userScore: row['user_score'] as int,
-      updatedAt:
-          DateTime.fromMillisecondsSinceEpoch(row['list_updated_at'] as int),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row['list_updated_at'] as int,
+      ),
     );
   }
 
@@ -373,14 +394,16 @@ class LocalStore {
       picture: Uri.parse(row['picture'] as String),
       totalChapters: row['total_chapters'] as int,
       totalVolumes: row['total_volumes'] as int,
-      publishingStatus:
-          MangaPublishingStatus.fromApiValue(row['publishing_status'] as String?),
+      publishingStatus: MangaPublishingStatus.fromApiValue(
+        row['publishing_status'] as String?,
+      ),
       userStatus: MangaListStatus.fromApiValue(row['user_status'] as String?),
       userChaptersRead: row['user_chapters_read'] as int,
       userVolumesRead: row['user_volumes_read'] as int,
       userScore: row['user_score'] as int,
-      updatedAt:
-          DateTime.fromMillisecondsSinceEpoch(row['list_updated_at'] as int),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row['list_updated_at'] as int,
+      ),
     );
   }
 }

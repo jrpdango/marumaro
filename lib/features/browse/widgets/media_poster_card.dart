@@ -11,6 +11,7 @@ class MediaPosterCard extends StatelessWidget {
     required this.onTap,
     this.score,
     this.rank,
+    this.inList = false,
   });
 
   static const double width = 108.0;
@@ -20,6 +21,9 @@ class MediaPosterCard extends StatelessWidget {
   final String title;
   final double? score;
   final int? rank;
+
+  /// Whether the media is on the user's list, shown as a corner check.
+  final bool inList;
   final VoidCallback onTap;
 
   @override
@@ -70,6 +74,23 @@ class MediaPosterCard extends StatelessWidget {
                       foreground: Theme.of(
                         context,
                       ).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                if (inList)
+                  Positioned(
+                    top: AppTokens.spaceXs,
+                    right: AppTokens.spaceXs,
+                    child: Container(
+                      padding: const EdgeInsets.all(3.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check,
+                        size: 12.0,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
                   ),
               ],

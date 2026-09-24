@@ -19,10 +19,11 @@ import 'package:miru/core/services/token_store.dart';
 /// their lists backed by [LocalStore].
 class GlobalController extends ChangeNotifier {
   GlobalController({LocalStore? store, MalRepository? repository})
-      : store = store ?? LocalStore() {
+    : store = store ?? LocalStore() {
     final http.Client httpClient = http.Client();
     auth = AuthRepository(httpClient: httpClient, tokenStore: TokenStore());
-    this.repository = repository ??
+    this.repository =
+        repository ??
         MalRepository(
           api: MalApiClient(
             httpClient: httpClient,
@@ -112,8 +113,9 @@ class GlobalController extends ChangeNotifier {
 
   /// Restores the persisted theme choice.
   Future<void> loadThemePreference() async {
-    themeMode =
-        AppThemeMode.fromStorageValue(await store.getPreference(_themeKey));
+    themeMode = AppThemeMode.fromStorageValue(
+      await store.getPreference(_themeKey),
+    );
     _notifySafely();
   }
 
@@ -146,8 +148,10 @@ class GlobalController extends ChangeNotifier {
     final List<Anime> items = <Anime>[];
     int offset = 0;
     while (true) {
-      final PageResult<Anime> page =
-          await repository.fetchAnimeListPage(offset: offset, status: status);
+      final PageResult<Anime> page = await repository.fetchAnimeListPage(
+        offset: offset,
+        status: status,
+      );
       items.addAll(page.items);
       if (!page.hasMore) break;
       offset += page.items.length;
@@ -159,8 +163,10 @@ class GlobalController extends ChangeNotifier {
     final List<Manga> items = <Manga>[];
     int offset = 0;
     while (true) {
-      final PageResult<Manga> page =
-          await repository.fetchMangaListPage(offset: offset, status: status);
+      final PageResult<Manga> page = await repository.fetchMangaListPage(
+        offset: offset,
+        status: status,
+      );
       items.addAll(page.items);
       if (!page.hasMore) break;
       offset += page.items.length;
@@ -173,7 +179,12 @@ class GlobalController extends ChangeNotifier {
     required int offset,
     required int limit,
   }) {
-    return store.pageAnime(status, offset: offset, limit: limit, sort: listSort);
+    return store.pageAnime(
+      status,
+      offset: offset,
+      limit: limit,
+      sort: listSort,
+    );
   }
 
   Future<int> countAnime(AnimeListStatus status) {
@@ -193,11 +204,26 @@ class GlobalController extends ChangeNotifier {
     required int offset,
     required int limit,
   }) {
-    return store.pageManga(status, offset: offset, limit: limit, sort: listSort);
+    return store.pageManga(
+      status,
+      offset: offset,
+      limit: limit,
+      sort: listSort,
+    );
   }
 
   Future<int> countManga(MangaListStatus status) {
     return store.countManga(status);
+  }
+
+  /// The ids of every cached anime, for list-membership checks.
+  Future<Set<int>> animeListIds() {
+    return store.allAnimeIds();
+  }
+
+  /// The ids of every cached manga, for list-membership checks.
+  Future<Set<int>> mangaListIds() {
+    return store.allMangaIds();
   }
 
   Future<List<Manga>> searchManga(
@@ -346,8 +372,8 @@ class GlobalControllerScope extends InheritedNotifier<GlobalController> {
   }) : super(notifier: controller);
 
   static GlobalController of(BuildContext context) {
-    final GlobalControllerScope? scope =
-        context.dependOnInheritedWidgetOfExactType<GlobalControllerScope>();
+    final GlobalControllerScope? scope = context
+        .dependOnInheritedWidgetOfExactType<GlobalControllerScope>();
     assert(scope != null, "No GlobalControllerScope found in context");
     return scope!.notifier!;
   }
