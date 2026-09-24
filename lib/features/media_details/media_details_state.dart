@@ -15,6 +15,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
   bool _initialized = false;
   bool _saving = false;
   bool _inList = true;
+  bool _adding = false;
   Future<TDetails>? _detailsFuture;
 
   late String _persistedStatus;
@@ -76,14 +77,24 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
   /// [initialInList] and flips to true once an edit has been saved.
   bool get inList => _inList;
 
-  /// Media not yet on the list is always dirty so the save bar (which adds it)
-  /// is available immediately.
+  /// Whether the stats/edit controls should be visible. Untracked media hides
+  /// them behind the "Add to List" button until [startAddToList] is called.
+  bool get showStats => _inList || _adding;
+
+  /// While adding, the entry counts as dirty so the save bar (which adds it) is
+  /// always available.
   bool get _dirty =>
-      !_inList ||
+      _adding ||
       _chosenStatus != _persistedStatus ||
       _chosenScore != _persistedScore ||
       _chosenProgress != _persistedProgress ||
       _chosenVolumes != _persistedVolumes;
+
+  /// Begins adding untracked media, revealing the stats/edit controls.
+  void startAddToList() {
+    if (_adding) return;
+    setState(() => _adding = true);
+  }
 
   @override
   void didChangeDependencies() {
@@ -112,6 +123,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
       if (!mounted) return;
       setState(() {
         _inList = true;
+        _adding = false;
         _persistedStatus = _chosenStatus;
         _persistedScore = _chosenScore;
         _persistedProgress = _chosenProgress;
@@ -127,9 +139,11 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     }
   }
 
-  /// Reverts staged changes back to the last persisted values.
+  /// Reverts staged changes back to the last persisted values. While adding
+  /// untracked media, discarding cancels the add entirely.
   void discardDraft() {
     setState(() {
+      _adding = false;
       _chosenStatus = _persistedStatus;
       _chosenScore = _persistedScore;
       _chosenProgress = _persistedProgress;
@@ -305,6 +319,8 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
         return MediaDetailsView(
           data: buildViewData(snapshot.data as TDetails),
           inList: inList,
+          showStats: showStats,
+          onAddToList: startAddToList,
           statusLabel: statusLabel(_chosenStatus),
           score: _chosenScore,
           progress: _chosenProgress,

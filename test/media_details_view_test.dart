@@ -25,11 +25,13 @@ MediaDetailsData _data() {
 Widget _host({
   bool dirty = false,
   bool inList = true,
+  bool showStats = true,
   int progress = 3,
   int progressTotal = 12,
   VoidCallback? onStatusTap,
   VoidCallback? onScoreTap,
   VoidCallback? onEditTap,
+  VoidCallback? onAddToList,
   ValueChanged<int>? onProgressDelta,
   VoidCallback? onSave,
   VoidCallback? onDiscard,
@@ -40,6 +42,8 @@ Widget _host({
     home: MediaDetailsView(
       data: _data(),
       inList: inList,
+      showStats: showStats,
+      onAddToList: onAddToList,
       statusLabel: "Watching",
       score: 7,
       progress: progress,
@@ -140,12 +144,35 @@ void main() {
     expect(deltas, <int>[-1, 1]);
   });
 
-  testWidgets("prompts to add and hides remove when not on the list",
+  testWidgets("untracked media shows Add to List instead of stats",
       (WidgetTester tester) async {
-    await tester.pumpWidget(_host(inList: false));
+    int adds = 0;
+    await tester.pumpWidget(_host(
+      inList: false,
+      showStats: false,
+      onAddToList: () => adds++,
+    ));
     await tester.pump();
 
-    expect(find.text("Add to list"), findsOneWidget);
+    expect(find.text("Add to List"), findsOneWidget);
+    expect(find.text("Status"), findsNothing);
+    expect(find.text("Watching"), findsNothing);
+    expect(find.byIcon(Icons.edit_outlined), findsNothing);
+    expect(find.byType(PopupMenuButton<String>), findsNothing);
+
+    await tester.tap(find.text("Add to List"));
+    expect(adds, 1);
+  });
+
+  testWidgets("adding hides remove but shows the stats and edit",
+      (WidgetTester tester) async {
+    await tester.pumpWidget(_host(inList: false, showStats: true));
+    await tester.pump();
+
+    expect(find.text("Add to List"), findsNothing);
+    expect(find.text("Status"), findsOneWidget);
+    expect(find.text("Watching"), findsWidgets);
+    expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
     expect(find.byType(PopupMenuButton<String>), findsNothing);
   });
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miru/core/core.dart';
 
+part 'add_to_list_card.dart';
 part 'content_sections.dart';
 part 'details_action_bar.dart';
 part 'details_header.dart';
@@ -12,7 +13,8 @@ part 'synopsis_section.dart';
 /// The shared Anime/Manga details page body: a collapsing header followed by
 /// the status card, synopsis, genres, alternative titles, and information grid.
 /// The status card holds the quick edit controls, with a sticky action bar that
-/// appears only while there are unsaved changes.
+/// appears only while there are unsaved changes. Untracked media instead show
+/// an "Add to List" button until the user chooses to add it.
 class MediaDetailsView extends StatelessWidget {
   const MediaDetailsView({
     super.key,
@@ -31,15 +33,24 @@ class MediaDetailsView extends StatelessWidget {
     required this.onDiscard,
     required this.onRemove,
     this.onProgressTap,
+    this.onAddToList,
     this.inList = true,
+    this.showStats = true,
     this.saving = false,
   });
 
   final MediaDetailsData data;
 
-  /// Whether the media is on the user's list. When false, the status card
-  /// prompts to add it and the remove action is hidden.
+  /// Whether the media is on the user's list. When false, the remove action is
+  /// hidden.
   final bool inList;
+
+  /// Whether the status/score/progress controls are shown. Untracked media keep
+  /// this false until the user taps "Add to List".
+  final bool showStats;
+
+  /// Called when the user taps "Add to List" on untracked media.
+  final VoidCallback? onAddToList;
   final String statusLabel;
   final int score;
   final int progress;
@@ -69,6 +80,7 @@ class MediaDetailsView extends StatelessWidget {
           _DetailsHeader(
             data: data,
             inList: inList,
+            showStats: showStats,
             onEditTap: onEditTap,
             onRemove: onRemove,
           ),
@@ -85,18 +97,20 @@ class MediaDetailsView extends StatelessWidget {
                 children: <Widget>[
                   _PosterRow(data: data),
                   const SizedBox(height: AppTokens.spaceLg),
-                  _StatusCard(
-                    inList: inList,
-                    statusLabel: statusLabel,
-                    score: score,
-                    progress: progress,
-                    progressTotal: progressTotal,
-                    progressLabel: progressLabel,
-                    onStatusTap: onStatusTap,
-                    onScoreTap: onScoreTap,
-                    onProgressTap: onProgressTap,
-                    onProgressDelta: onProgressDelta,
-                  ),
+                  if (showStats)
+                    _StatusCard(
+                      statusLabel: statusLabel,
+                      score: score,
+                      progress: progress,
+                      progressTotal: progressTotal,
+                      progressLabel: progressLabel,
+                      onStatusTap: onStatusTap,
+                      onScoreTap: onScoreTap,
+                      onProgressTap: onProgressTap,
+                      onProgressDelta: onProgressDelta,
+                    )
+                  else
+                    _AddToListCard(onAddToList: onAddToList ?? () {}),
                   if (data.synopsis != null) ...<Widget>[
                     const SizedBox(height: AppTokens.spaceLg),
                     _SynopsisSection(synopsis: data.synopsis!),

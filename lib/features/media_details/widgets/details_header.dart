@@ -6,12 +6,14 @@ class _DetailsHeader extends StatelessWidget {
   const _DetailsHeader({
     required this.data,
     required this.inList,
+    required this.showStats,
     required this.onEditTap,
     required this.onRemove,
   });
 
   final MediaDetailsData data;
   final bool inList;
+  final bool showStats;
   final VoidCallback onEditTap;
   final VoidCallback onRemove;
 
@@ -30,11 +32,12 @@ class _DetailsHeader extends StatelessWidget {
         fontWeight: FontWeight.w600,
       ),
       actions: <Widget>[
-        IconButton(
-          onPressed: onEditTap,
-          icon: const Icon(Icons.edit_outlined),
-          tooltip: "Edit",
-        ),
+        if (showStats)
+          IconButton(
+            onPressed: onEditTap,
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: "Edit",
+          ),
         if (inList)
           PopupMenuButton<String>(
             onSelected: (String value) {

@@ -53,42 +53,77 @@ Anime _browseAnime() {
   });
 }
 
-void main() {
-  late _FakeRepository repository;
-  late GlobalController controller;
+Anime _listedAnime() {
+  return _browseAnime().copyWith(
+    inList: true,
+    userStatus: AnimeListStatus.watching,
+    userScore: 8,
+    userEpisodesWatched: 3,
+  );
+}
 
+Future<void> _pumpDetails(WidgetTester tester, Anime anime) async {
+  await tester.pumpWidget(
+    GlobalControllerScope(
+      controller: _controller,
+      child: MaterialApp(
+        theme: AppTheme.dark,
+        home: AnimeDetailsPage(anime: anime),
+      ),
+    ),
+  );
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 100));
+}
+
+late _FakeRepository _repository;
+late GlobalController _controller;
+
+void main() {
   setUp(() {
-    repository = _FakeRepository();
-    controller = GlobalController(store: _FakeStore(), repository: repository);
+    _repository = _FakeRepository();
+    _controller = GlobalController(
+      store: _FakeStore(),
+      repository: _repository,
+    );
   });
 
   tearDown(() {
-    controller.dispose();
+    _controller.dispose();
   });
 
-  testWidgets("a non-list anime can be added by saving", (WidgetTester tester) async {
-    await tester.pumpWidget(
-      GlobalControllerScope(
-        controller: controller,
-        child: MaterialApp(
-          theme: AppTheme.dark,
-          home: AnimeDetailsPage(anime: _browseAnime()),
-        ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+  testWidgets("a non-list anime is added after tapping Add to List", (
+    WidgetTester tester,
+  ) async {
+    await _pumpDetails(tester, _browseAnime());
 
-    expect(find.text("Add to list"), findsOneWidget);
+    expect(find.text("Add to List"), findsOneWidget);
+    expect(find.text("Save changes"), findsNothing);
+    expect(find.byTooltip("Increase Episodes"), findsNothing);
+
+    await tester.tap(find.text("Add to List"));
+    await tester.pump();
+
+    expect(find.text("Add to List"), findsNothing);
+    expect(find.byTooltip("Increase Episodes"), findsOneWidget);
+    expect(find.text("Plan To Watch"), findsOneWidget);
     expect(find.text("Save changes"), findsOneWidget);
-    expect(find.byType(PopupMenuButton<String>), findsNothing);
 
     await tester.tap(find.text("Save changes"));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(repository.updateCalls, 1);
-    expect(find.text("Add to list"), findsNothing);
+    expect(_repository.updateCalls, 1);
+    expect(find.text("Save changes"), findsNothing);
+  });
+
+  testWidgets("a listed anime opens with its stats and no Add button", (
+    WidgetTester tester,
+  ) async {
+    await _pumpDetails(tester, _listedAnime());
+
+    expect(find.text("Add to List"), findsNothing);
+    expect(find.text("Currently Watching"), findsOneWidget);
     expect(find.text("Save changes"), findsNothing);
   });
 }
