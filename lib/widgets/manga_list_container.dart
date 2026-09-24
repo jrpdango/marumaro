@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:miru/models/enums.dart';
 import 'package:miru/models/manga.dart';
+import 'package:miru/models/user_list_status.dart';
 import 'package:miru/pages/manga_details_page.dart';
 import 'package:miru/services/global_controller.dart';
 import 'package:miru/widgets/media_list_card.dart';
 import 'package:miru/widgets/paged_list.dart';
+import 'package:miru/widgets/quick_edit_menu.dart';
+import 'package:miru/widgets/quick_edit_sheets.dart';
 
 class MangaListContainer extends StatelessWidget {
   /// An explicit paged source to display (e.g. search results). When null, the
@@ -44,7 +47,7 @@ class MangaListContainer extends StatelessWidget {
           source: resolved,
           pageStorageKey: mangaType?.apiValue ?? pageStorageKey,
           pageSize: 30,
-          itemExtent: 106.0,
+          itemExtent: 120.0,
           resetKey: resetKey ?? (fromStatus ? controller.listSort : null),
           reloadListenable: fromStatus ? controller : null,
           onRefresh: fromStatus ? controller.syncManga : null,
@@ -61,21 +64,139 @@ class MangaListContainer extends StatelessWidget {
               child: MediaListCard(
                 picture: manga.picture,
                 title: manga.title,
-                progress: "${manga.userChaptersRead}/${manga.totalChapters}"
-                    "  Vol ${manga.userVolumesRead}/${manga.totalVolumes}",
+                progressText: manga.totalChapters > 0
+                    ? "${manga.userChaptersRead}/${manga.totalChapters}"
+                    : "${manga.userChaptersRead}/-",
+                progressValue: manga.totalChapters > 0
+                    ? (manga.userChaptersRead / manga.totalChapters)
+                        .clamp(0.0, 1.0)
+                    : null,
+                volumeText: manga.totalVolumes > 0
+                    ? "Vol ${manga.userVolumesRead}/${manga.totalVolumes}"
+                    : "Vol ${manga.userVolumesRead}/-",
                 score: "${manga.userScore}",
-                statusLabel: manga.publishingStatus?.label ?? "",
-                statusPrefix: "Publishing Status",
+                statusLabel: manga.userStatus.label,
+                heroTag: "media-manga-${manga.id}",
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => MangaDetailsPage(manga: manga),
                   ),
                 ),
+                onLongPress: () => _quickEdit(context, controller, manga),
               ),
             );
           },
         );
       },
     );
+  }
+
+  Future<void> _quickEdit(
+    BuildContext context,
+    GlobalController controller,
+    Manga manga,
+  ) async {
+    final String? action = await showQuickEditMenu(
+      context,
+      <QuickEditAction>[
+        QuickEditAction(
+          icon: Icons.bar_chart,
+          label: "Change status",
+          value: manga.userStatus.label,
+          id: "status",
+        ),
+        QuickEditAction(
+          icon: Icons.menu_book_outlined,
+          label: "Update chapters",
+          value: manga.totalChapters > 0
+              ? "${manga.userChaptersRead}/${manga.totalChapters}"
+              : "${manga.userChaptersRead}",
+          id: "chapters",
+        ),
+        QuickEditAction(
+          icon: Icons.library_books_outlined,
+          label: "Update volumes",
+          value: manga.totalVolumes > 0
+              ? "${manga.userVolumesRead}/${manga.totalVolumes}"
+              : "${manga.userVolumesRead}",
+          id: "volumes",
+        ),
+        QuickEditAction(
+          icon: Icons.star_outline,
+          label: "Set score",
+          value: "${manga.userScore}",
+          id: "score",
+        ),
+      ],
+    );
+    if (action == null || !context.mounted) return;
+
+    switch (action) {
+      case "status":
+        await showStatusSheet(
+          context,
+          kind: MediaKind.manga,
+          current: manga.userStatus.apiValue,
+          onSelected: (String value) => applyUpdate(
+            context,
+            controller.updateManga(
+              manga: manga,
+              status: MangaListStatus.fromApiValue(value),
+              score: manga.userScore,
+              chaptersRead: manga.userChaptersRead,
+              volumesRead: manga.userVolumesRead,
+            ),
+          ),
+        );
+      case "chapters":
+        await showProgressSheet(
+          context,
+          label: "Chapters Read",
+          total: manga.totalChapters,
+          initial: manga.userChaptersRead,
+          onChanged: (int value) => applyUpdate(
+            context,
+            controller.updateManga(
+              manga: manga,
+              status: manga.userStatus,
+              score: manga.userScore,
+              chaptersRead: value,
+              volumesRead: manga.userVolumesRead,
+            ),
+          ),
+        );
+      case "volumes":
+        await showProgressSheet(
+          context,
+          label: "Volumes Read",
+          total: manga.totalVolumes,
+          initial: manga.userVolumesRead,
+          onChanged: (int value) => applyUpdate(
+            context,
+            controller.updateManga(
+              manga: manga,
+              status: manga.userStatus,
+              score: manga.userScore,
+              chaptersRead: manga.userChaptersRead,
+              volumesRead: value,
+            ),
+          ),
+        );
+      case "score":
+        await showScoreSheet(
+          context,
+          initial: manga.userScore,
+          onChanged: (int value) => applyUpdate(
+            context,
+            controller.updateManga(
+              manga: manga,
+              status: manga.userStatus,
+              score: value,
+              chaptersRead: manga.userChaptersRead,
+              volumesRead: manga.userVolumesRead,
+            ),
+          ),
+        );
+    }
   }
 }
