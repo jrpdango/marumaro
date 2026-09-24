@@ -36,10 +36,13 @@ class GlobalController extends ChangeNotifier {
   final LocalStore store;
 
   static const String _sortKey = "list_sort";
+  static const String _themeKey = "theme_mode";
 
   User? user;
 
   ListSort listSort = ListSort.defaultSort;
+
+  AppThemeMode themeMode = AppThemeMode.system;
 
   bool animeSyncing = false;
   bool animeSynced = false;
@@ -102,8 +105,24 @@ class GlobalController extends ChangeNotifier {
 
   Future<void> syncAll() async {
     await loadSortPreferences();
+    await loadThemePreference();
     await syncAnime();
     await syncManga();
+  }
+
+  /// Restores the persisted theme choice.
+  Future<void> loadThemePreference() async {
+    themeMode =
+        AppThemeMode.fromStorageValue(await store.getPreference(_themeKey));
+    _notifySafely();
+  }
+
+  /// Updates and persists the selected theme.
+  Future<void> setThemeMode(AppThemeMode mode) async {
+    if (mode == themeMode) return;
+    themeMode = mode;
+    notifyListeners();
+    await store.setPreference(_themeKey, mode.storageValue);
   }
 
   /// Restores the persisted sort choice shared by both lists.

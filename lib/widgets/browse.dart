@@ -6,11 +6,17 @@ class Browse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        'Browse',
-        style: TextStyle(
-          color: Colors.white,
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            Icons.explore_outlined,
+            size: 48.0,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 12.0),
+          const Text('Browse'),
+        ],
       ),
     );
   }
