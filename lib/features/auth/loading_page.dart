@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/features/home/home.dart';
+import 'package:miru/features/anime/anime.dart';
 import 'package:miru/features/auth/login_page.dart';
 import 'package:miru/core/core.dart';
 
@@ -24,7 +24,7 @@ class _LoadingPageState extends State<LoadingPage> {
     await _finishSetup();
   }
 
-  /// Fetches the current user and navigates to the home page.
+  /// Fetches the current user and navigates to the anime page.
   Future<void> _finishSetup() async {
     if (_needsLogin) {
       await _controller!.store.clearAll();
@@ -33,7 +33,7 @@ class _LoadingPageState extends State<LoadingPage> {
 
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomePage()),
+      MaterialPageRoute(builder: (_) => const AnimePage()),
     );
   }
 

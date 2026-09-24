@@ -8,14 +8,14 @@ import 'package:miru/features/settings/settings.dart';
 import 'package:miru/features/browse/browse.dart';
 import 'package:miru/features/library/library.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AnimePage extends StatefulWidget {
+  const AnimePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AnimePage> createState() => _AnimePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _AnimePageState extends State<AnimePage> with SingleTickerProviderStateMixin {
   GlobalController? _controller;
   late final TabController _tabController;
 
@@ -330,9 +330,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         },
         destinations: const <NavigationDestination>[
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: "Home",
+            icon: Icon(Icons.movie_outlined),
+            selectedIcon: Icon(Icons.movie),
+            label: "Anime",
           ),
           NavigationDestination(
             icon: Icon(Icons.auto_stories_outlined),
