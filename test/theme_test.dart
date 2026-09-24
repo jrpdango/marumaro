@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/models/enums.dart';
-import 'package:miru/theme/app_colors.dart';
-import 'package:miru/theme/app_theme.dart';
+import 'package:miru/core/core.dart';
 
 void main() {
   test("builds light, dark, and AMOLED themes with the right brightness", () {

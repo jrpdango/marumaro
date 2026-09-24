@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/models/media_details_data.dart';
-import 'package:miru/models/user_list_status.dart';
-import 'package:miru/theme/app_theme.dart';
-import 'package:miru/widgets/media_details_view.dart';
+import 'package:miru/core/core.dart';
+import 'package:miru/features/media_details/media_details.dart';
 
 MediaDetailsData _data() {
   return MediaDetailsData(

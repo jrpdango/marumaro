@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miru/models/enums.dart';
-import 'package:miru/pages/loading.dart';
-import 'package:miru/services/global_controller.dart';
-import 'package:miru/theme/app_colors.dart';
-import 'package:miru/theme/app_theme.dart';
+import 'package:miru/core/core.dart';
+import 'package:miru/features/auth/auth.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +32,7 @@ class MiruApp extends StatelessWidget {
               AppThemeMode.system => ThemeMode.system,
             },
             themeAnimationDuration: AppTokens.medium,
-            home: const Loading(),
+            home: const LoadingPage(),
           );
         },
       ),

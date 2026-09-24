@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/models/anime.dart';
-import 'package:miru/models/manga.dart';
-import 'package:miru/pages/search.dart';
-import 'package:miru/services/global_controller.dart';
-import 'package:miru/theme/app_theme.dart';
+import 'package:miru/core/core.dart';
+import 'package:miru/features/search/search.dart';
 
 /// A controller whose searches resolve immediately, avoiding a real database.
 class _FakeController extends GlobalController {
@@ -43,7 +40,7 @@ void main() {
       controller: controller,
       child: MaterialApp(
         theme: AppTheme.dark,
-        home: const Search(),
+        home: const SearchPage(),
       ),
     );
   }

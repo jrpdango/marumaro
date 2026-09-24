@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/theme/app_theme.dart';
-import 'package:miru/widgets/media_list_card.dart';
-import 'package:miru/widgets/media_progress_bar.dart';
+import 'package:miru/core/core.dart';
+import 'package:miru/features/library/library.dart';
 
 Widget _host(Widget child) {
   return MaterialApp(

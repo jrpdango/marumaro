@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:miru/models/anime.dart';
-import 'package:miru/models/enums.dart';
-import 'package:miru/models/manga.dart';
-import 'package:miru/models/page.dart';
-import 'package:miru/services/global_controller.dart';
-import 'package:miru/services/local_store.dart';
-import 'package:miru/services/mal_api_client.dart';
-import 'package:miru/services/mal_repository.dart';
+import 'package:miru/core/core.dart';
 
 class _FakeStore extends LocalStore {
   _FakeStore();

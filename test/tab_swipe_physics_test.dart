@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/widgets/tab_page_scroll_physics.dart';
+import 'package:miru/core/core.dart';
 
 const double _viewport = 400.0;
 const double _dpr = 420 / 160; // emulator: 420dpi / 160

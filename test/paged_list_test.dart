@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/widgets/paged_list.dart';
+import 'package:miru/core/core.dart';
 
 class _FakeSource extends PagedSource<int> {
   _FakeSource(this.total);
