@@ -49,8 +49,12 @@ class MediaPosterCard extends StatelessWidget {
                     left: AppTokens.spaceXs,
                     child: _PosterBadge(
                       text: "#$rank",
-                      background: Theme.of(context).colorScheme.secondaryContainer,
-                      foreground: Theme.of(context).colorScheme.onSecondaryContainer,
+                      background: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
+                      foreground: Theme.of(
+                        context,
+                      ).colorScheme.onSecondaryContainer,
                     ),
                   ),
                 if (score != null && score! > 0)
@@ -60,8 +64,12 @@ class MediaPosterCard extends StatelessWidget {
                     child: _PosterBadge(
                       text: score!.toStringAsFixed(1),
                       icon: Icons.star_rounded,
-                      background: Theme.of(context).colorScheme.primaryContainer,
-                      foreground: Theme.of(context).colorScheme.onPrimaryContainer,
+                      background: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      foreground: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer,
                     ),
                   ),
               ],
@@ -114,9 +122,9 @@ class _PosterBadge extends StatelessWidget {
           Text(
             text,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: foreground,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: foreground,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

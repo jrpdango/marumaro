@@ -41,7 +41,8 @@ class BrowseListPage<T> extends StatefulWidget {
     List<Object> selected, {
     required int offset,
     required int limit,
-  }) loader;
+  })
+  loader;
 
   final Widget Function(BuildContext context, T item) itemBuilder;
   final String emptyMessage;
@@ -52,8 +53,9 @@ class BrowseListPage<T> extends StatefulWidget {
 }
 
 class _BrowseListPageState<T> extends State<BrowseListPage<T>> {
-  late final List<Object> _selected =
-      widget.selectors.map((BrowseSelector selector) => selector.value).toList();
+  late final List<Object> _selected = widget.selectors
+      .map((BrowseSelector selector) => selector.value)
+      .toList();
   int _generation = 0;
 
   void _select(int index, Object value) {
