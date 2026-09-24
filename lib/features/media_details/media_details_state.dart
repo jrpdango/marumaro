@@ -14,6 +14,8 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     on State<TWidget> {
   bool _initialized = false;
   bool _saving = false;
+  bool _inList = true;
+  bool _adding = false;
   Future<TDetails>? _detailsFuture;
 
   late String _persistedStatus;
@@ -46,6 +48,9 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
   int get initialScore;
   int get initialProgress;
   int get initialVolumeProgress;
+
+  /// Whether the media is on the user's list when the page opens.
+  bool get initialInList;
   int get mediaId;
   String get mediaTitle;
   Uri get mediaPicture;
@@ -68,23 +73,81 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
 
   // --- Shared state. ---
 
+  /// Whether the media is currently on the user's list. Starts from
+  /// [initialInList] and flips to true once an edit has been saved.
+  bool get inList => _inList;
+
+  /// Whether the stats/edit controls should be visible. Untracked media hides
+  /// them behind the "Add to List" button until [startAddToList] is called.
+  bool get showStats => _inList || _adding;
+
+  /// While adding, the entry counts as dirty so the save bar (which adds it) is
+  /// always available.
   bool get _dirty =>
+      _adding ||
       _chosenStatus != _persistedStatus ||
       _chosenScore != _persistedScore ||
       _chosenProgress != _persistedProgress ||
       _chosenVolumes != _persistedVolumes;
+
+  /// Begins adding untracked media, revealing the stats/edit controls.
+  void startAddToList() {
+    if (_adding) return;
+    setState(() => _adding = true);
+  }
+
+  /// The status used when adding untracked media.
+  String get _defaultStatusValue => kind == MediaKind.anime
+      ? AnimeListStatus.planToWatch.apiValue
+      : MangaListStatus.planToRead.apiValue;
+
+  /// Loads details and reconciles the list state with the server before the
+  /// future resolves, so the view never renders a stale add/stats state.
+  Future<TDetails> _loadAndSync() {
+    return loadDetails().then((TDetails details) {
+      _applyServerStatus(details);
+      return details;
+    });
+  }
+
+  /// Reconciles the displayed list status/score/progress with the server's
+  /// `my_list_status`. This fixes browse entries, whose list membership is
+  /// unknown until the details request returns. Skipped while the user has
+  /// pending edits.
+  void _applyServerStatus(TDetails details) {
+    final UserListStatus? server = serverStatus(details);
+    if (server == null) {
+      if (_inList && !_dirty) {
+        _inList = false;
+        _persistedStatus = _chosenStatus = _defaultStatusValue;
+        _persistedScore = _chosenScore = 0;
+        _persistedProgress = _chosenProgress = 0;
+        _persistedVolumes = _chosenVolumes = kind == MediaKind.manga ? 0 : null;
+      }
+      return;
+    }
+    if (_dirty) return;
+    _inList = true;
+    _persistedStatus = _chosenStatus = server.status;
+    _persistedScore = _chosenScore = server.score;
+    _persistedProgress = _chosenProgress = server.progress;
+    if (kind == MediaKind.manga) {
+      _persistedVolumes = _chosenVolumes = server.volumeProgress;
+    }
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_initialized) return;
     _initialized = true;
+    _inList = initialInList;
     _persistedStatus = _chosenStatus = initialStatusValue;
     _persistedScore = _chosenScore = initialScore;
     _persistedProgress = _chosenProgress = initialProgress;
     _persistedVolumes = _chosenVolumes =
         kind == MediaKind.manga ? initialVolumeProgress : null;
-    _detailsFuture = loadDetails();
+    _detailsFuture = _loadAndSync();
   }
 
   /// Sends the pending changes to MAL and updates local state.
@@ -99,6 +162,8 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
       );
       if (!mounted) return;
       setState(() {
+        _inList = true;
+        _adding = false;
         _persistedStatus = _chosenStatus;
         _persistedScore = _chosenScore;
         _persistedProgress = _chosenProgress;
@@ -114,9 +179,11 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     }
   }
 
-  /// Reverts staged changes back to the last persisted values.
+  /// Reverts staged changes back to the last persisted values. While adding
+  /// untracked media, discarding cancels the add entirely.
   void discardDraft() {
     setState(() {
+      _adding = false;
       _chosenStatus = _persistedStatus;
       _chosenScore = _persistedScore;
       _chosenProgress = _persistedProgress;
@@ -221,6 +288,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
     final UserListStatus updated = result as UserListStatus;
 
     setState(() {
+      _inList = true;
       _chosenStatus = updated.status;
       _chosenScore = updated.score;
       _chosenProgress = updated.progress;
@@ -231,7 +299,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
       _persistedScore = _chosenScore;
       _persistedProgress = _chosenProgress;
       _persistedVolumes = _chosenVolumes;
-      _detailsFuture = loadDetails();
+      _detailsFuture = _loadAndSync();
     });
   }
 
@@ -279,7 +347,7 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
         if (snapshot.hasError) {
           return MediaDetailsError(
             title: mediaTitle,
-            onRetry: () => setState(() => _detailsFuture = loadDetails()),
+            onRetry: () => setState(() => _detailsFuture = _loadAndSync()),
           );
         }
         if (!snapshot.hasData) {
@@ -290,6 +358,9 @@ mixin MediaDetailsStateMixin<TWidget extends StatefulWidget, TDetails>
         }
         return MediaDetailsView(
           data: buildViewData(snapshot.data as TDetails),
+          inList: inList,
+          showStats: showStats,
+          onAddToList: startAddToList,
           statusLabel: statusLabel(_chosenStatus),
           score: _chosenScore,
           progress: _chosenProgress,

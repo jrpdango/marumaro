@@ -12,6 +12,7 @@ class MalRepository {
   MalRepository({required this._api});
 
   static const int pageSize = 1000;
+  static const int browsePageSize = 100;
   static const String _listFields = "list_status,num_episodes,status";
   static const String _animeListStatusFields =
       "status,score,num_episodes_watched,start_date,finish_date,is_rewatching,"
@@ -32,6 +33,10 @@ class MalRepository {
       "background,mean,rank,popularity,num_list_users,num_scoring_users,"
       "media_type,status,genres,my_list_status{$_mangaListStatusFields},"
       "num_chapters,num_volumes,source,authors";
+  static const String _animeBrowseFields =
+      "id,title,main_picture,num_episodes,status,mean,media_type";
+  static const String _mangaBrowseFields =
+      "id,title,main_picture,num_chapters,num_volumes,status,mean,media_type";
 
   final MalApiClient _api;
 
@@ -51,19 +56,7 @@ class MalRepository {
         if (status != null) "status": status.apiValue,
       },
     );
-    final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
-    final List<Anime> items = data
-        .map(
-          (dynamic entry) =>
-              Anime.fromListStatusJson((entry as Map).cast<String, dynamic>()),
-        )
-        .toList(growable: false);
-    final Map<String, dynamic>? paging =
-        (page["paging"] as Map?)?.cast<String, dynamic>();
-    return PageResult<Anime>(
-      items: items,
-      hasMore: items.isNotEmpty && paging != null && paging["next"] != null,
-    );
+    return _parsePage(page, Anime.fromListStatusJson);
   }
 
   Future<AnimeDetails> fetchAnimeDetails(int animeId) async {
@@ -123,19 +116,7 @@ class MalRepository {
         if (status != null) "status": status.apiValue,
       },
     );
-    final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
-    final List<Manga> items = data
-        .map(
-          (dynamic entry) =>
-              Manga.fromListStatusJson((entry as Map).cast<String, dynamic>()),
-        )
-        .toList(growable: false);
-    final Map<String, dynamic>? paging =
-        (page["paging"] as Map?)?.cast<String, dynamic>();
-    return PageResult<Manga>(
-      items: items,
-      hasMore: items.isNotEmpty && paging != null && paging["next"] != null,
-    );
+    return _parsePage(page, Manga.fromListStatusJson);
   }
 
   Future<MangaDetails> fetchMangaDetails(int mangaId) async {
@@ -175,5 +156,94 @@ class MalRepository {
   /// Removes a manga from the user's list entirely.
   Future<void> deleteMangaListStatus(int mangaId) async {
     await _api.delete("v2/manga/$mangaId/my_list_status");
+  }
+
+  /// Fetches one page of a season's anime, ordered by [sort].
+  Future<PageResult<Anime>> fetchSeasonalAnime({
+    required SeasonRef season,
+    AnimeSeasonSort sort = AnimeSeasonSort.score,
+    required int offset,
+    int limit = browsePageSize,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/anime/season/${season.year}/${season.season.apiValue}",
+      query: <String, String>{
+        "fields": _animeBrowseFields,
+        "limit": "$limit",
+        "offset": "$offset",
+        "sort": sort.apiValue,
+      },
+    );
+    return _parsePage(page, Anime.fromNodeJson);
+  }
+
+  /// Fetches one page of an anime ranking.
+  Future<PageResult<Anime>> fetchAnimeRanking({
+    required AnimeRankingType type,
+    required int offset,
+    int limit = browsePageSize,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/anime/ranking",
+      query: <String, String>{
+        "fields": _animeBrowseFields,
+        "ranking_type": type.apiValue,
+        "limit": "$limit",
+        "offset": "$offset",
+      },
+    );
+    return _parsePage(page, Anime.fromNodeJson);
+  }
+
+  /// Fetches one page of a manga ranking.
+  Future<PageResult<Manga>> fetchMangaRanking({
+    required MangaRankingType type,
+    required int offset,
+    int limit = browsePageSize,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/manga/ranking",
+      query: <String, String>{
+        "fields": _mangaBrowseFields,
+        "ranking_type": type.apiValue,
+        "limit": "$limit",
+        "offset": "$offset",
+      },
+    );
+    return _parsePage(page, Manga.fromNodeJson);
+  }
+
+  /// Fetches one page of anime suggested for the authorized user.
+  Future<PageResult<Anime>> fetchSuggestedAnime({
+    required int offset,
+    int limit = browsePageSize,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/anime/suggestions",
+      query: <String, String>{
+        "fields": _animeBrowseFields,
+        "limit": "$limit",
+        "offset": "$offset",
+      },
+    );
+    return _parsePage(page, Anime.fromNodeJson);
+  }
+
+  /// Parses a paged list response into [PageResult], using [fromJson] to map
+  /// each entry.
+  PageResult<T> _parsePage<T>(
+    Map<String, dynamic> page,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    final List<dynamic> data = (page["data"] as List<dynamic>?) ?? const [];
+    final List<T> items = data
+        .map((dynamic entry) => fromJson((entry as Map).cast<String, dynamic>()))
+        .toList(growable: false);
+    final Map<String, dynamic>? paging =
+        (page["paging"] as Map?)?.cast<String, dynamic>();
+    return PageResult<T>(
+      items: items,
+      hasMore: items.isNotEmpty && paging != null && paging["next"] != null,
+    );
   }
 }
