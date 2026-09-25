@@ -75,63 +75,68 @@ class MediaDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          _DetailsHeader(
-            data: data,
-            inList: inList,
-            showStats: showStats,
-            onEditTap: onEditTap,
-            onRemove: onRemove,
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppTokens.spaceLg,
-                AppTokens.spaceLg,
-                AppTokens.spaceLg,
-                AppTokens.spaceXl,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _PosterRow(data: data),
-                  const SizedBox(height: AppTokens.spaceLg),
-                  if (showStats)
-                    _StatusCard(
-                      statusLabel: statusLabel,
-                      score: score,
-                      progress: progress,
-                      progressTotal: progressTotal,
-                      progressLabel: progressLabel,
-                      onStatusTap: onStatusTap,
-                      onScoreTap: onScoreTap,
-                      onProgressTap: onProgressTap,
-                      onProgressDelta: onProgressDelta,
-                    )
-                  else
-                    _AddToListCard(onAddToList: onAddToList ?? () {}),
-                  if (data.synopsis != null) ...<Widget>[
+      body: ScrollConfiguration(
+        // Android's stretch overscroll also stretches the image header, which
+        // distorts it and leaves a seam at its bottom edge, so opt out here.
+        behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            _DetailsHeader(
+              data: data,
+              inList: inList,
+              showStats: showStats,
+              onEditTap: onEditTap,
+              onRemove: onRemove,
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppTokens.spaceLg,
+                  AppTokens.spaceLg,
+                  AppTokens.spaceLg,
+                  AppTokens.spaceXl,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _PosterRow(data: data),
                     const SizedBox(height: AppTokens.spaceLg),
-                    _SynopsisSection(synopsis: data.synopsis!),
+                    if (showStats)
+                      _StatusCard(
+                        statusLabel: statusLabel,
+                        score: score,
+                        progress: progress,
+                        progressTotal: progressTotal,
+                        progressLabel: progressLabel,
+                        onStatusTap: onStatusTap,
+                        onScoreTap: onScoreTap,
+                        onProgressTap: onProgressTap,
+                        onProgressDelta: onProgressDelta,
+                      )
+                    else
+                      _AddToListCard(onAddToList: onAddToList ?? () {}),
+                    if (data.synopsis != null) ...<Widget>[
+                      const SizedBox(height: AppTokens.spaceLg),
+                      _SynopsisSection(synopsis: data.synopsis!),
+                    ],
+                    if (data.genres.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: AppTokens.spaceLg),
+                      _GenresSection(genres: data.genres),
+                    ],
+                    if (_hasAltTitles) ...<Widget>[
+                      const SizedBox(height: AppTokens.spaceLg),
+                      _AltTitlesSection(data: data),
+                    ],
+                    if (data.infoRows.isNotEmpty) ...<Widget>[
+                      const SizedBox(height: AppTokens.spaceLg),
+                      _InformationSection(rows: data.infoRows),
+                    ],
                   ],
-                  if (data.genres.isNotEmpty) ...<Widget>[
-                    const SizedBox(height: AppTokens.spaceLg),
-                    _GenresSection(genres: data.genres),
-                  ],
-                  if (_hasAltTitles) ...<Widget>[
-                    const SizedBox(height: AppTokens.spaceLg),
-                    _AltTitlesSection(data: data),
-                  ],
-                  if (data.infoRows.isNotEmpty) ...<Widget>[
-                    const SizedBox(height: AppTokens.spaceLg),
-                    _InformationSection(rows: data.infoRows),
-                  ],
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: dirty
           ? _DetailsActionBar(

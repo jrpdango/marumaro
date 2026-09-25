@@ -48,6 +48,13 @@ abstract final class AppTokens {
   static const double radiusMd = 14.0;
   static const double radiusLg = 20.0;
 
+  /// Opacities for the translucent scrims drawn over header backdrops.
+  static const double scrimSolid = 0.45;
+  static const double scrimTop = 0.90;
+
+  /// Blur applied to full-bleed header backdrops.
+  static const double backdropBlur = 5.0;
+
   static const Duration fast = Duration(milliseconds: 150);
   static const Duration medium = Duration(milliseconds: 300);
 }

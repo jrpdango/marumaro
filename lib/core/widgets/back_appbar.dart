@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miru/core/widgets/header_scrim.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BackAppBar({super.key, this.title, this.actions});
@@ -14,7 +15,6 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
     return AppBar(
       toolbarHeight: 72.0,
       title: title == null
@@ -29,7 +29,7 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
             fit: BoxFit.cover,
             alignment: Alignment(0, -0.5),
           ),
-          ColoredBox(color: scheme.surface.withValues(alpha: 0.45)),
+          const HeaderScrim(),
         ],
       ),
       leading: Padding(

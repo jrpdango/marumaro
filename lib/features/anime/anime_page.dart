@@ -248,7 +248,7 @@ class _AnimePageState extends State<AnimePage> with SingleTickerProviderStateMix
                   ? const Alignment(0, -0.4)
                   : const Alignment(0, -0.5),
             ),
-            ColoredBox(color: scheme.surface.withValues(alpha: 0.45)),
+            const HeaderScrim(),
           ],
         ),
         leading: Padding(

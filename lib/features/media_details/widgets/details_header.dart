@@ -23,7 +23,7 @@ class _DetailsHeader extends StatelessWidget {
     final TextTheme text = Theme.of(context).textTheme;
     return SliverAppBar(
       pinned: true,
-      expandedHeight: 280.0,
+      expandedHeight: 200.0,
       backgroundColor: scheme.surface,
       foregroundColor: scheme.onSurface,
       title: Text(data.title, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -52,39 +52,42 @@ class _DetailsHeader extends StatelessWidget {
             ],
           ),
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.parallax,
-        background: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            RemoteImage(uri: data.backdrop, fallback: data.poster),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: <Color>[
-                    scheme.surface.withValues(alpha: 0.55),
-                    scheme.surface.withValues(alpha: 0.0),
-                    scheme.surface.withValues(alpha: 0.85),
-                    scheme.surface,
-                  ],
-                  stops: const <double>[0.0, 0.35, 0.78, 1.0],
+      flexibleSpace: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final double currentExtent = constraints.maxHeight;
+          final double minExtent =
+              MediaQuery.paddingOf(context).top + kToolbarHeight;
+          final double chipOpacity =
+              ((currentExtent - minExtent) / (2.0 * kToolbarHeight))
+                  .clamp(0.0, 1.0);
+          return Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FlexibleSpaceBar(
+                collapseMode: CollapseMode.parallax,
+                background: RemoteImage(
+                  uri: data.backdrop,
+                  fallback: data.poster,
+                  blurSigma: AppTokens.backdropBlur,
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  right: AppTokens.spaceLg,
-                  bottom: AppTokens.spaceXl + AppTokens.spaceSm,
+              const HeaderScrim.fade(),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    right: AppTokens.spaceLg,
+                    bottom: AppTokens.spaceXl + AppTokens.spaceSm,
+                  ),
+                  child: Opacity(
+                    opacity: chipOpacity,
+                    child: StatusChip(label: data.statusLabel),
+                  ),
                 ),
-                child: StatusChip(label: data.statusLabel),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
     );
   }
