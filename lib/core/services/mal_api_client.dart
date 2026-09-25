@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:miru/core/services/api_exception.dart';
+import 'package:tamarun/core/services/api_exception.dart';
 
 /// Thin wrapper over the MAL v2 REST API.
 ///

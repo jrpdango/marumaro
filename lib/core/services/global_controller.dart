@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:miru/core/models/anime.dart';
-import 'package:miru/core/models/enums.dart';
-import 'package:miru/core/models/list_sort.dart';
-import 'package:miru/core/models/manga.dart';
-import 'package:miru/core/models/page.dart';
-import 'package:miru/core/models/user.dart';
-import 'package:miru/core/models/user_list_status.dart';
-import 'package:miru/core/services/auth_repository.dart';
-import 'package:miru/core/services/local_store.dart';
-import 'package:miru/core/services/mal_api_client.dart';
-import 'package:miru/core/services/mal_repository.dart';
-import 'package:miru/core/services/token_store.dart';
+import 'package:tamarun/core/models/anime.dart';
+import 'package:tamarun/core/models/enums.dart';
+import 'package:tamarun/core/models/list_sort.dart';
+import 'package:tamarun/core/models/manga.dart';
+import 'package:tamarun/core/models/page.dart';
+import 'package:tamarun/core/models/user.dart';
+import 'package:tamarun/core/models/user_list_status.dart';
+import 'package:tamarun/core/services/auth_repository.dart';
+import 'package:tamarun/core/services/local_store.dart';
+import 'package:tamarun/core/services/mal_api_client.dart';
+import 'package:tamarun/core/services/mal_repository.dart';
+import 'package:tamarun/core/services/token_store.dart';
 
 /// Application-wide state: authentication, the current user, and a cache of
 /// their lists backed by [LocalStore].

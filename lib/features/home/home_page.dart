@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/auth/auth.dart';
-import 'package:miru/features/profile/profile.dart';
-import 'package:miru/features/search/search.dart';
-import 'package:miru/features/settings/settings.dart';
-import 'package:miru/features/browse/browse.dart';
-import 'package:miru/features/library/library.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/auth/auth.dart';
+import 'package:tamarun/features/profile/profile.dart';
+import 'package:tamarun/features/search/search.dart';
+import 'package:tamarun/features/settings/settings.dart';
+import 'package:tamarun/features/browse/browse.dart';
+import 'package:tamarun/features/library/library.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

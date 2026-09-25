@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/auth/auth.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/auth/auth.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MiruApp(controller: GlobalController()));
+  runApp(TamarunApp(controller: GlobalController()));
 }
 
-class MiruApp extends StatelessWidget {
-  const MiruApp({super.key, required this.controller});
+class TamarunApp extends StatelessWidget {
+  const TamarunApp({super.key, required this.controller});
 
   final GlobalController controller;
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/browse/browse_list_page.dart';
-import 'package:miru/features/browse/widgets/browse_list_tile.dart';
-import 'package:miru/features/browse/widgets/media_poster_card.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/browse/browse_list_page.dart';
+import 'package:tamarun/features/browse/widgets/browse_list_tile.dart';
+import 'package:tamarun/features/browse/widgets/media_poster_card.dart';
 
 void main() {
   testWidgets("MediaPosterCard shows the title and fires onTap", (

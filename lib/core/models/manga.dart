@@ -1,4 +1,4 @@
-import 'package:miru/core/models/enums.dart';
+import 'package:tamarun/core/models/enums.dart';
 
 /// A manga entry from the user's list.
 class Manga {

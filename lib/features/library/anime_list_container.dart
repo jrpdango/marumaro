@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/media_details/media_details.dart';
-import 'package:miru/features/library/media_list_card.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/media_details/media_details.dart';
+import 'package:tamarun/features/library/media_list_card.dart';
 
 class AnimeListContainer extends StatelessWidget {
   /// An explicit paged source to display (e.g. search results). When null, the

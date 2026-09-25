@@ -1,5 +1,5 @@
-import 'package:miru/core/models/enums.dart';
-import 'package:miru/core/models/user_list_status.dart';
+import 'package:tamarun/core/models/enums.dart';
+import 'package:tamarun/core/models/user_list_status.dart';
 
 /// The values gathered by the edit form, decoupled from the widgets and text
 /// controllers so the status/patch mapping can be unit-tested on its own.

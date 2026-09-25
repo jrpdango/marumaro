@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:tamarun/core/core.dart';
 
 /// A compact poster card used in the browse carousels: a 2:3 poster with an
 /// optional rank and score badge and the title underneath.

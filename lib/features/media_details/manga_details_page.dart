@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/media_details/media_details_state.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/media_details/media_details_state.dart';
 
 class MangaDetailsPage extends StatefulWidget {
   const MangaDetailsPage({super.key, required this.manga});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/widgets/header_scrim.dart';
+import 'package:tamarun/core/widgets/header_scrim.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BackAppBar({super.key, this.title, this.actions});

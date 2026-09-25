@@ -1,10 +1,10 @@
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
-import 'package:miru/core/models/anime.dart';
-import 'package:miru/core/models/enums.dart';
-import 'package:miru/core/models/list_sort.dart';
-import 'package:miru/core/models/manga.dart';
+import 'package:tamarun/core/models/anime.dart';
+import 'package:tamarun/core/models/enums.dart';
+import 'package:tamarun/core/models/list_sort.dart';
+import 'package:tamarun/core/models/manga.dart';
 
 class LocalStore {
   LocalStore({this._factory, this.path});
@@ -22,7 +22,7 @@ class LocalStore {
 
   Future<Database> _open() async {
     final String path =
-        this.path ?? p.join(await getDatabasesPath(), "miru.db");
+        this.path ?? p.join(await getDatabasesPath(), "tamarun.db");
     return (_factory ?? databaseFactory).openDatabase(
       path,
       options: OpenDatabaseOptions(

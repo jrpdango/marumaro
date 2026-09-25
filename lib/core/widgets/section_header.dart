@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/theme/app_colors.dart';
+import 'package:tamarun/core/theme/app_colors.dart';
 
 /// A titled content section: the title, a gap, then [child].
 class SectionHeader extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/media_details/widgets/number_field.dart';
-import 'package:miru/features/media_details/widgets/score_slider.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/media_details/widgets/number_field.dart';
+import 'package:tamarun/features/media_details/widgets/score_slider.dart';
 
 /// Shows the list-status picker as a modal bottom sheet.
 Future<void> showStatusSheet(

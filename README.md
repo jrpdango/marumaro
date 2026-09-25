@@ -1,4 +1,4 @@
-# miru
+# tamarun
 
 A MAL client for my (and maybe some friends) personal use. 
 

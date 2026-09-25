@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:miru/core/core.dart';
+import 'package:tamarun/core/core.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 const int _fakePageSize = 2;

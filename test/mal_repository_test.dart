@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:miru/core/core.dart';
+import 'package:tamarun/core/core.dart';
 
 /// A repository backed by a mock client that records requests and returns
 /// [body] with the given [statusCode].

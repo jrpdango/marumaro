@@ -1,4 +1,4 @@
-package com.miru.app
+package com.tamarun.app
 
 import io.flutter.embedding.android.FlutterActivity
 

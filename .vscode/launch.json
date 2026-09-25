@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "miru",
+            "name": "tamarun",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "miru (profile mode)",
+            "name": "tamarun (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"

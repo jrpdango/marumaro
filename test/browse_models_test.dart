@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/core/core.dart';
+import 'package:tamarun/core/core.dart';
 
 void main() {
   group("MediaSeason.current", () {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:tamarun/core/core.dart';
 
 /// A tappable row card for browse lists (rankings and seasons). Unlike
 /// [MediaListCard], it carries no list status or progress because browse

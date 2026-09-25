@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:tamarun/core/core.dart';
 
 /// A tappable list card showing a poster, title, status, progress, and score.
 ///

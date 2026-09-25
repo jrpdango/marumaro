@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart';
-import 'package:miru/core/constants.dart' as constants;
-import 'package:miru/core/services/pkce_code_gen.dart';
-import 'package:miru/core/services/token_store.dart';
+import 'package:tamarun/core/constants.dart' as constants;
+import 'package:tamarun/core/services/pkce_code_gen.dart';
+import 'package:tamarun/core/services/token_store.dart';
 
 /// Handles the MyAnimeList OAuth2 PKCE flow and token lifecycle.
 class AuthRepository {
@@ -57,7 +57,7 @@ class AuthRepository {
     try {
       final String callback = await FlutterWebAuth2.authenticate(
         url: authorizationUrl().toString(),
-        callbackUrlScheme: "miru",
+        callbackUrlScheme: "tamarun",
       );
       final String? code = Uri.parse(callback).queryParameters["code"];
       if (code == null) return false;

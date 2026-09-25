@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/settings/settings.dart';
+import 'package:tamarun/core/core.dart';
+import 'package:tamarun/features/settings/settings.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Widget _host(GlobalController controller) {

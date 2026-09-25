@@ -1,11 +1,11 @@
-import 'package:miru/core/models/anime.dart';
-import 'package:miru/core/models/anime_details.dart';
-import 'package:miru/core/models/enums.dart';
-import 'package:miru/core/models/manga.dart';
-import 'package:miru/core/models/manga_details.dart';
-import 'package:miru/core/models/page.dart';
-import 'package:miru/core/models/user.dart';
-import 'package:miru/core/services/mal_api_client.dart';
+import 'package:tamarun/core/models/anime.dart';
+import 'package:tamarun/core/models/anime_details.dart';
+import 'package:tamarun/core/models/enums.dart';
+import 'package:tamarun/core/models/manga.dart';
+import 'package:tamarun/core/models/manga_details.dart';
+import 'package:tamarun/core/models/page.dart';
+import 'package:tamarun/core/models/user.dart';
+import 'package:tamarun/core/services/mal_api_client.dart';
 
 /// Typed access to the MAL API endpoints used by the app.
 class MalRepository {
