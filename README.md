@@ -1,5 +1,11 @@
-# marumaro
+<p align="center">
+  <img src="assets/icon/icon_foreground.png" alt="marumaro icon" width="200">
+</p>
 
-A MAL client for my (and maybe some friends) personal use. 
+<h1 align="center">marumaro</h1>
 
-![App Screenshot](https://jrpdango.github.io/gittop/miru_vertical_transparent1.png)
+<p align="center">
+  <img src="assets/screenshots/pixel.webp" alt="Pixel" width="220">
+  <img src="assets/screenshots/s21.webp" alt="Galaxy S21" width="220">
+  <img src="assets/screenshots/s24.webp" alt="Galaxy S24" width="220">
+</p>
