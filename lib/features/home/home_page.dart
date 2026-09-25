@@ -8,14 +8,14 @@ import 'package:miru/features/settings/settings.dart';
 import 'package:miru/features/browse/browse.dart';
 import 'package:miru/features/library/library.dart';
 
-class AnimePage extends StatefulWidget {
-  const AnimePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<AnimePage> createState() => _AnimePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _AnimePageState extends State<AnimePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   GlobalController? _controller;
   late final TabController _tabController;
 
