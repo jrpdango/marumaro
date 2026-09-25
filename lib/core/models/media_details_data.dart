@@ -32,7 +32,7 @@ class MediaDetailsData {
   final int id;
   final String title;
 
-  /// The list thumbnail, used as a fallback and for the hero transition.
+  /// The list thumbnail, used as a fallback image.
   final Uri poster;
 
   /// A larger image used for the header backdrop.
@@ -51,7 +51,4 @@ class MediaDetailsData {
   final String? englishTitle;
   final String? japaneseTitle;
   final List<String> synonyms;
-
-  /// Shared-element tag linking the list card to this page.
-  String get heroTag => "media-${kind.name}-$id";
 }

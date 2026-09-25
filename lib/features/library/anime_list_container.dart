@@ -67,7 +67,6 @@ class AnimeListContainer extends StatelessWidget {
                     : null,
                 score: "${anime.userScore}",
                 statusLabel: anime.userStatus.label,
-                heroTag: "media-anime-${anime.id}",
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => AnimeDetailsPage(anime: anime),

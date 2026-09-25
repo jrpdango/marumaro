@@ -70,7 +70,6 @@ class MangaListContainer extends StatelessWidget {
                     : "Vol ${manga.userVolumesRead}/-",
                 score: "${manga.userScore}",
                 statusLabel: manga.userStatus.label,
-                heroTag: "media-manga-${manga.id}",
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => MangaDetailsPage(manga: manga),

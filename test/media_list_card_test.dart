@@ -21,7 +21,6 @@ void main() {
         progressValue: 0.25,
         score: "8",
         statusLabel: "Currently Watching",
-        heroTag: "media-anime-1",
         onTap: () {},
       ),
     ));
@@ -47,7 +46,6 @@ void main() {
         volumeText: "Vol 2/4",
         score: "9",
         statusLabel: "Currently Reading",
-        heroTag: "media-manga-1",
         onTap: () {},
       ),
     ));
@@ -66,7 +64,6 @@ void main() {
         progressText: "0/1",
         score: "0",
         statusLabel: "Plan To Watch",
-        heroTag: "media-anime-2",
         onTap: () => taps++,
         onLongPress: () => longPresses++,
       ),
@@ -90,7 +87,6 @@ void main() {
         progressValue: null,
         score: "0",
         statusLabel: "On Hold",
-        heroTag: "media-anime-3",
         onTap: () {},
       ),
     ));

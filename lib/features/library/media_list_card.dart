@@ -12,7 +12,6 @@ class MediaListCard extends StatelessWidget {
     required this.progressText,
     required this.score,
     required this.statusLabel,
-    required this.heroTag,
     required this.onTap,
     this.progressValue,
     this.volumeText,
@@ -26,7 +25,6 @@ class MediaListCard extends StatelessWidget {
   final String? volumeText;
   final String score;
   final String statusLabel;
-  final String heroTag;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
 
@@ -47,15 +45,12 @@ class MediaListCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Hero(
-                tag: heroTag,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(AppTokens.radiusSm),
-                  child: AnimePoster(
-                    picture: picture,
-                    height: posterHeight,
-                    width: posterWidth,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppTokens.radiusSm),
+                child: AnimePoster(
+                  picture: picture,
+                  height: posterHeight,
+                  width: posterWidth,
                 ),
               ),
               const SizedBox(width: AppTokens.spaceMd),

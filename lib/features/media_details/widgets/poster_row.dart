@@ -13,15 +13,12 @@ class _PosterRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Hero(
-          tag: data.heroTag,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppTokens.radiusSm),
-            child: RemoteImage(
-              uri: data.poster,
-              fallback: data.poster,
-              width: 96.0,
-            ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppTokens.radiusSm),
+          child: RemoteImage(
+            uri: data.poster,
+            fallback: data.poster,
+            width: 96.0,
           ),
         ),
         const SizedBox(width: AppTokens.spaceLg),
