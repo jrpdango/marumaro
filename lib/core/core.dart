@@ -28,6 +28,7 @@ export 'widgets/back_appbar.dart';
 export 'widgets/colored_tab_bar.dart';
 export 'widgets/editable_stat_tile.dart';
 export 'widgets/header_scrim.dart';
+export 'widgets/image_viewer.dart';
 export 'widgets/loading_popup.dart';
 export 'widgets/media_progress_bar.dart';
 export 'widgets/paged_list.dart';

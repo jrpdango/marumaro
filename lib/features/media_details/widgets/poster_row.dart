@@ -13,14 +13,7 @@ class _PosterRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppTokens.radiusSm),
-          child: RemoteImage(
-            uri: data.poster,
-            fallback: data.poster,
-            width: 96.0,
-          ),
-        ),
+        _TappablePoster(data: data),
         const SizedBox(width: AppTokens.spaceLg),
         Expanded(
           child: Column(
@@ -61,6 +54,51 @@ class _PosterRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// The poster thumbnail, tappable to open the full-screen zoom viewer.
+class _TappablePoster extends StatelessWidget {
+  const _TappablePoster({required this.data});
+
+  final MediaDetailsData data;
+
+  /// Shared with the viewer's [Hero] so the poster animates into the full image.
+  String get _heroTag => "${data.kind.name}-${data.id}-poster";
+
+  void _open(BuildContext context) {
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (_) => ImageViewer(
+          uri: data.backdrop,
+          fallback: data.poster,
+          heroTag: _heroTag,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: "View image",
+      child: GestureDetector(
+        onTap: () => _open(context),
+        child: Hero(
+          tag: _heroTag,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppTokens.radiusSm),
+            child: RemoteImage(
+              uri: data.poster,
+              fallback: data.poster,
+              width: 96.0,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

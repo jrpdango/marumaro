@@ -176,6 +176,21 @@ void main() {
     expect(find.byType(PopupMenuButton<String>), findsNothing);
   });
 
+  testWidgets("tapping the poster opens the zoom viewer",
+      (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    await tester.pumpWidget(_host());
+    await tester.pump();
+
+    await tester.tap(find.bySemanticsLabel("View image"));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ImageViewer), findsOneWidget);
+    expect(find.byType(InteractiveViewer), findsOneWidget);
+
+    handle.dispose();
+  });
+
   testWidgets("remove is offered via the overflow menu", (WidgetTester tester) async {
     int removals = 0;
     await tester.pumpWidget(_host(onRemove: () => removals++));
