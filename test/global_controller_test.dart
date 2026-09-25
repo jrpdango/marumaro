@@ -242,6 +242,22 @@ void main() {
     reloaded.dispose();
   });
 
+  test("edge swipe is disabled by default", () {
+    expect(controller.edgeSwipeOpensDrawer, isFalse);
+  });
+
+  test("persists and restores the edge swipe preference", () async {
+    await controller.loadEdgeSwipePreference();
+    await controller.setEdgeSwipeOpensDrawer(true);
+
+    final GlobalController reloaded =
+        GlobalController(store: store, repository: repository);
+    await reloaded.loadEdgeSwipePreference();
+
+    expect(reloaded.edgeSwipeOpensDrawer, isTrue);
+    reloaded.dispose();
+  });
+
   test("a failed sync leaves previously cached data intact", () async {
     await controller.syncAnime();
     expect(await controller.countAnime(AnimeListStatus.watching), 5);

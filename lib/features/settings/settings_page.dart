@@ -32,6 +32,19 @@ class SettingsPage extends StatelessWidget {
               }).toList(),
             ),
           ),
+          const SizedBox(height: AppTokens.spaceLg),
+          Text(
+            "Navigation",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: AppTokens.spaceMd),
+          Card(
+            child: SwitchListTile(
+              title: const Text("Swipe from edge to open menu"),
+              value: controller.edgeSwipeOpensDrawer,
+              onChanged: controller.setEdgeSwipeOpensDrawer,
+            ),
+          ),
         ],
       ),
     );

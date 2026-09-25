@@ -150,6 +150,7 @@ class _AnimePageState extends State<AnimePage> with SingleTickerProviderStateMix
     final User? user = _controller!.user;
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return Scaffold(
+      drawerEnableOpenDragGesture: _controller!.edgeSwipeOpensDrawer,
       drawer: Drawer(
         backgroundColor: scheme.surface,
         child: Column(

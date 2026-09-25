@@ -38,12 +38,15 @@ class GlobalController extends ChangeNotifier {
 
   static const String _sortKey = "list_sort";
   static const String _themeKey = "theme_mode";
+  static const String _edgeSwipeKey = "drawer_edge_swipe";
 
   User? user;
 
   ListSort listSort = ListSort.defaultSort;
 
   AppThemeMode themeMode = AppThemeMode.system;
+
+  bool edgeSwipeOpensDrawer = false;
 
   bool animeSyncing = false;
   bool animeSynced = false;
@@ -107,6 +110,7 @@ class GlobalController extends ChangeNotifier {
   Future<void> syncAll() async {
     await loadSortPreferences();
     await loadThemePreference();
+    await loadEdgeSwipePreference();
     await syncAnime();
     await syncManga();
   }
@@ -125,6 +129,21 @@ class GlobalController extends ChangeNotifier {
     themeMode = mode;
     notifyListeners();
     await store.setPreference(_themeKey, mode.storageValue);
+  }
+
+  /// Restores whether a left-edge swipe opens the navigation drawer.
+  Future<void> loadEdgeSwipePreference() async {
+    edgeSwipeOpensDrawer =
+        (await store.getPreference(_edgeSwipeKey)) == "true";
+    _notifySafely();
+  }
+
+  /// Updates and persists whether a left-edge swipe opens the drawer.
+  Future<void> setEdgeSwipeOpensDrawer(bool value) async {
+    if (value == edgeSwipeOpensDrawer) return;
+    edgeSwipeOpensDrawer = value;
+    notifyListeners();
+    await store.setPreference(_edgeSwipeKey, value ? "true" : "false");
   }
 
   /// Restores the persisted sort choice shared by both lists.
