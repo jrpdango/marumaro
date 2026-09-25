@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 /// A horizontally paged view of a set of status lists, kept in sync with
 /// [tabController].

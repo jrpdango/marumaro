@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:miru/core/models/user_list_status.dart';
+import 'package:marumaro/core/models/user_list_status.dart';
 
 /// Normalized details rendered by `MediaDetailsView` for both anime and manga.
 ///

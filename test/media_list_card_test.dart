@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/library/library.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/library/library.dart';
 
 Widget _host(Widget child) {
   return MaterialApp(

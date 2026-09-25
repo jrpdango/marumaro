@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/library/manga_list_container.dart';
-import 'package:miru/features/library/media_list_pager.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/library/manga_list_container.dart';
+import 'package:marumaro/features/library/media_list_pager.dart';
 
 /// The Manga tab: pages through the cached manga status buckets.
 class MangaTab extends StatefulWidget {

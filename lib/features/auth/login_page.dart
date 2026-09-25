@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.onSignedIn});
@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Hello, and welcome to miru! To get started, log in with your MyAnimeList account.",
+                    "Hello, and welcome to marumaro! To get started, log in with your MyAnimeList account.",
                     textAlign: TextAlign.center,
                   ),
                 ),

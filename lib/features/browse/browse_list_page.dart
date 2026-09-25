@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 /// One selectable filter on a [BrowseListPage] (a ranking type, a season, a
 /// sort order, ...). Values are compared by identity/equality, so enums and

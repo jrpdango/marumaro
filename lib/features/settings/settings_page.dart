@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 /// Minimal settings page hosting the appearance (theme) selector.
 class SettingsPage extends StatelessWidget {

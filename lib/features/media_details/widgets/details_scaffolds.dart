@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 /// A themed loading scaffold shown while details are being fetched.
 class MediaDetailsLoading extends StatelessWidget {

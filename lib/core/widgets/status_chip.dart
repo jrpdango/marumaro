@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/theme/app_colors.dart';
+import 'package:marumaro/core/theme/app_colors.dart';
 
 /// A rounded, secondary-container pill displaying a list status.
 ///

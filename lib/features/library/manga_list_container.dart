@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/media_details/media_details.dart';
-import 'package:miru/features/library/media_list_card.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/media_details/media_details.dart';
+import 'package:marumaro/features/library/media_list_card.dart';
 
 class MangaListContainer extends StatelessWidget {
   /// An explicit paged source to display (e.g. search results). When null, the

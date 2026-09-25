@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:miru/features/home/home.dart';
-import 'package:miru/features/auth/login_page.dart';
-import 'package:miru/core/core.dart';
+import 'package:marumaro/features/home/home.dart';
+import 'package:marumaro/features/auth/login_page.dart';
+import 'package:marumaro/core/core.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});

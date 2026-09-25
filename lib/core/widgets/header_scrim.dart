@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:miru/core/theme/app_colors.dart';
+import 'package:marumaro/core/theme/app_colors.dart';
 
 /// A translucent scrim drawn over a header backdrop so overlaid content stays
 /// legible no matter how bright the underlying image is.

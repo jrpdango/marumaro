@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
-import 'package:miru/core/models/enums.dart';
-import 'package:miru/core/theme/app_colors.dart';
+import 'package:marumaro/core/models/enums.dart';
+import 'package:marumaro/core/theme/app_colors.dart';
 
 /// Builds the app's light, dark, and AMOLED [ThemeData]s from a shared set of
 /// design tokens.

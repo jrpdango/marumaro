@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/auth/auth.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/auth/auth.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MiruApp(controller: GlobalController()));
+  runApp(MarumaroApp(controller: GlobalController()));
 }
 
-class MiruApp extends StatelessWidget {
-  const MiruApp({super.key, required this.controller});
+class MarumaroApp extends StatelessWidget {
+  const MarumaroApp({super.key, required this.controller});
 
   final GlobalController controller;
 

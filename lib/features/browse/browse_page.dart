@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/browse/browse_list_page.dart';
-import 'package:miru/features/browse/widgets/browse_list_tile.dart';
-import 'package:miru/features/browse/widgets/browse_section.dart';
-import 'package:miru/features/browse/widgets/media_poster_card.dart';
-import 'package:miru/features/media_details/media_details.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/browse/browse_list_page.dart';
+import 'package:marumaro/features/browse/widgets/browse_list_tile.dart';
+import 'package:marumaro/features/browse/widgets/browse_section.dart';
+import 'package:marumaro/features/browse/widgets/media_poster_card.dart';
+import 'package:marumaro/features/media_details/media_details.dart';
 
 /// Discovery page: this season's anime, suggestions, and top rankings, each as
 /// a horizontal carousel that links to a full paged list.

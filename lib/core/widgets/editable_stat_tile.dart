@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/theme/app_colors.dart';
+import 'package:marumaro/core/theme/app_colors.dart';
 
 /// Wraps a stat in an outlined, tappable tile with a trailing chevron so it
 /// reads as editable. When [onTap] is null the tile stays plain and borderless.

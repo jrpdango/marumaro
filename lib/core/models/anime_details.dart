@@ -1,6 +1,6 @@
-import 'package:miru/core/models/enums.dart';
-import 'package:miru/core/models/media_details_data.dart';
-import 'package:miru/core/models/user_list_status.dart';
+import 'package:marumaro/core/models/enums.dart';
+import 'package:marumaro/core/models/media_details_data.dart';
+import 'package:marumaro/core/models/user_list_status.dart';
 
 /// Detailed information about an anime.
 class AnimeDetails {

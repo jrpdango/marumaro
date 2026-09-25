@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miru/core/theme/app_colors.dart';
-import 'package:miru/core/widgets/remote_image.dart';
+import 'package:marumaro/core/theme/app_colors.dart';
+import 'package:marumaro/core/widgets/remote_image.dart';
 
 /// A full-screen, pinch-to-zoom viewer for a remote image.
 ///

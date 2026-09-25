@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:miru/core/core.dart';
-import 'package:miru/features/media_details/media_details.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/media_details/media_details.dart';
 
 MediaDetailsData _data() {
   return MediaDetailsData(
