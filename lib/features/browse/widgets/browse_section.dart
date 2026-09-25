@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tamarun/core/core.dart';
-import 'package:tamarun/features/browse/widgets/media_poster_card.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/browse/widgets/media_poster_card.dart';
 
 /// A titled browse section with an optional "View More" action and its content
 /// (typically a horizontal carousel).

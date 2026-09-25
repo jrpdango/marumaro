@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tamarun/core/core.dart';
-import 'package:tamarun/features/search/search.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/search/search.dart';
 
 /// A controller whose searches resolve immediately, avoiding a real database.
 class _FakeController extends GlobalController {

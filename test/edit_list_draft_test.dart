@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tamarun/core/models/enums.dart';
-import 'package:tamarun/core/models/user_list_status.dart';
-import 'package:tamarun/features/media_details/edit_list_draft.dart';
+import 'package:marumaro/core/models/enums.dart';
+import 'package:marumaro/core/models/user_list_status.dart';
+import 'package:marumaro/features/media_details/edit_list_draft.dart';
 
 EditListDraft _draft({
   String status = "watching",

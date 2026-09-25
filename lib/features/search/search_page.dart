@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tamarun/core/core.dart';
-import 'package:tamarun/features/library/library.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/library/library.dart';
 
 /// Unified search over the user's cached anime and manga lists.
 class SearchPage extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tamarun/core/core.dart';
-import 'package:tamarun/features/media_details/edit_list_draft.dart';
-import 'package:tamarun/features/media_details/widgets/number_field.dart';
-import 'package:tamarun/features/media_details/widgets/score_slider.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/media_details/edit_list_draft.dart';
+import 'package:marumaro/features/media_details/widgets/number_field.dart';
+import 'package:marumaro/features/media_details/widgets/score_slider.dart';
 
 part 'widgets/edit_action_bar.dart';
 part 'widgets/edit_dates_section.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tamarun/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

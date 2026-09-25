@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tamarun/core/core.dart';
-import 'package:tamarun/features/media_details/edit_list_page.dart';
-import 'package:tamarun/features/media_details/quick_edit_sheets.dart';
-import 'package:tamarun/features/media_details/widgets/details_scaffolds.dart';
-import 'package:tamarun/features/media_details/widgets/media_details_view.dart';
+import 'package:marumaro/core/core.dart';
+import 'package:marumaro/features/media_details/edit_list_page.dart';
+import 'package:marumaro/features/media_details/quick_edit_sheets.dart';
+import 'package:marumaro/features/media_details/widgets/details_scaffolds.dart';
+import 'package:marumaro/features/media_details/widgets/media_details_view.dart';
 
 /// Shared state and behavior for the anime and manga details pages.
 ///

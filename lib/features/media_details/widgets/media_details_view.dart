@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tamarun/core/core.dart';
+import 'package:marumaro/core/core.dart';
 
 part 'add_to_list_card.dart';
 part 'content_sections.dart';
