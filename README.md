@@ -4,9 +4,9 @@
 
 <h1 align="center">marumaro</h1>
 
-A simple MyAnimeList client for viewing and updating your anime and manga lists.
-<br />
-Includes a section to browse and discover more to watch or read.
+<div align="center">
+    A simple MyAnimeList client for viewing and updating your anime and manga lists.
+</div>
 
 ## Screenshots
 
