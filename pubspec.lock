@@ -230,11 +230,10 @@ packages:
   flutter_web_auth_2:
     dependency: "direct main"
     description:
-      path: flutter_web_auth_2
-      ref: "9cb43e1afb6dec277563bdb0c993b6a8b14195d4"
-      resolved-ref: "9cb43e1afb6dec277563bdb0c993b6a8b14195d4"
-      url: "https://github.com/0phelia/flutter_web_auth_2"
-    source: git
+      name: flutter_web_auth_2
+      sha256: a7655829251ee63aae64a748f8512f36670d8eba4657b0055cdf5ef304a9d164
+      url: "https://pub.dev"
+    source: hosted
     version: "5.1.0"
   flutter_web_auth_2_platform_interface:
     dependency: transitive

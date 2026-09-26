@@ -62,7 +62,6 @@ class AuthRepository {
       callback = await FlutterWebAuth2.authenticate(
         url: authorizationUrl().toString(),
         callbackUrlScheme: "marumaro",
-        options: const FlutterWebAuth2Options(preferAuthTabs: false),
       );
     } catch (_) {
       // The user cancelled, the browser could not be opened, or the plugin
@@ -109,13 +108,18 @@ class AuthRepository {
   }
 
   Future<bool> _exchangeCode(String code) async {
-    final Response response = await _httpClient.post(_tokenEndpoint, body: {
-      "client_id": constants.malClientId,
-      "code": code,
-      "code_verifier": _codeVerifier,
-      "grant_type": "authorization_code",
-      "redirect_uri": constants.malRedirectUri,
-    });
+    final Response response;
+    try {
+      response = await _httpClient.post(_tokenEndpoint, body: {
+        "client_id": constants.malClientId,
+        "code": code,
+        "code_verifier": _codeVerifier,
+        "grant_type": "authorization_code",
+        "redirect_uri": constants.malRedirectUri,
+      });
+    } catch (_) {
+      return false;
+    }
     if (response.statusCode != 200) return false;
     await _persistTokens(jsonDecode(response.body));
     return true;
