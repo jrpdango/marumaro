@@ -9,26 +9,47 @@ class AnimePoster extends StatelessWidget {
     this.width = 65.0,
   });
 
-  static const String _placeholder = "assets/404img.png";
-
   final Uri picture;
   final double height;
   final double width;
 
   @override
   Widget build(BuildContext context) {
-    return FadeInImage.assetNetwork(
+    return Image.network(
+      picture.toString(),
       fit: BoxFit.cover,
       height: height,
       width: width,
-      placeholderCacheHeight: height.round(),
-      placeholderCacheWidth: width.round(),
-      placeholder: _placeholder,
-      image: picture.toString(),
-      imageErrorBuilder: (context, error, stackTrace) => Image.asset(
-        _placeholder,
-        height: height,
-        width: width,
+      cacheHeight: height.round(),
+      cacheWidth: width.round(),
+      loadingBuilder: (context, child, progress) => progress == null
+          ? child
+          : _PlaceholderPoster(height: height, width: width),
+      errorBuilder: (context, error, stackTrace) =>
+          _PlaceholderPoster(height: height, width: width),
+    );
+  }
+}
+
+/// A code-drawn stand-in shown while a poster loads or when it fails.
+class _PlaceholderPoster extends StatelessWidget {
+  const _PlaceholderPoster({required this.height, required this.width});
+
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    return Container(
+      height: height,
+      width: width,
+      color: colors.surfaceContainerHighest,
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.image_outlined,
+        size: height * 0.4,
+        color: colors.onSurfaceVariant,
       ),
     );
   }
