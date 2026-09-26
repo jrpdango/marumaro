@@ -25,11 +25,29 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   /// Fetches the current user and navigates to the home page.
+  ///
+  /// If anything fails (bad token, network error, malformed response) we drop
+  /// the session and fall back to the login screen instead of leaving the user
+  /// on an endless spinner.
   Future<void> _finishSetup() async {
-    if (_needsLogin) {
+    try {
+      if (_needsLogin) {
+        await _controller!.store.clearAll();
+      }
+      _controller!.user = await _controller!.repository.fetchCurrentUser();
+    } catch (_) {
+      await _controller!.auth.signOut();
       await _controller!.store.clearAll();
+      _controller!.user = null;
+      if (!mounted) return;
+      setState(() => _needsLogin = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Could not load your profile. Please log in again."),
+        ),
+      );
+      return;
     }
-    _controller!.user = await _controller!.repository.fetchCurrentUser();
 
     if (!mounted) return;
     Navigator.of(context).pushReplacement(

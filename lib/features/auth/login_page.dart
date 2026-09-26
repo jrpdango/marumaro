@@ -16,13 +16,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _signIn() async {
     setState(() => _busy = true);
-    final bool authenticated =
-        await GlobalControllerScope.of(context).auth.signIn();
-    if (!mounted) return;
-    if (authenticated) {
-      await widget.onSignedIn();
-      return;
+    bool authenticated = false;
+    try {
+      authenticated = await GlobalControllerScope.of(context).auth.signIn();
+      if (!mounted) return;
+      if (authenticated) {
+        await widget.onSignedIn();
+        return;
+      }
+    } catch (_) {
+      authenticated = false;
     }
+    if (!mounted) return;
     setState(() => _busy = false);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Login failed. Please try again.")),

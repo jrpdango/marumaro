@@ -37,6 +37,18 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
 
+# Temporary override pinned to the upstream `preferAuthTabs` fix (see
+# flutter_web_auth_2 #215 / PR #218): it lets us avoid Chrome's Auth Tab on
+# Android and use a plain Custom Tab, whose redirect returns through our
+# `marumaro://oauth` deep link. TODO: replace with a normal `flutter_web_auth_2`
+# version constraint once a release ships preferAuthTabs.
+dependency_overrides:
+  flutter_web_auth_2:
+    git:
+      url: https://github.com/0phelia/flutter_web_auth_2
+      ref: 9cb43e1afb6dec277563bdb0c993b6a8b14195d4
+      path: flutter_web_auth_2
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

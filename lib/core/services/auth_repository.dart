@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart';
 import 'package:marumaro/core/constants.dart' as constants;
@@ -53,19 +52,29 @@ class AuthRepository {
   }
 
   /// Runs the interactive PKCE flow. Returns true when tokens were obtained.
+  ///
+  /// Any failure — a cancelled tab, an unavailable browser, a lost callback, or
+  /// a rejected code exchange — resolves to `false` so the caller can always
+  /// recover instead of waiting forever.
   Future<bool> signIn() async {
+    final String callback;
     try {
-      final String callback = await FlutterWebAuth2.authenticate(
+      callback = await FlutterWebAuth2.authenticate(
         url: authorizationUrl().toString(),
         callbackUrlScheme: "marumaro",
+        options: const FlutterWebAuth2Options(preferAuthTabs: false),
       );
-      final String? code = Uri.parse(callback).queryParameters["code"];
-      if (code == null) return false;
-      return await _exchangeCode(code);
-    } on PlatformException {
-      // The user cancelled or the browser could not be opened.
+    } catch (_) {
+      // The user cancelled, the browser could not be opened, or the plugin
+      // reported an Auth Tab / verification error. The plugin already cleans up
+      // any dangling callbacks on resume, so we can safely treat this as a
+      // failed attempt.
       return false;
     }
+
+    final String? code = Uri.parse(callback).queryParameters["code"];
+    if (code == null) return false;
+    return _exchangeCode(code);
   }
 
   Future<void> signOut() async {
