@@ -1,11 +1,7 @@
-<p align="center" style="padding-top: 24px; margin-bottom: -24px;">
-  <img src="assets/icon/icon_foreground.png" alt="marumaro icon" width="200">
-</p>
-
 <div id="user-content-toc" align="center">
     <ul style="list-style: none; padding-left: 0;">
         <summary>
-            <h1>marumaro</h1>
+            <h1><img src="assets/icon/icon_foreground_trimmed.png" alt="marumaro icon" width="180"><br>marumaro</h1>
         </summary>
     </ul>
 </div>
