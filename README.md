@@ -1,12 +1,6 @@
-<div id="user-content-toc" align="center">
-    <ul style="list-style: none; padding-left: 0;">
-        <summary>
-            <h1><img src="assets/icon/icon_foreground_trimmed.png" alt="marumaro icon" width="180"><br>marumaro</h1>
-        </summary>
-    </ul>
-</div>
-
 <div align="center">
+    <img src="assets/icon/icon_banner.webp" alt="marumaro banner" width="800">
+    <br>
     A simple MyAnimeList client for viewing and updating your anime and manga lists.
 </div>
 
