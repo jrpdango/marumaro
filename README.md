@@ -1,8 +1,14 @@
-<p align="center">
-  <img src="assets/icon/icon_foreground.png" alt="marumaro icon" width="200" style="padding-top: 24px;">
+<p align="center" style="padding-top: 24px; margin-bottom: -24px;">
+  <img src="assets/icon/icon_foreground.png" alt="marumaro icon" width="200">
 </p>
 
-<h1 align="center">marumaro</h1>
+<div id="user-content-toc" align="center">
+    <ul style="list-style: none; padding-left: 0;">
+        <summary>
+            <h1>marumaro</h1>
+        </summary>
+    </ul>
+</div>
 
 <div align="center">
     A simple MyAnimeList client for viewing and updating your anime and manga lists.
