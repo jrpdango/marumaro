@@ -10,6 +10,7 @@ import 'package:marumaro/core/models/manga.dart';
 import 'package:marumaro/core/models/page.dart';
 import 'package:marumaro/core/models/user.dart';
 import 'package:marumaro/core/models/user_list_status.dart';
+import 'package:marumaro/core/models/user_stats.dart';
 import 'package:marumaro/core/services/auth_repository.dart';
 import 'package:marumaro/core/services/local_store.dart';
 import 'package:marumaro/core/services/mal_api_client.dart';
@@ -297,6 +298,19 @@ class GlobalController extends ChangeNotifier {
         .toList(growable: false);
     if (planned.isEmpty) return null;
     return planned[(random ?? Random()).nextInt(planned.length)];
+  }
+
+  /// Aggregates the cached lists (and the user's server statistics, when
+  /// available) into [ProfileStats] for the profile page.
+  Future<ProfileStats> profileStats() async {
+    final Map<int, Anime> anime = await store.allAnime();
+    final Map<int, Manga> manga = await store.allManga();
+    return ProfileStats.fromLists(
+      anime.values,
+      manga.values,
+      animeServer: user?.animeStatistics,
+      mangaServer: user?.mangaStatistics,
+    );
   }
 
   /// The item in [items] with the latest timestamp from [updatedAt].

@@ -14,6 +14,8 @@ export 'models/media_details_data.dart';
 export 'models/page.dart';
 export 'models/user.dart';
 export 'models/user_list_status.dart';
+export 'models/user_statistics.dart';
+export 'models/user_stats.dart';
 export 'services/api_exception.dart';
 export 'services/auth_repository.dart';
 export 'services/global_controller.dart';
