@@ -52,12 +52,14 @@ jobs:
       - name: Resolve version
         id: version
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "name=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+            name="${{ github.event.inputs.version }}"
           else
-            echo "name=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+            name="${GITHUB_REF_NAME#v}"
           fi
-          echo "number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "number=${pubspec_version##*+}" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: flutter pub get
