@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,7 @@ import 'package:marumaro/core/models/manga.dart';
 import 'package:marumaro/core/models/page.dart';
 import 'package:marumaro/core/models/user.dart';
 import 'package:marumaro/core/models/user_list_status.dart';
+import 'package:marumaro/core/models/user_stats.dart';
 import 'package:marumaro/core/services/auth_repository.dart';
 import 'package:marumaro/core/services/local_store.dart';
 import 'package:marumaro/core/services/mal_api_client.dart';
@@ -56,6 +58,15 @@ class GlobalController extends ChangeNotifier {
   bool mangaSynced = false;
   bool mangaSyncFailed = false;
 
+  /// When the most recent list sync succeeded, or null if none has finished.
+  DateTime? lastSyncedAt;
+
+  /// Whether any sync is currently running.
+  bool get syncing => animeSyncing || mangaSyncing;
+
+  /// Whether either list's most recent sync attempt failed.
+  bool get syncFailed => animeSyncFailed || mangaSyncFailed;
+
   bool _disposed = false;
 
   /// Notifies listeners on a later microtask.
@@ -80,6 +91,7 @@ class GlobalController extends ChangeNotifier {
         await store.replaceAnimeStatus(status, await _allAnime(status));
       }
       animeSynced = true;
+      lastSyncedAt = DateTime.now();
     } catch (_) {
       animeSyncFailed = true;
     } finally {
@@ -99,6 +111,7 @@ class GlobalController extends ChangeNotifier {
         await store.replaceMangaStatus(status, await _allManga(status));
       }
       mangaSynced = true;
+      lastSyncedAt = DateTime.now();
     } catch (_) {
       mangaSyncFailed = true;
     } finally {
@@ -243,6 +256,75 @@ class GlobalController extends ChangeNotifier {
   /// Every cached manga, keyed by id, for list-membership and status lookups.
   Future<Map<int, Manga>> mangaById() {
     return store.allManga();
+  }
+
+  /// The most recently updated anime the user is currently watching, if any.
+  Future<Anime?> continueWatching() async {
+    final Iterable<Anime> watching = (await store.allAnime())
+        .values
+        .where((Anime a) => a.userStatus == AnimeListStatus.watching);
+    return _mostRecentlyUpdated<Anime>(
+      watching,
+      (Anime a) => a.updatedAt,
+    );
+  }
+
+  /// The most recently updated manga the user is currently reading, if any.
+  Future<Manga?> continueReading() async {
+    final Iterable<Manga> reading = (await store.allManga())
+        .values
+        .where((Manga m) => m.userStatus == MangaListStatus.reading);
+    return _mostRecentlyUpdated<Manga>(
+      reading,
+      (Manga m) => m.updatedAt,
+    );
+  }
+
+  /// A random anime from the user's plan-to-watch list, or null if it is empty.
+  Future<Anime?> randomPlannedAnime({Random? random}) async {
+    final List<Anime> planned = (await store.allAnime())
+        .values
+        .where((Anime a) => a.userStatus == AnimeListStatus.planToWatch)
+        .toList(growable: false);
+    if (planned.isEmpty) return null;
+    return planned[(random ?? Random()).nextInt(planned.length)];
+  }
+
+  /// A random manga from the user's plan-to-read list, or null if it is empty.
+  Future<Manga?> randomPlannedManga({Random? random}) async {
+    final List<Manga> planned = (await store.allManga())
+        .values
+        .where((Manga m) => m.userStatus == MangaListStatus.planToRead)
+        .toList(growable: false);
+    if (planned.isEmpty) return null;
+    return planned[(random ?? Random()).nextInt(planned.length)];
+  }
+
+  /// Aggregates the cached lists (and the user's server statistics, when
+  /// available) into [ProfileStats] for the profile page.
+  Future<ProfileStats> profileStats() async {
+    final Map<int, Anime> anime = await store.allAnime();
+    final Map<int, Manga> manga = await store.allManga();
+    return ProfileStats.fromLists(
+      anime.values,
+      manga.values,
+      animeServer: user?.animeStatistics,
+      mangaServer: user?.mangaStatistics,
+    );
+  }
+
+  /// The item in [items] with the latest timestamp from [updatedAt].
+  T? _mostRecentlyUpdated<T>(
+    Iterable<T> items,
+    DateTime Function(T item) updatedAt,
+  ) {
+    T? best;
+    for (final T item in items) {
+      if (best == null || updatedAt(item).isAfter(updatedAt(best))) {
+        best = item;
+      }
+    }
+    return best;
   }
 
   Future<List<Manga>> searchManga(

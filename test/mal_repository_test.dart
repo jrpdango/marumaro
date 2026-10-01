@@ -260,6 +260,45 @@ void main() {
     expect(request.url.queryParameters["limit"], "12");
   });
 
+  test("fetchCurrentUser requests and parses lifetime statistics", () async {
+    final result = buildRepository(
+      jsonEncode(<String, dynamic>{
+        "name": "tester",
+        "picture": "https://example.com/p.jpg",
+        "anime_statistics": <String, dynamic>{
+          "num_items": 12,
+          "num_episodes": 345,
+          "num_times_rewatched": 4,
+          "mean_score": 7.7,
+        },
+        "manga_statistics": <String, dynamic>{
+          "num_items": 3,
+          "num_chapters": 40,
+          "num_volumes": 5,
+          "mean_score": 8.1,
+        },
+      }),
+    );
+
+    final User user = await result.repository.fetchCurrentUser();
+
+    expect(
+      result.requests.single.url.queryParameters["fields"],
+      contains("anime_statistics"),
+    );
+    expect(
+      result.requests.single.url.queryParameters["fields"],
+      contains("manga_statistics"),
+    );
+    expect(user.name, "tester");
+    expect(user.animeStatistics?.items, 12);
+    expect(user.animeStatistics?.episodes, 345);
+    expect(user.animeStatistics?.timesRewatched, 4);
+    expect(user.animeStatistics?.meanScore, 7.7);
+    expect(user.mangaStatistics?.chapters, 40);
+    expect(user.mangaStatistics?.volumes, 5);
+  });
+
   test("an empty page reports no more results", () async {
     final result = buildRepository(
       jsonEncode(<String, dynamic>{"data": <dynamic>[]}),

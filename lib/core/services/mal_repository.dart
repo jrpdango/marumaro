@@ -70,8 +70,17 @@ class MalRepository {
     return AnimeDetails.fromJson(json);
   }
 
+  /// Fields on the user endpoint that carry lifetime list aggregates.
+  static const String _userStatisticsFields =
+      "anime_statistics,manga_statistics";
+
   Future<User> fetchCurrentUser() async {
-    return User.fromJson(await _api.get("v2/users/@me"));
+    return User.fromJson(
+      await _api.get(
+        "v2/users/@me",
+        query: <String, String>{"fields": _userStatisticsFields},
+      ),
+    );
   }
 
   Future<void> updateListStatus({

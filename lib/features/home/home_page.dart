@@ -6,6 +6,7 @@ import 'package:marumaro/features/profile/profile.dart';
 import 'package:marumaro/features/search/search.dart';
 import 'package:marumaro/features/settings/settings.dart';
 import 'package:marumaro/features/browse/browse.dart';
+import 'package:marumaro/features/home/widgets/home_drawer.dart';
 import 'package:marumaro/features/library/library.dart';
 
 class HomePage extends StatefulWidget {
@@ -123,103 +124,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildAvatar(User? user, ColorScheme scheme) {
-    final Uri? picture = user?.picture;
-    if (picture == null) {
-      return SizedBox(
-        height: 55.0,
-        width: 55.0,
-        child: Icon(Icons.person, color: scheme.onSurfaceVariant),
-      );
-    }
-    return Image.network(
-      picture.toString(),
-      fit: BoxFit.cover,
-      height: 55.0,
-      width: 55.0,
-      errorBuilder: (context, error, stackTrace) => SizedBox(
-        height: 55.0,
-        width: 55.0,
-        child: Icon(Icons.person, color: scheme.onSurfaceVariant),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final User? user = _controller!.user;
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return Scaffold(
       drawerEnableOpenDragGesture: _controller!.edgeSwipeOpensDrawer,
-      drawer: Drawer(
-        backgroundColor: scheme.surface,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(5.0),
-              child: Card(
-                color: scheme.surfaceContainer,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AppTokens.radiusMd),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const ProfilePage()),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15.0, vertical: 20.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(300.0),
-                          child: _buildAvatar(user, scheme),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.portrait,
-                              color: scheme.onSurface,
-                            ),
-                            Text(
-                              user?.name ?? 'Loading name...',
-                              style: TextStyle(
-                                color: scheme.onSurface,
-                                fontSize: 20,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextButton.icon(
-                    onPressed: _confirmLogout,
-                    icon: const Icon(Icons.logout_rounded),
-                    label: const Text("Logout"),
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+      drawer: HomeDrawer(
+        controller: _controller!,
+        user: user,
+        onOpenProfile: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const ProfilePage()),
         ),
+        onLogout: _confirmLogout,
       ),
       appBar: AppBar(
         toolbarHeight: _hasTabBar ? null : 80.0,
