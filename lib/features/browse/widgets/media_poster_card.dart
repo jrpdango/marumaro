@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:marumaro/core/core.dart';
 
 /// A compact poster card used in the browse carousels: a 2:3 poster with an
-/// optional rank and score badge and the title underneath.
+/// optional members (or rank) badge, an optional score badge, and the title
+/// underneath.
 class MediaPosterCard extends StatelessWidget {
   const MediaPosterCard({
     super.key,
@@ -11,6 +12,7 @@ class MediaPosterCard extends StatelessWidget {
     required this.onTap,
     this.score,
     this.rank,
+    this.members,
     this.statusLabel,
   });
 
@@ -21,6 +23,10 @@ class MediaPosterCard extends StatelessWidget {
   final String title;
   final double? score;
   final int? rank;
+
+  /// The number of users with this media on their list; shown in place of
+  /// [rank] when supplied.
+  final int? members;
 
   /// The user's list status, shown as a chip when the media is on their list.
   final String? statusLabel;
@@ -47,7 +53,22 @@ class MediaPosterCard extends StatelessWidget {
                     width: width,
                   ),
                 ),
-                if (rank != null)
+                if (members != null)
+                  Positioned(
+                    top: AppTokens.spaceXs,
+                    left: AppTokens.spaceXs,
+                    child: _PosterBadge(
+                      text: formatCount(members!),
+                      icon: Icons.people_alt_outlined,
+                      background: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
+                      foreground: Theme.of(
+                        context,
+                      ).colorScheme.onSecondaryContainer,
+                    ),
+                  )
+                else if (rank != null)
                   Positioned(
                     top: AppTokens.spaceXs,
                     left: AppTokens.spaceXs,

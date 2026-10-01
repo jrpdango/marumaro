@@ -16,6 +16,7 @@ class Anime {
     this.meanScore,
     this.rank,
     this.mediaType,
+    this.members,
   });
 
   final int id;
@@ -39,6 +40,10 @@ class Anime {
 
   /// The media type (e.g. `tv`, `movie`), when supplied by browse endpoints.
   final String? mediaType;
+
+  /// The number of users with this anime on their list, when supplied by
+  /// browse endpoints.
+  final int? members;
 
   factory Anime.fromListStatusJson(Map<String, dynamic> json) {
     final Map<String, dynamic> node =
@@ -87,6 +92,7 @@ class Anime {
       meanScore: (node["mean"] as num?)?.toDouble(),
       rank: ranking?["rank"] as int?,
       mediaType: node["media_type"] as String?,
+      members: (node["num_list_users"] as num?)?.toInt(),
     );
   }
 
@@ -99,6 +105,7 @@ class Anime {
     double? meanScore,
     int? rank,
     String? mediaType,
+    int? members,
   }) {
     return Anime(
       id: id,
@@ -114,6 +121,7 @@ class Anime {
       meanScore: meanScore ?? this.meanScore,
       rank: rank ?? this.rank,
       mediaType: mediaType ?? this.mediaType,
+      members: members ?? this.members,
     );
   }
 }

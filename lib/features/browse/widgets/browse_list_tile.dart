@@ -12,6 +12,7 @@ class BrowseListTile extends StatelessWidget {
     required this.onTap,
     this.score,
     this.rank,
+    this.members,
     this.mediaType,
     this.statusLabel,
   });
@@ -23,6 +24,10 @@ class BrowseListTile extends StatelessWidget {
   final String title;
   final double? score;
   final int? rank;
+
+  /// The number of users with this media on their list; shown in place of
+  /// [rank] when supplied.
+  final int? members;
   final String? mediaType;
 
   /// The user's list status, shown as a chip when the media is on their list.
@@ -70,7 +75,13 @@ class BrowseListTile extends StatelessWidget {
                       const Spacer(),
                       Row(
                         children: <Widget>[
-                          if (rank != null) ...<Widget>[
+                          if (members != null) ...<Widget>[
+                            _MetaChip(
+                              icon: Icons.people_alt_outlined,
+                              label: formatCount(members!),
+                            ),
+                            const SizedBox(width: AppTokens.spaceSm),
+                          ] else if (rank != null) ...<Widget>[
                             _MetaChip(
                               icon: Icons.emoji_events_outlined,
                               label: "#$rank",

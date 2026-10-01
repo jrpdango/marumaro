@@ -31,6 +31,66 @@ import 'package:marumaro/core/core.dart';
   );
 }
 
+/// A repository whose mock client returns each entry of [bodies] for the
+/// successive requests it receives, recording every request.
+({MalRepository repository, List<http.Request> requests})
+buildSequencedRepository(List<String> bodies) {
+  final List<http.Request> requests = <http.Request>[];
+  int index = 0;
+  final MockClient client = MockClient((http.Request request) async {
+    requests.add(request);
+    final String body = bodies[index < bodies.length ? index : bodies.length - 1];
+    index++;
+    return http.Response(
+      body,
+      200,
+      headers: <String, String>{"content-type": "application/json"},
+    );
+  });
+  return (
+    repository: MalRepository(
+      api: MalApiClient(
+        httpClient: client,
+        accessTokenProvider: () => "token",
+      ),
+    ),
+    requests: requests,
+  );
+}
+
+Map<String, dynamic> animeNode(
+  int id,
+  String title,
+  double? mean, {
+  int? members,
+}) {
+  return <String, dynamic>{
+    "id": id,
+    "title": title,
+    "num_episodes": 12,
+    "status": "finished_airing",
+    "media_type": "tv",
+    "main_picture": <String, dynamic>{"medium": "https://example.com/$id.jpg"},
+    "mean": ?mean,
+    "num_list_users": ?members,
+  };
+}
+
+String seasonPageJson(
+  List<Map<String, dynamic>> nodes, {
+  bool withNext = false,
+}) {
+  return jsonEncode(<String, dynamic>{
+    "data": nodes
+        .map(
+          (Map<String, dynamic> node) => <String, dynamic>{"node": node},
+        )
+        .toList(),
+    if (withNext)
+      "paging": <String, dynamic>{"next": "https://example.com/next"},
+  });
+}
+
 String animePageJson({bool withNext = false}) {
   return jsonEncode(<String, dynamic>{
     "data": <dynamic>[
@@ -45,8 +105,8 @@ String animePageJson({bool withNext = false}) {
           "status": "currently_airing",
           "mean": 8.25,
           "media_type": "tv",
+          "num_list_users": 183703,
         },
-        "ranking": <String, dynamic>{"rank": 1},
       },
     ],
     if (withNext)
@@ -97,8 +157,66 @@ void main() {
     expect(page.items, hasLength(1));
     expect(page.items.single.title, "Anime One");
     expect(page.items.single.inList, isFalse);
-    expect(page.items.single.rank, 1);
+    expect(page.items.single.members, 183703);
     expect(page.hasMore, isTrue);
+  });
+
+  test("fetchSeasonalAnime requests and parses member counts", () async {
+    final result = buildRepository(
+      seasonPageJson(<Map<String, dynamic>>[
+        animeNode(10, "First", 8.0, members: 183703),
+        animeNode(11, "Second", 7.0, members: 42),
+      ]),
+    );
+
+    final PageResult<Anime> page = await result.repository.fetchSeasonalAnime(
+      season: const SeasonRef(year: 2023, season: MediaSeason.summer),
+      sort: AnimeSeasonSort.popularity,
+      offset: 0,
+    );
+
+    expect(
+      result.requests.single.url.queryParameters["fields"],
+      contains("num_list_users"),
+    );
+    expect(
+      page.items.map((Anime anime) => anime.members).toList(),
+      <int>[183703, 42],
+    );
+  });
+
+  test("fetchSeasonalAnimeByScore pages the season and sorts by mean", () async {
+    final result = buildSequencedRepository(<String>[
+      seasonPageJson(<Map<String, dynamic>>[
+        animeNode(1, "Low", 7.5),
+        animeNode(5, "High A", 9.1),
+        animeNode(2, "High B", 9.1),
+      ], withNext: true),
+      seasonPageJson(<Map<String, dynamic>>[
+        animeNode(3, "Mid", 8.0),
+        animeNode(4, "Unscored", null),
+      ]),
+    ]);
+
+    final List<Anime> sorted = await result.repository
+        .fetchSeasonalAnimeByScore(
+          const SeasonRef(year: 2023, season: MediaSeason.summer),
+        );
+
+    expect(result.requests, hasLength(2));
+    expect(result.requests[0].url.path, "/v2/anime/season/2023/summer");
+    expect(
+      result.requests[0].url.queryParameters["sort"],
+      "anime_num_list_users",
+    );
+    expect(result.requests[0].url.queryParameters["limit"], "500");
+    expect(result.requests[0].url.queryParameters["offset"], "0");
+    expect(result.requests[1].url.queryParameters["offset"], "3");
+
+    expect(
+      sorted.map((Anime anime) => anime.id).toList(),
+      <int>[2, 5, 3, 1, 4],
+    );
   });
 
   test("fetchAnimeRanking sends the ranking type", () async {

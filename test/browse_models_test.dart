@@ -46,6 +46,7 @@ void main() {
           "status": "currently_airing",
           "mean": 8.5,
           "media_type": "tv",
+          "num_list_users": 183703,
         },
         "ranking": <String, dynamic>{"rank": 3},
       });
@@ -59,6 +60,7 @@ void main() {
       expect(anime.meanScore, 8.5);
       expect(anime.rank, 3);
       expect(anime.mediaType, "tv");
+      expect(anime.members, 183703);
     });
 
     test("tolerates a bare node without a ranking wrapper", () {

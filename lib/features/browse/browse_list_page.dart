@@ -31,6 +31,7 @@ class BrowseListPage<T> extends StatefulWidget {
     required this.itemBuilder,
     this.emptyMessage = "Nothing here yet.",
     this.pageSize = 30,
+    this.onRefresh,
   });
 
   final String title;
@@ -47,6 +48,10 @@ class BrowseListPage<T> extends StatefulWidget {
   final Widget Function(BuildContext context, T item) itemBuilder;
   final String emptyMessage;
   final int pageSize;
+
+  /// Runs before a pull-to-refresh reloads the current selection, e.g. to
+  /// invalidate a cache the [loader] reads from.
+  final Future<void> Function()? onRefresh;
 
   @override
   State<BrowseListPage<T>> createState() => _BrowseListPageState<T>();
@@ -99,6 +104,7 @@ class _BrowseListPageState<T> extends State<BrowseListPage<T>> {
               pageStorageKey: "browse_list_${widget.title}_$_generation",
               pageSize: widget.pageSize,
               resetKey: _generation,
+              onRefresh: widget.onRefresh,
               emptyMessage: widget.emptyMessage,
             ),
           ),

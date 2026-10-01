@@ -85,6 +85,52 @@ void main() {
     expect(taps, 1);
   });
 
+  testWidgets("BrowseListTile shows members instead of rank", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        home: Scaffold(
+          body: BrowseListTile(
+            picture: Uri.parse(""),
+            title: "Tile Title",
+            rank: 5,
+            members: 183703,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text("183.7K"), findsOneWidget);
+    expect(find.text("#5"), findsNothing);
+  });
+
+  testWidgets("MediaPosterCard shows members instead of rank", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        home: Scaffold(
+          body: MediaPosterCard(
+            picture: Uri.parse(""),
+            title: "Poster Title",
+            rank: 2,
+            members: 2227190,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text("2.2M"), findsOneWidget);
+    expect(find.text("#2"), findsNothing);
+  });
+
   testWidgets("BrowseListTile shows the list status when tracked", (
     WidgetTester tester,
   ) async {
@@ -152,5 +198,42 @@ void main() {
 
     expect(find.text("Item 2"), findsOneWidget);
     expect(loads, contains(2));
+  });
+
+  testWidgets("BrowseListPage runs onRefresh before reloading", (
+    WidgetTester tester,
+  ) async {
+    final List<String> events = <String>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        home: BrowseListPage<String>(
+          title: "Test",
+          selectors: const <BrowseSelector>[],
+          onRefresh: () async {
+            events.add("refresh");
+          },
+          loader:
+              (
+                List<Object> selected, {
+                required int offset,
+                required int limit,
+              }) async {
+                events.add("load");
+                return <String>["Item"];
+              },
+          itemBuilder: (BuildContext context, String item) =>
+              ListTile(title: Text(item)),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    await tester.fling(find.text("Item"), const Offset(0, 400), 1000);
+    await tester.pumpAndSettle();
+
+    expect(events, <String>["load", "refresh", "load"]);
   });
 }

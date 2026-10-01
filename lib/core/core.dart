@@ -3,6 +3,7 @@
 library;
 
 export 'constants.dart';
+export 'format.dart';
 export 'models/anime.dart';
 export 'models/anime_details.dart';
 export 'models/enums.dart';

@@ -18,6 +18,7 @@ class BrowsePage extends StatefulWidget {
 class _BrowsePageState extends State<BrowsePage> {
   static const int _previewLimit = 12;
   static const int _oldestSeasonYear = 1990;
+  static const int _seasonCacheLimit = 3;
 
   GlobalController? _controller;
 
@@ -52,7 +53,7 @@ class _BrowsePageState extends State<BrowsePage> {
     _season = _repository
         .fetchSeasonalAnime(
           season: _currentSeason,
-          sort: AnimeSeasonSort.score,
+          sort: AnimeSeasonSort.popularity,
           offset: 0,
           limit: _previewLimit,
         )
@@ -168,6 +169,47 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   Future<void> _openSeasonal() async {
+    // MAL ignores `sort=anime_score`, so score-sorted seasons are fetched in
+    // full and sliced here. Cache the resolved lists (bounded, MRU-first) so
+    // paging a season and cycling back to it don't refetch.
+    final Map<SeasonRef, List<Anime>> scoreCache = <SeasonRef, List<Anime>>{};
+
+    List<Anime>? takeCached(SeasonRef season) {
+      final List<Anime>? items = scoreCache.remove(season);
+      if (items != null) scoreCache[season] = items;
+      return items;
+    }
+
+    void store(SeasonRef season, List<Anime> items) {
+      scoreCache.remove(season);
+      scoreCache[season] = items;
+      while (scoreCache.length > _seasonCacheLimit) {
+        scoreCache.remove(scoreCache.keys.first);
+      }
+    }
+
+    Future<List<Anime>> loadScorePage(
+      SeasonRef season,
+      int offset,
+      int limit,
+    ) {
+      List<Anime> slice(List<Anime> items) {
+        if (offset >= items.length) return const <Anime>[];
+        final int end = offset + limit < items.length
+            ? offset + limit
+            : items.length;
+        return items.sublist(offset, end);
+      }
+      final List<Anime>? cached = takeCached(season);
+      if (cached != null) return Future<List<Anime>>.value(slice(cached));
+      return _repository.fetchSeasonalAnimeByScore(season).then((
+        List<Anime> items,
+      ) {
+        store(season, items);
+        return slice(items);
+      });
+    }
+
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => BrowseListPage<Anime>(
@@ -191,15 +233,25 @@ class _BrowsePageState extends State<BrowsePage> {
                 List<Object> selected, {
                 required int offset,
                 required int limit,
-              }) => _repository
-                  .fetchSeasonalAnime(
-                    season: selected[0] as SeasonRef,
-                    sort: selected[1] as AnimeSeasonSort,
-                    offset: offset,
-                    limit: limit,
-                  )
-                  .then((PageResult<Anime> page) => page.items),
-          itemBuilder: _buildAnimeTile,
+              }) {
+                final SeasonRef season = selected[0] as SeasonRef;
+                final AnimeSeasonSort sort = selected[1] as AnimeSeasonSort;
+                if (sort == AnimeSeasonSort.score) {
+                  return loadScorePage(season, offset, limit);
+                }
+                return _repository
+                    .fetchSeasonalAnime(
+                      season: season,
+                      sort: sort,
+                      offset: offset,
+                      limit: limit,
+                    )
+                    .then((PageResult<Anime> page) => page.items);
+              },
+          onRefresh: () async {
+            scoreCache.clear();
+          },
+          itemBuilder: _buildSeasonalAnimeTile,
         ),
       ),
     );
@@ -309,6 +361,21 @@ class _BrowsePageState extends State<BrowsePage> {
     );
   }
 
+  Widget _buildSeasonalAnimeTile(BuildContext context, Anime anime) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+      child: BrowseListTile(
+        picture: anime.picture,
+        title: anime.title,
+        score: anime.meanScore,
+        members: anime.members,
+        mediaType: anime.mediaType,
+        statusLabel: _animeById[anime.id]?.userStatus.label,
+        onTap: () => _openAnime(anime),
+      ),
+    );
+  }
+
   Widget _buildMangaTile(BuildContext context, Manga manga) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
@@ -341,7 +408,7 @@ class _BrowsePageState extends State<BrowsePage> {
             onViewMore: _openSeasonal,
             onRetry: _refresh,
             itemBuilder: (BuildContext context, Anime anime) =>
-                _animePosterCard(anime),
+                _seasonalAnimePosterCard(anime),
           ),
           const SizedBox(height: AppTokens.spaceLg),
           _BrowseSection<Anime>(
@@ -400,6 +467,17 @@ class _BrowsePageState extends State<BrowsePage> {
       title: anime.title,
       score: anime.meanScore,
       rank: anime.rank,
+      statusLabel: _animeById[anime.id]?.userStatus.shortLabel,
+      onTap: () => _openAnime(anime),
+    );
+  }
+
+  Widget _seasonalAnimePosterCard(Anime anime) {
+    return MediaPosterCard(
+      picture: anime.picture,
+      title: anime.title,
+      score: anime.meanScore,
+      members: anime.members,
       statusLabel: _animeById[anime.id]?.userStatus.shortLabel,
       onTap: () => _openAnime(anime),
     );

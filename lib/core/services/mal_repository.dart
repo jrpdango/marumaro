@@ -13,6 +13,9 @@ class MalRepository {
 
   static const int pageSize = 1000;
   static const int browsePageSize = 100;
+
+  /// The maximum page size accepted by the seasonal endpoint.
+  static const int _seasonMaxPageSize = 500;
   static const String _listFields = "list_status,num_episodes,status";
   static const String _animeListStatusFields =
       "status,score,num_episodes_watched,start_date,finish_date,is_rewatching,"
@@ -34,7 +37,7 @@ class MalRepository {
       "media_type,status,genres,my_list_status{$_mangaListStatusFields},"
       "num_chapters,num_volumes,source,authors";
   static const String _animeBrowseFields =
-      "id,title,main_picture,num_episodes,status,mean,media_type";
+      "id,title,main_picture,num_episodes,status,mean,media_type,num_list_users";
   static const String _mangaBrowseFields =
       "id,title,main_picture,num_chapters,num_volumes,status,mean,media_type";
 
@@ -175,6 +178,34 @@ class MalRepository {
       },
     );
     return _parsePage(page, Anime.fromNodeJson);
+  }
+
+  /// Fetches an entire season's anime, sorted by community score descending.
+  ///
+  /// The MAL seasonal endpoint ignores `sort=anime_score`, so the season is
+  /// fetched in full (paged with the working popularity sort for stable
+  /// offsets) and re-sorted in-app. Entries without a score sort last.
+  Future<List<Anime>> fetchSeasonalAnimeByScore(SeasonRef season) async {
+    final List<Anime> all = <Anime>[];
+    int offset = 0;
+    while (true) {
+      final PageResult<Anime> page = await fetchSeasonalAnime(
+        season: season,
+        sort: AnimeSeasonSort.popularity,
+        offset: offset,
+        limit: _seasonMaxPageSize,
+      );
+      all.addAll(page.items);
+      if (!page.hasMore || page.items.isEmpty) break;
+      offset += page.items.length;
+    }
+    all.sort((Anime a, Anime b) {
+      final double scoreA = a.meanScore ?? double.negativeInfinity;
+      final double scoreB = b.meanScore ?? double.negativeInfinity;
+      final int byScore = scoreB.compareTo(scoreA);
+      return byScore != 0 ? byScore : a.id.compareTo(b.id);
+    });
+    return all;
   }
 
   /// Fetches one page of an anime ranking.
