@@ -101,23 +101,36 @@ class _HomeDrawerState extends State<HomeDrawer> {
     if (anime && manga) {
       final MediaKind? kind = await showModalBottomSheet<MediaKind>(
         context: context,
-        builder: (BuildContext context) => SafeArea(
-          child: Column(
+        useSafeArea: true,
+        builder: (BuildContext context) {
+          final TextTheme text = Theme.of(context).textTheme;
+          return Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppTokens.spaceLg,
+                  AppTokens.spaceSm,
+                  AppTokens.spaceLg,
+                  AppTokens.spaceSm,
+                ),
+                child: Text("Pick a planned title for me", style: text.titleMedium),
+              ),
               ListTile(
                 leading: const Icon(Icons.movie_outlined),
-                title: const Text("Surprise me with anime"),
+                title: const Text("Get a random anime"),
                 onTap: () => Navigator.of(context).pop(MediaKind.anime),
               ),
               ListTile(
                 leading: const Icon(Icons.auto_stories_outlined),
-                title: const Text("Surprise me with manga"),
+                title: const Text("Get a random manga"),
                 onTap: () => Navigator.of(context).pop(MediaKind.manga),
               ),
+              const SizedBox(height: AppTokens.spaceSm),
             ],
-          ),
-        ),
+          );
+        },
       );
       if (kind == null) return;
       if (kind == MediaKind.anime) {
