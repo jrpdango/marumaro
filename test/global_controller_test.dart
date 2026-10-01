@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:marumaro/core/core.dart';
@@ -69,7 +71,7 @@ class _FakeRepository extends MalRepository {
   }) async {}
 }
 
-Anime _anime(int id, AnimeListStatus status) {
+Anime _anime(int id, AnimeListStatus status, {int updatedAt = 0}) {
   return Anime(
     id: id,
     title: "Anime $id",
@@ -79,11 +81,11 @@ Anime _anime(int id, AnimeListStatus status) {
     userStatus: status,
     userEpisodesWatched: 0,
     userScore: 0,
-    updatedAt: DateTime.fromMillisecondsSinceEpoch(0),
+    updatedAt: DateTime.fromMillisecondsSinceEpoch(updatedAt),
   );
 }
 
-Manga _manga(int id, MangaListStatus status) {
+Manga _manga(int id, MangaListStatus status, {int updatedAt = 0}) {
   return Manga(
     id: id,
     title: "Manga $id",
@@ -95,7 +97,7 @@ Manga _manga(int id, MangaListStatus status) {
     userChaptersRead: 0,
     userVolumesRead: 0,
     userScore: 0,
-    updatedAt: DateTime.fromMillisecondsSinceEpoch(0),
+    updatedAt: DateTime.fromMillisecondsSinceEpoch(updatedAt),
   );
 }
 
@@ -256,6 +258,62 @@ void main() {
 
     expect(reloaded.edgeSwipeOpensDrawer, isTrue);
     reloaded.dispose();
+  });
+
+  test("continueWatching returns the most recently updated watching anime",
+      () async {
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1, AnimeListStatus.watching, updatedAt: 100),
+      _anime(2, AnimeListStatus.watching, updatedAt: 300),
+      _anime(3, AnimeListStatus.watching, updatedAt: 200),
+    ]);
+
+    final Anime? anime = await controller.continueWatching();
+    expect(anime?.id, 2);
+  });
+
+  test("continueWatching ignores non-watching entries", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.completed, <Anime>[
+      _anime(1, AnimeListStatus.completed, updatedAt: 999),
+    ]);
+
+    expect(await controller.continueWatching(), isNull);
+  });
+
+  test("continueReading returns the most recently updated reading manga",
+      () async {
+    await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[
+      _manga(1, MangaListStatus.reading, updatedAt: 100),
+      _manga(2, MangaListStatus.reading, updatedAt: 400),
+    ]);
+
+    final Manga? manga = await controller.continueReading();
+    expect(manga?.id, 2);
+  });
+
+  test("random planned helpers only pick from the plan statuses", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.planToWatch, <Anime>[
+      _anime(7, AnimeListStatus.planToWatch),
+    ]);
+    await store.replaceMangaStatus(MangaListStatus.planToRead, <Manga>[
+      _manga(8, MangaListStatus.planToRead),
+    ]);
+
+    expect((await controller.randomPlannedAnime())?.id, 7);
+    expect((await controller.randomPlannedManga())?.id, 8);
+    expect(await controller.randomPlannedAnime(random: Random(1)), isNotNull);
+  });
+
+  test("random planned helpers return null when the plan list is empty",
+      () async {
+    expect(await controller.randomPlannedAnime(), isNull);
+    expect(await controller.randomPlannedManga(), isNull);
+  });
+
+  test("a successful sync records lastSyncedAt", () async {
+    expect(controller.lastSyncedAt, isNull);
+    await controller.syncAnime();
+    expect(controller.lastSyncedAt, isNotNull);
   });
 
   test("a failed sync leaves previously cached data intact", () async {
