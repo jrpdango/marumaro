@@ -155,8 +155,8 @@ void main() {
     await tester.pumpWidget(_host(controller));
     await tester.pumpAndSettle();
 
-    expect(find.text("Jump back in"), findsOneWidget);
-    expect(find.text("Continue watching"), findsOneWidget);
+    expect(find.text("View Last Updated"), findsOneWidget);
+    expect(find.text("Anime"), findsOneWidget);
     expect(find.text("Newest"), findsOneWidget);
     expect(find.text("Older"), findsNothing);
   });
@@ -175,12 +175,12 @@ void main() {
     await tester.pumpWidget(_host(controller));
     await tester.pumpAndSettle();
 
-    expect(find.text("Continue reading"), findsOneWidget);
+    expect(find.text("Manga"), findsOneWidget);
     expect(find.text("NewestM"), findsOneWidget);
     expect(find.text("OlderM"), findsNothing);
   });
 
-  testWidgets("hides jump back in when nothing is in progress", (
+  testWidgets("hides last-updated section when nothing is in progress", (
     WidgetTester tester,
   ) async {
     final GlobalController controller = _controller();
@@ -189,8 +189,9 @@ void main() {
     await tester.pumpWidget(_host(controller));
     await tester.pumpAndSettle();
 
-    expect(find.text("Jump back in"), findsNothing);
-    expect(find.text("Continue watching"), findsNothing);
+    expect(find.text("View Last Updated"), findsNothing);
+    expect(find.text("Anime"), findsNothing);
+    expect(find.text("Manga"), findsNothing);
   });
 
   testWidgets("sync tile triggers a sync", (WidgetTester tester) async {

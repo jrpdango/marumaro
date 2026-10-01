@@ -354,7 +354,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       AppTokens.spaceXs,
                     ),
                     child: Text(
-                      "Jump back in",
+                      "View Last Updated",
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
@@ -366,7 +366,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       Icons.play_circle_outline,
                       color: scheme.onSurfaceVariant,
                     ),
-                    title: const Text("Continue watching"),
+                    title: const Text("Anime"),
                     subtitle: Text(
                       anime.title,
                       maxLines: 1,
@@ -380,7 +380,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       Icons.menu_book_outlined,
                       color: scheme.onSurfaceVariant,
                     ),
-                    title: const Text("Continue reading"),
+                    title: const Text("Manga"),
                     subtitle: Text(
                       manga.title,
                       maxLines: 1,
