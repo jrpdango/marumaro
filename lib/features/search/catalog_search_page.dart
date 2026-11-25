@@ -18,6 +18,9 @@ class CatalogSearchPage extends StatefulWidget {
 
 class _CatalogSearchPageState extends State<CatalogSearchPage> {
   static const Duration _debounceDelay = Duration(milliseconds: 300);
+  static const int _minQueryLength = 3;
+  static const String _shortQueryMessage =
+      "Type at least $_minQueryLength characters to search.";
 
   GlobalController? _controller;
   final TextEditingController _searchController = TextEditingController();
@@ -183,16 +186,22 @@ class _CatalogSearchPageState extends State<CatalogSearchPage> {
               ),
             ),
           ),
-          Expanded(
-            child: _query.isEmpty
-                ? const _SearchHint()
-                : isAnime
-                    ? _buildAnimeResults(controller)
-                    : _buildMangaResults(controller),
-          ),
+          Expanded(child: _buildBody(controller, isAnime)),
         ],
       ),
     );
+  }
+
+  /// Builds the results area, withholding the request until the query is long
+  /// enough for MAL to accept it.
+  Widget _buildBody(GlobalController controller, bool isAnime) {
+    if (_query.isEmpty) return const _SearchHint();
+    if (_query.length < _minQueryLength) {
+      return const _SearchHint(message: _shortQueryMessage);
+    }
+    return isAnime
+        ? _buildAnimeResults(controller)
+        : _buildMangaResults(controller);
   }
 
   Widget _buildAnimeResults(GlobalController controller) {
@@ -251,9 +260,14 @@ class _CatalogSearchPageState extends State<CatalogSearchPage> {
   }
 }
 
-/// The placeholder shown before the user enters a query.
+/// The placeholder shown before a query is long enough to search.
 class _SearchHint extends StatelessWidget {
-  const _SearchHint();
+  const _SearchHint({
+    this.message = "Search anime and manga on MyAnimeList to add them to your "
+        "list.",
+  });
+
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -271,8 +285,7 @@ class _SearchHint extends StatelessWidget {
             ),
             const SizedBox(height: AppTokens.spaceMd),
             Text(
-              "Search anime and manga on MyAnimeList to add them to your "
-              "list.",
+              message,
               textAlign: TextAlign.center,
               style: TextStyle(color: scheme.onSurfaceVariant),
             ),

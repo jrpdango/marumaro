@@ -111,6 +111,29 @@ void main() {
     expect(controller.mangaSearches, 0);
   });
 
+  testWidgets("requires three characters before searching", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_host(controller));
+    await tester.pump();
+
+    await tester.enterText(find.byType(TextField), "ab");
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump();
+
+    expect(find.text("Type at least 3 characters to search."), findsOneWidget);
+    expect(controller.animeSearches, 0);
+    expect(find.text("Failed to load."), findsNothing);
+
+    await tester.enterText(find.byType(TextField), "abc");
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump();
+
+    expect(controller.lastAnimeQuery, "abc");
+    expect(controller.animeSearches, 1);
+    expect(find.text("Result Anime"), findsOneWidget);
+  });
+
   testWidgets("searches the anime catalog after the debounce", (
     WidgetTester tester,
   ) async {
