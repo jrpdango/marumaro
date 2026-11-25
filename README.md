@@ -16,7 +16,8 @@
 
 - Sign in with your MyAnimeList account
 - Offline-first cached lists that sync with MAL
-- Search for anime and manga
+- Search for anime and manga in your lists or across the full MyAnimeList catalog to add new titles
 - Browse seasonal anime, personalized suggestions, and rankings (airing, upcoming, top manga, etc.)
 - Edit status, score, and progress, as well as advanced stats like date started/finished, tags, comments, and more
 - Light, dark, and AMOLED themes with sortable lists
+- Optional setting to show or hide adult titles across search and your lists
