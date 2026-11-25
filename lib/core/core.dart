@@ -11,6 +11,7 @@ export 'models/list_sort.dart';
 export 'models/manga.dart';
 export 'models/manga_details.dart';
 export 'models/media_details_data.dart';
+export 'models/nsfw.dart';
 export 'models/page.dart';
 export 'models/user.dart';
 export 'models/user_list_status.dart';

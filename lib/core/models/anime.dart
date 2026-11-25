@@ -1,4 +1,5 @@
 import 'package:marumaro/core/models/enums.dart';
+import 'package:marumaro/core/models/nsfw.dart';
 
 /// An anime entry from the user's list.
 class Anime {
@@ -70,7 +71,7 @@ class Anime {
             (listStatus["updated_at"] as String?) ?? "",
           ) ??
           DateTime.fromMillisecondsSinceEpoch(0),
-      isNsfw: (node["nsfw"] as bool?) ?? false,
+      isNsfw: parseIsNsfw(node["nsfw"]),
     );
   }
 
@@ -98,7 +99,7 @@ class Anime {
       rank: ranking?["rank"] as int?,
       mediaType: node["media_type"] as String?,
       members: (node["num_list_users"] as num?)?.toInt(),
-      isNsfw: (node["nsfw"] as bool?) ?? false,
+      isNsfw: parseIsNsfw(node["nsfw"]),
     );
   }
 

@@ -106,6 +106,7 @@ String animePageJson({bool withNext = false}) {
           "mean": 8.25,
           "media_type": "tv",
           "num_list_users": 183703,
+          "nsfw": "white",
         },
       },
     ],
@@ -129,6 +130,7 @@ String mangaPageJson() {
           "status": "currently_publishing",
           "mean": 9.1,
           "media_type": "manga",
+          "nsfw": "gray",
         },
         "ranking": <String, dynamic>{"rank": 2},
       },
@@ -289,6 +291,7 @@ void main() {
     expect(request.url.queryParameters["nsfw"], "false");
     expect(request.url.queryParameters["fields"], contains("nsfw"));
     expect(page.items.single.title, "Anime One");
+    expect(page.items.single.isNsfw, isFalse);
     expect(page.hasMore, isTrue);
   });
 
@@ -321,6 +324,7 @@ void main() {
     expect(page.items.single.title, "Manga One");
     expect(page.items.single.totalVolumes, 8);
     expect(page.items.single.inList, isFalse);
+    expect(page.items.single.isNsfw, isTrue);
   });
 
   test("fetchCurrentUser requests and parses lifetime statistics", () async {

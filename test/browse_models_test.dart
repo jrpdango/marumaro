@@ -47,7 +47,7 @@ void main() {
           "mean": 8.5,
           "media_type": "tv",
           "num_list_users": 183703,
-          "nsfw": true,
+          "nsfw": "gray",
         },
         "ranking": <String, dynamic>{"rank": 3},
       });
@@ -73,6 +73,25 @@ void main() {
       });
 
       expect(anime.isNsfw, isFalse);
+    });
+
+    test("parses the string NSFW field from list entries", () {
+      final Anime anime = Anime.fromListStatusJson(<String, dynamic>{
+        "node": <String, dynamic>{
+          "id": 5,
+          "title": "Adult Anime",
+          "num_episodes": 1,
+          "status": "finished_airing",
+          "nsfw": "black",
+        },
+        "list_status": <String, dynamic>{
+          "status": "completed",
+          "num_episodes_watched": 1,
+          "score": 8,
+        },
+      });
+
+      expect(anime.isNsfw, isTrue);
     });
 
     test("tolerates a bare node without a ranking wrapper", () {
@@ -103,7 +122,7 @@ void main() {
           "status": "currently_publishing",
           "mean": 9.0,
           "media_type": "manga",
-          "nsfw": true,
+          "nsfw": "black",
         },
         "ranking": <String, dynamic>{"rank": 1},
       });
@@ -116,6 +135,27 @@ void main() {
       expect(manga.meanScore, 9.0);
       expect(manga.rank, 1);
       expect(manga.mediaType, "manga");
+      expect(manga.isNsfw, isTrue);
+    });
+
+    test("parses the string NSFW field from list entries", () {
+      final Manga manga = Manga.fromListStatusJson(<String, dynamic>{
+        "node": <String, dynamic>{
+          "id": 5,
+          "title": "Adult Manga",
+          "num_chapters": 10,
+          "num_volumes": 2,
+          "status": "finished",
+          "nsfw": "gray",
+        },
+        "list_status": <String, dynamic>{
+          "status": "completed",
+          "num_chapters_read": 10,
+          "num_volumes_read": 2,
+          "score": 7,
+        },
+      });
+
       expect(manga.isNsfw, isTrue);
     });
   });
