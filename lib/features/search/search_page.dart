@@ -123,7 +123,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildAnimeResults(GlobalController controller) {
     return AnimeListContainer(
       pageStorageKey: "search_anime",
-      resetKey: _query,
+      resetKey: "$_query|${controller.showNsfw}",
       source: DelegatePagedSource<Anime>(
         ({required int offset, required int limit}) =>
             controller.searchAnime(_query, offset: offset, limit: limit),
@@ -137,7 +137,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildMangaResults(GlobalController controller) {
     return MangaListContainer(
       pageStorageKey: "search_manga",
-      resetKey: _query,
+      resetKey: "$_query|${controller.showNsfw}",
       source: DelegatePagedSource<Manga>(
         ({required int offset, required int limit}) =>
             controller.searchManga(_query, offset: offset, limit: limit),

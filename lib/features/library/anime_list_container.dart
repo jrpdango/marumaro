@@ -42,7 +42,10 @@ class AnimeListContainer extends StatelessWidget {
           pageStorageKey: listType?.apiValue ?? pageStorageKey,
           pageSize: 30,
           itemExtent: 120.0,
-          resetKey: resetKey ?? (fromStatus ? controller.listSort : null),
+          resetKey: resetKey ??
+              (fromStatus
+                  ? "${controller.listSort}|${controller.showNsfw}"
+                  : null),
           reloadListenable: fromStatus ? controller : null,
           onRefresh: fromStatus ? controller.syncAnime : null,
           emptyMessage: emptyMessage ??
