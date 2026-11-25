@@ -41,6 +41,7 @@ class GlobalController extends ChangeNotifier {
   static const String _sortKey = "list_sort";
   static const String _themeKey = "theme_mode";
   static const String _edgeSwipeKey = "drawer_edge_swipe";
+  static const String _nsfwKey = "show_nsfw";
 
   User? user;
 
@@ -49,6 +50,9 @@ class GlobalController extends ChangeNotifier {
   AppThemeMode themeMode = AppThemeMode.system;
 
   bool edgeSwipeOpensDrawer = false;
+
+  /// Whether adult titles are shown in catalog search and the user's lists.
+  bool showNsfw = false;
 
   bool animeSyncing = false;
   bool animeSynced = false;
@@ -124,6 +128,7 @@ class GlobalController extends ChangeNotifier {
     await loadSortPreferences();
     await loadThemePreference();
     await loadEdgeSwipePreference();
+    await loadNsfwPreference();
     await syncAnime();
     await syncManga();
   }
@@ -157,6 +162,20 @@ class GlobalController extends ChangeNotifier {
     edgeSwipeOpensDrawer = value;
     notifyListeners();
     await store.setPreference(_edgeSwipeKey, value ? "true" : "false");
+  }
+
+  /// Restores whether adult titles are shown.
+  Future<void> loadNsfwPreference() async {
+    showNsfw = (await store.getPreference(_nsfwKey)) == "true";
+    _notifySafely();
+  }
+
+  /// Updates and persists whether adult titles are shown.
+  Future<void> setShowNsfw(bool value) async {
+    if (value == showNsfw) return;
+    showNsfw = value;
+    notifyListeners();
+    await store.setPreference(_nsfwKey, value ? "true" : "false");
   }
 
   /// Restores the persisted sort choice shared by both lists.
@@ -216,11 +235,12 @@ class GlobalController extends ChangeNotifier {
       offset: offset,
       limit: limit,
       sort: listSort,
+      includeNsfw: showNsfw,
     );
   }
 
   Future<int> countAnime(AnimeListStatus status) {
-    return store.countAnime(status);
+    return store.countAnime(status, includeNsfw: showNsfw);
   }
 
   Future<List<Anime>> searchAnime(
@@ -228,7 +248,12 @@ class GlobalController extends ChangeNotifier {
     required int offset,
     required int limit,
   }) {
-    return store.searchAnime(query, offset: offset, limit: limit);
+    return store.searchAnime(
+      query,
+      offset: offset,
+      limit: limit,
+      includeNsfw: showNsfw,
+    );
   }
 
   Future<List<Manga>> pageManga(
@@ -241,11 +266,12 @@ class GlobalController extends ChangeNotifier {
       offset: offset,
       limit: limit,
       sort: listSort,
+      includeNsfw: showNsfw,
     );
   }
 
   Future<int> countManga(MangaListStatus status) {
-    return store.countManga(status);
+    return store.countManga(status, includeNsfw: showNsfw);
   }
 
   /// Every cached anime, keyed by id, for list-membership and status lookups.
@@ -260,9 +286,9 @@ class GlobalController extends ChangeNotifier {
 
   /// The most recently updated anime the user is currently watching, if any.
   Future<Anime?> continueWatching() async {
-    final Iterable<Anime> watching = (await store.allAnime())
-        .values
-        .where((Anime a) => a.userStatus == AnimeListStatus.watching);
+    final Iterable<Anime> watching = _visibleAnime(
+      (await store.allAnime()).values,
+    ).where((Anime a) => a.userStatus == AnimeListStatus.watching);
     return _mostRecentlyUpdated<Anime>(
       watching,
       (Anime a) => a.updatedAt,
@@ -271,9 +297,9 @@ class GlobalController extends ChangeNotifier {
 
   /// The most recently updated manga the user is currently reading, if any.
   Future<Manga?> continueReading() async {
-    final Iterable<Manga> reading = (await store.allManga())
-        .values
-        .where((Manga m) => m.userStatus == MangaListStatus.reading);
+    final Iterable<Manga> reading = _visibleManga(
+      (await store.allManga()).values,
+    ).where((Manga m) => m.userStatus == MangaListStatus.reading);
     return _mostRecentlyUpdated<Manga>(
       reading,
       (Manga m) => m.updatedAt,
@@ -282,8 +308,9 @@ class GlobalController extends ChangeNotifier {
 
   /// A random anime from the user's plan-to-watch list, or null if it is empty.
   Future<Anime?> randomPlannedAnime({Random? random}) async {
-    final List<Anime> planned = (await store.allAnime())
-        .values
+    final List<Anime> planned = _visibleAnime(
+      (await store.allAnime()).values,
+    )
         .where((Anime a) => a.userStatus == AnimeListStatus.planToWatch)
         .toList(growable: false);
     if (planned.isEmpty) return null;
@@ -292,12 +319,23 @@ class GlobalController extends ChangeNotifier {
 
   /// A random manga from the user's plan-to-read list, or null if it is empty.
   Future<Manga?> randomPlannedManga({Random? random}) async {
-    final List<Manga> planned = (await store.allManga())
-        .values
+    final List<Manga> planned = _visibleManga(
+      (await store.allManga()).values,
+    )
         .where((Manga m) => m.userStatus == MangaListStatus.planToRead)
         .toList(growable: false);
     if (planned.isEmpty) return null;
     return planned[(random ?? Random()).nextInt(planned.length)];
+  }
+
+  /// [items] minus adult titles when they are hidden by the user's setting.
+  Iterable<Anime> _visibleAnime(Iterable<Anime> items) {
+    return showNsfw ? items : items.where((Anime a) => !a.isNsfw);
+  }
+
+  /// [items] minus adult titles when they are hidden by the user's setting.
+  Iterable<Manga> _visibleManga(Iterable<Manga> items) {
+    return showNsfw ? items : items.where((Manga m) => !m.isNsfw);
   }
 
   /// Aggregates the cached lists (and the user's server statistics, when
@@ -306,8 +344,8 @@ class GlobalController extends ChangeNotifier {
     final Map<int, Anime> anime = await store.allAnime();
     final Map<int, Manga> manga = await store.allManga();
     return ProfileStats.fromLists(
-      anime.values,
-      manga.values,
+      _visibleAnime(anime.values),
+      _visibleManga(manga.values),
       animeServer: user?.animeStatistics,
       mangaServer: user?.mangaStatistics,
     );
@@ -332,7 +370,40 @@ class GlobalController extends ChangeNotifier {
     required int offset,
     required int limit,
   }) {
-    return store.searchManga(query, offset: offset, limit: limit);
+    return store.searchManga(
+      query,
+      offset: offset,
+      limit: limit,
+      includeNsfw: showNsfw,
+    );
+  }
+
+  /// Searches the full anime catalog, honoring the NSFW preference.
+  Future<PageResult<Anime>> searchAnimeCatalog({
+    required String query,
+    required int offset,
+    int limit = MalRepository.browsePageSize,
+  }) {
+    return repository.searchAnimeCatalog(
+      query: query,
+      offset: offset,
+      limit: limit,
+      includeNsfw: showNsfw,
+    );
+  }
+
+  /// Searches the full manga catalog, honoring the NSFW preference.
+  Future<PageResult<Manga>> searchMangaCatalog({
+    required String query,
+    required int offset,
+    int limit = MalRepository.browsePageSize,
+  }) {
+    return repository.searchMangaCatalog(
+      query: query,
+      offset: offset,
+      limit: limit,
+      includeNsfw: showNsfw,
+    );
   }
 
   /// Persists list changes for [anime] and updates the cache.

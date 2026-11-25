@@ -19,6 +19,19 @@ class _FakeRepository extends MalRepository {
   final Map<AnimeListStatus, List<Anime>> anime;
   final Map<MangaListStatus, List<Manga>> manga;
 
+  bool? lastAnimeSearchIncludeNsfw;
+
+  @override
+  Future<PageResult<Anime>> searchAnimeCatalog({
+    required String query,
+    required int offset,
+    int limit = MalRepository.browsePageSize,
+    bool includeNsfw = false,
+  }) async {
+    lastAnimeSearchIncludeNsfw = includeNsfw;
+    return const PageResult<Anime>(items: <Anime>[], hasMore: false);
+  }
+
   @override
   Future<PageResult<Anime>> fetchAnimeListPage({
     required int offset,
@@ -71,7 +84,12 @@ class _FakeRepository extends MalRepository {
   }) async {}
 }
 
-Anime _anime(int id, AnimeListStatus status, {int updatedAt = 0}) {
+Anime _anime(
+  int id,
+  AnimeListStatus status, {
+  int updatedAt = 0,
+  bool isNsfw = false,
+}) {
   return Anime(
     id: id,
     title: "Anime $id",
@@ -82,10 +100,16 @@ Anime _anime(int id, AnimeListStatus status, {int updatedAt = 0}) {
     userEpisodesWatched: 0,
     userScore: 0,
     updatedAt: DateTime.fromMillisecondsSinceEpoch(updatedAt),
+    isNsfw: isNsfw,
   );
 }
 
-Manga _manga(int id, MangaListStatus status, {int updatedAt = 0}) {
+Manga _manga(
+  int id,
+  MangaListStatus status, {
+  int updatedAt = 0,
+  bool isNsfw = false,
+}) {
   return Manga(
     id: id,
     title: "Manga $id",
@@ -98,6 +122,7 @@ Manga _manga(int id, MangaListStatus status, {int updatedAt = 0}) {
     userVolumesRead: 0,
     userScore: 0,
     updatedAt: DateTime.fromMillisecondsSinceEpoch(updatedAt),
+    isNsfw: isNsfw,
   );
 }
 
@@ -258,6 +283,117 @@ void main() {
 
     expect(reloaded.edgeSwipeOpensDrawer, isTrue);
     reloaded.dispose();
+  });
+
+  test("NSFW titles are hidden by default", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1, AnimeListStatus.watching),
+      _anime(2, AnimeListStatus.watching, isNsfw: true),
+    ]);
+
+    expect(await controller.countAnime(AnimeListStatus.watching), 1);
+    final List<Anime> page = await controller.pageAnime(
+      AnimeListStatus.watching,
+      offset: 0,
+      limit: 10,
+    );
+    expect(page.map((Anime a) => a.id), <int>[1]);
+
+    final List<Anime> search = await controller.searchAnime(
+      "Anime",
+      offset: 0,
+      limit: 10,
+    );
+    expect(search.map((Anime a) => a.id), <int>[1]);
+  });
+
+  test("showing NSFW titles reveals cached adult entries", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1, AnimeListStatus.watching),
+      _anime(2, AnimeListStatus.watching, isNsfw: true),
+    ]);
+    await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[
+      _manga(1, MangaListStatus.reading),
+      _manga(2, MangaListStatus.reading, isNsfw: true),
+    ]);
+
+    await controller.setShowNsfw(true);
+
+    expect(await controller.countAnime(AnimeListStatus.watching), 2);
+    expect(await controller.countManga(MangaListStatus.reading), 2);
+    final List<Anime> page = await controller.pageAnime(
+      AnimeListStatus.watching,
+      offset: 0,
+      limit: 10,
+    );
+    expect(page.map((Anime a) => a.id), <int>[1, 2]);
+  });
+
+  test("persists and restores the NSFW preference", () async {
+    await controller.loadNsfwPreference();
+    await controller.setShowNsfw(true);
+
+    final GlobalController reloaded =
+        GlobalController(store: store, repository: repository);
+    await reloaded.loadNsfwPreference();
+
+    expect(reloaded.showNsfw, isTrue);
+    reloaded.dispose();
+  });
+
+  test("catalog search passes the NSFW preference to the repository", () async {
+    await controller.searchAnimeCatalog(query: "test", offset: 0);
+    expect(repository.lastAnimeSearchIncludeNsfw, isFalse);
+
+    await controller.setShowNsfw(true);
+    await controller.searchAnimeCatalog(query: "test", offset: 0);
+    expect(repository.lastAnimeSearchIncludeNsfw, isTrue);
+  });
+
+  test("continueWatching skips hidden adult titles", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+      _anime(1, AnimeListStatus.watching, updatedAt: 100, isNsfw: true),
+    ]);
+
+    expect(await controller.continueWatching(), isNull);
+
+    await controller.setShowNsfw(true);
+    expect((await controller.continueWatching())?.id, 1);
+  });
+
+  test("random planned helpers skip hidden adult titles", () async {
+    await store.replaceAnimeStatus(AnimeListStatus.planToWatch, <Anime>[
+      _anime(7, AnimeListStatus.planToWatch, isNsfw: true),
+    ]);
+    await store.replaceMangaStatus(MangaListStatus.planToRead, <Manga>[
+      _manga(8, MangaListStatus.planToRead, isNsfw: true),
+    ]);
+
+    expect(await controller.randomPlannedAnime(), isNull);
+    expect(await controller.randomPlannedManga(), isNull);
+
+    await controller.setShowNsfw(true);
+    expect((await controller.randomPlannedAnime())?.id, 7);
+    expect((await controller.randomPlannedManga())?.id, 8);
+  });
+
+  test("profileStats excludes hidden adult titles from local aggregates",
+      () async {
+    await store.replaceAnimeStatus(AnimeListStatus.completed, <Anime>[
+      _anime(1, AnimeListStatus.completed),
+      _anime(2, AnimeListStatus.completed, isNsfw: true),
+    ]);
+    await store.replaceMangaStatus(MangaListStatus.completed, <Manga>[
+      _manga(1, MangaListStatus.completed),
+    ]);
+
+    ProfileStats hidden = await controller.profileStats();
+    expect(hidden.anime.total, 1);
+    expect(hidden.manga.total, 1);
+
+    await controller.setShowNsfw(true);
+    hidden = await controller.profileStats();
+    expect(hidden.anime.total, 2);
   });
 
   test("continueWatching returns the most recently updated watching anime",
