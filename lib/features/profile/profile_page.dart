@@ -42,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final ProfileStats stats = await controller.profileStats();
     final Map<int, Anime> anime = await controller.animeById();
     final List<Anime> topRated = anime.values
+        .where((Anime a) => controller.showNsfw || !a.isNsfw)
         .where((Anime a) => a.userScore > 0)
         .toList()
       ..sort((Anime a, Anime b) => b.userScore.compareTo(a.userScore));

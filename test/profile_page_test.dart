@@ -9,6 +9,7 @@ class _FakeStore extends LocalStore {
 
   final List<Anime> anime;
   final List<Manga> manga;
+  final Map<String, String> preferences = <String, String>{};
 
   @override
   Future<Map<int, Anime>> allAnime() async => <int, Anime>{
@@ -19,6 +20,14 @@ class _FakeStore extends LocalStore {
   Future<Map<int, Manga>> allManga() async => <int, Manga>{
         for (final Manga m in manga) m.id: m,
       };
+
+  @override
+  Future<String?> getPreference(String key) async => preferences[key];
+
+  @override
+  Future<void> setPreference(String key, String value) async {
+    preferences[key] = value;
+  }
 }
 
 Anime _anime(
@@ -27,6 +36,7 @@ Anime _anime(
   required AnimeListStatus status,
   int score = 0,
   int episodes = 0,
+  bool isNsfw = false,
 }) {
   return Anime(
     id: id,
@@ -38,6 +48,7 @@ Anime _anime(
     userEpisodesWatched: episodes,
     userScore: score,
     updatedAt: DateTime.fromMillisecondsSinceEpoch(0),
+    isNsfw: isNsfw,
   );
 }
 
@@ -178,5 +189,38 @@ void main() {
     expect(find.text("Manga status"), findsNothing);
     expect(find.text("Scores"), findsNothing);
     expect(find.text("Top rated"), findsNothing);
+  });
+
+  testWidgets("hides NSFW titles from top rated unless enabled", (
+    WidgetTester tester,
+  ) async {
+    final GlobalController controller = _controller(
+      anime: <Anime>[
+        _anime(1, "Safe Show", status: AnimeListStatus.completed, score: 8),
+        _anime(
+          2,
+          "Adult Show",
+          status: AnimeListStatus.completed,
+          score: 10,
+          isNsfw: true,
+        ),
+      ],
+    );
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(_host(controller));
+    await tester.pumpAndSettle();
+
+    final Finder scrollable = find.byType(Scrollable).first;
+    await tester.drag(scrollable, const Offset(0, -2000));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Safe Show"), findsOneWidget);
+    expect(find.text("Adult Show"), findsNothing);
+
+    await controller.setShowNsfw(true);
+    await tester.pumpAndSettle();
+
+    expect(find.text("Adult Show"), findsOneWidget);
   });
 }
