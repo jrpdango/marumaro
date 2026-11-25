@@ -36,6 +36,7 @@ class _BrowsePageState extends State<BrowsePage> {
 
   Map<int, Anime> _animeById = const <int, Anime>{};
   Map<int, Manga> _mangaById = const <int, Manga>{};
+  bool _loadingMembership = false;
 
   @override
   void didChangeDependencies() {
@@ -43,8 +44,10 @@ class _BrowsePageState extends State<BrowsePage> {
     _controller ??= GlobalControllerScope.of(context);
     if (_season == null) {
       _assignFutures();
-      _loadMembership();
     }
+    // Cached membership can change after edits made on the details or search
+    // screens. Reload so the status chips stay accurate.
+    _loadMembership();
   }
 
   MalRepository get _repository => _controller!.repository;
@@ -109,6 +112,8 @@ class _BrowsePageState extends State<BrowsePage> {
   /// Loads the user's cached list entries so browse cards can show their list
   /// status and details can open with the known stats.
   Future<void> _loadMembership() async {
+    if (_loadingMembership) return;
+    _loadingMembership = true;
     final GlobalController controller = _controller!;
     try {
       final List<Map<int, Object>> entries = await Future.wait(
@@ -122,7 +127,10 @@ class _BrowsePageState extends State<BrowsePage> {
         _animeById = entries[0].cast<int, Anime>();
         _mangaById = entries[1].cast<int, Manga>();
       });
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      _loadingMembership = false;
+    }
   }
 
   /// Merges the cached list entry (status, score, progress) into a browse node
@@ -135,6 +143,7 @@ class _BrowsePageState extends State<BrowsePage> {
       userStatus: cached.userStatus,
       userScore: cached.userScore,
       userEpisodesWatched: cached.userEpisodesWatched,
+      isNsfw: cached.isNsfw,
     );
   }
 
@@ -147,6 +156,7 @@ class _BrowsePageState extends State<BrowsePage> {
       userScore: cached.userScore,
       userChaptersRead: cached.userChaptersRead,
       userVolumesRead: cached.userVolumesRead,
+      isNsfw: cached.isNsfw,
     );
   }
 
