@@ -17,6 +17,7 @@ class Anime {
     this.rank,
     this.mediaType,
     this.members,
+    this.isNsfw = false,
   });
 
   final int id;
@@ -45,6 +46,9 @@ class Anime {
   /// browse endpoints.
   final int? members;
 
+  /// Whether this title is marked as adult content by MAL.
+  final bool isNsfw;
+
   factory Anime.fromListStatusJson(Map<String, dynamic> json) {
     final Map<String, dynamic> node =
         (json["node"] as Map).cast<String, dynamic>();
@@ -66,6 +70,7 @@ class Anime {
             (listStatus["updated_at"] as String?) ?? "",
           ) ??
           DateTime.fromMillisecondsSinceEpoch(0),
+      isNsfw: (node["nsfw"] as bool?) ?? false,
     );
   }
 
@@ -93,6 +98,7 @@ class Anime {
       rank: ranking?["rank"] as int?,
       mediaType: node["media_type"] as String?,
       members: (node["num_list_users"] as num?)?.toInt(),
+      isNsfw: (node["nsfw"] as bool?) ?? false,
     );
   }
 
@@ -106,6 +112,7 @@ class Anime {
     int? rank,
     String? mediaType,
     int? members,
+    bool? isNsfw,
   }) {
     return Anime(
       id: id,
@@ -122,6 +129,7 @@ class Anime {
       rank: rank ?? this.rank,
       mediaType: mediaType ?? this.mediaType,
       members: members ?? this.members,
+      isNsfw: isNsfw ?? this.isNsfw,
     );
   }
 }

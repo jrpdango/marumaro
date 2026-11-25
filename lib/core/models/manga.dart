@@ -18,6 +18,7 @@ class Manga {
     this.meanScore,
     this.rank,
     this.mediaType,
+    this.isNsfw = false,
   });
 
   final int id;
@@ -44,6 +45,9 @@ class Manga {
   /// The media type (e.g. `manga`, `novel`), when supplied by browse endpoints.
   final String? mediaType;
 
+  /// Whether this title is marked as adult content by MAL.
+  final bool isNsfw;
+
   factory Manga.fromListStatusJson(Map<String, dynamic> json) {
     final Map<String, dynamic> node =
         (json["node"] as Map).cast<String, dynamic>();
@@ -66,6 +70,7 @@ class Manga {
             (listStatus["updated_at"] as String?) ?? "",
           ) ??
           DateTime.fromMillisecondsSinceEpoch(0),
+      isNsfw: (node["nsfw"] as bool?) ?? false,
     );
   }
 
@@ -94,6 +99,7 @@ class Manga {
       meanScore: (node["mean"] as num?)?.toDouble(),
       rank: ranking?["rank"] as int?,
       mediaType: node["media_type"] as String?,
+      isNsfw: (node["nsfw"] as bool?) ?? false,
     );
   }
 
@@ -107,6 +113,7 @@ class Manga {
     double? meanScore,
     int? rank,
     String? mediaType,
+    bool? isNsfw,
   }) {
     return Manga(
       id: id,
@@ -124,6 +131,7 @@ class Manga {
       meanScore: meanScore ?? this.meanScore,
       rank: rank ?? this.rank,
       mediaType: mediaType ?? this.mediaType,
+      isNsfw: isNsfw ?? this.isNsfw,
     );
   }
 }

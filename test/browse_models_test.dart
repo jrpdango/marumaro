@@ -47,6 +47,7 @@ void main() {
           "mean": 8.5,
           "media_type": "tv",
           "num_list_users": 183703,
+          "nsfw": true,
         },
         "ranking": <String, dynamic>{"rank": 3},
       });
@@ -61,6 +62,17 @@ void main() {
       expect(anime.rank, 3);
       expect(anime.mediaType, "tv");
       expect(anime.members, 183703);
+      expect(anime.isNsfw, isTrue);
+    });
+
+    test("defaults the NSFW flag to false when absent", () {
+      final Anime anime = Anime.fromNodeJson(<String, dynamic>{
+        "id": 7,
+        "title": "Bare",
+        "num_episodes": 0,
+      });
+
+      expect(anime.isNsfw, isFalse);
     });
 
     test("tolerates a bare node without a ranking wrapper", () {
@@ -91,6 +103,7 @@ void main() {
           "status": "currently_publishing",
           "mean": 9.0,
           "media_type": "manga",
+          "nsfw": true,
         },
         "ranking": <String, dynamic>{"rank": 1},
       });
@@ -103,6 +116,7 @@ void main() {
       expect(manga.meanScore, 9.0);
       expect(manga.rank, 1);
       expect(manga.mediaType, "manga");
+      expect(manga.isNsfw, isTrue);
     });
   });
 
