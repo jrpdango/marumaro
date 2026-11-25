@@ -16,7 +16,7 @@ class MalRepository {
 
   /// The maximum page size accepted by the seasonal endpoint.
   static const int _seasonMaxPageSize = 500;
-  static const String _listFields = "list_status,num_episodes,status";
+  static const String _listFields = "list_status,num_episodes,status,nsfw";
   static const String _animeListStatusFields =
       "status,score,num_episodes_watched,start_date,finish_date,is_rewatching,"
       "priority,num_times_rewatched,rewatch_value,tags,comments";
@@ -30,16 +30,18 @@ class MalRepository {
       "num_episodes,start_season,source,average_episode_duration,rating,"
       "studios,broadcast";
   static const String _mangaListFields =
-      "list_status,num_chapters,num_volumes,status";
+      "list_status,num_chapters,num_volumes,status,nsfw";
   static const String _mangaDetailsFields =
       "title,main_picture,alternative_titles,start_date,end_date,synopsis,"
       "background,mean,rank,popularity,num_list_users,num_scoring_users,"
       "media_type,status,genres,my_list_status{$_mangaListStatusFields},"
       "num_chapters,num_volumes,source,authors";
   static const String _animeBrowseFields =
-      "id,title,main_picture,num_episodes,status,mean,media_type,num_list_users";
+      "id,title,main_picture,num_episodes,status,mean,media_type,num_list_users,"
+      "nsfw";
   static const String _mangaBrowseFields =
-      "id,title,main_picture,num_chapters,num_volumes,status,mean,media_type";
+      "id,title,main_picture,num_chapters,num_volumes,status,mean,media_type,"
+      "nsfw";
 
   final MalApiClient _api;
 
@@ -267,6 +269,50 @@ class MalRepository {
       },
     );
     return _parsePage(page, Anime.fromNodeJson);
+  }
+
+  /// Searches the full anime catalog for [query].
+  ///
+  /// Adult entries are excluded unless [includeNsfw] is set.
+  Future<PageResult<Anime>> searchAnimeCatalog({
+    required String query,
+    required int offset,
+    int limit = browsePageSize,
+    bool includeNsfw = false,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/anime",
+      query: <String, String>{
+        "q": query,
+        "fields": _animeBrowseFields,
+        "limit": "$limit",
+        "offset": "$offset",
+        "nsfw": includeNsfw ? "true" : "false",
+      },
+    );
+    return _parsePage(page, Anime.fromNodeJson);
+  }
+
+  /// Searches the full manga catalog for [query].
+  ///
+  /// Adult entries are excluded unless [includeNsfw] is set.
+  Future<PageResult<Manga>> searchMangaCatalog({
+    required String query,
+    required int offset,
+    int limit = browsePageSize,
+    bool includeNsfw = false,
+  }) async {
+    final Map<String, dynamic> page = await _api.get(
+      "v2/manga",
+      query: <String, String>{
+        "q": query,
+        "fields": _mangaBrowseFields,
+        "limit": "$limit",
+        "offset": "$offset",
+        "nsfw": includeNsfw ? "true" : "false",
+      },
+    );
+    return _parsePage(page, Manga.fromNodeJson);
   }
 
   /// Parses a paged list response into [PageResult], using [fromJson] to map

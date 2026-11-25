@@ -260,6 +260,69 @@ void main() {
     expect(request.url.queryParameters["limit"], "12");
   });
 
+  test("list requests ask for the NSFW field", () async {
+    final result = buildRepository(
+      jsonEncode(<String, dynamic>{"data": <dynamic>[]}),
+    );
+
+    await result.repository.fetchAnimeListPage(offset: 0);
+    expect(
+      result.requests.single.url.queryParameters["fields"],
+      contains("nsfw"),
+    );
+  });
+
+  test("searchAnimeCatalog sends the query, paging, and NSFW filter", () async {
+    final result = buildRepository(animePageJson(withNext: true));
+
+    final PageResult<Anime> page = await result.repository.searchAnimeCatalog(
+      query: "frieren",
+      offset: 30,
+      limit: 25,
+    );
+
+    final http.Request request = result.requests.single;
+    expect(request.url.path, "/v2/anime");
+    expect(request.url.queryParameters["q"], "frieren");
+    expect(request.url.queryParameters["offset"], "30");
+    expect(request.url.queryParameters["limit"], "25");
+    expect(request.url.queryParameters["nsfw"], "false");
+    expect(request.url.queryParameters["fields"], contains("nsfw"));
+    expect(page.items.single.title, "Anime One");
+    expect(page.hasMore, isTrue);
+  });
+
+  test("searchAnimeCatalog includes NSFW results when requested", () async {
+    final result = buildRepository(animePageJson());
+
+    await result.repository.searchAnimeCatalog(
+      query: "test",
+      offset: 0,
+      includeNsfw: true,
+    );
+
+    expect(result.requests.single.url.queryParameters["nsfw"], "true");
+  });
+
+  test("searchMangaCatalog parses manga nodes and filters NSFW", () async {
+    final result = buildRepository(mangaPageJson());
+
+    final PageResult<Manga> page = await result.repository.searchMangaCatalog(
+      query: "berserk",
+      offset: 0,
+      limit: 20,
+    );
+
+    final http.Request request = result.requests.single;
+    expect(request.url.path, "/v2/manga");
+    expect(request.url.queryParameters["q"], "berserk");
+    expect(request.url.queryParameters["limit"], "20");
+    expect(request.url.queryParameters["nsfw"], "false");
+    expect(page.items.single.title, "Manga One");
+    expect(page.items.single.totalVolumes, 8);
+    expect(page.items.single.inList, isFalse);
+  });
+
   test("fetchCurrentUser requests and parses lifetime statistics", () async {
     final result = buildRepository(
       jsonEncode(<String, dynamic>{
