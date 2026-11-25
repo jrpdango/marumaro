@@ -124,7 +124,7 @@ class _CatalogSearchPageState extends State<CatalogSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalController controller = _controller!;
+    final GlobalController controller = GlobalControllerScope.of(context);
     final bool isAnime = _kind == MediaKind.anime;
     return Scaffold(
       appBar: BackAppBar(title: "Search"),
