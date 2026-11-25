@@ -9,6 +9,7 @@ Anime _anime(
   int episodesWatched = 0,
   int score = 0,
   DateTime? updatedAt,
+  bool isNsfw = false,
 }) {
   return Anime(
     id: id,
@@ -20,6 +21,7 @@ Anime _anime(
     userEpisodesWatched: episodesWatched,
     userScore: score,
     updatedAt: updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0),
+    isNsfw: isNsfw,
   );
 }
 
@@ -31,6 +33,7 @@ Manga _manga(
   int volumesRead = 0,
   int score = 0,
   DateTime? updatedAt,
+  bool isNsfw = false,
 }) {
   return Manga(
     id: id,
@@ -44,6 +47,7 @@ Manga _manga(
     userVolumesRead: volumesRead,
     userScore: score,
     updatedAt: updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0),
+    isNsfw: isNsfw,
   );
 }
 
@@ -120,7 +124,13 @@ void main() {
 
     test("round-trips every field", () async {
       await store.replaceAnimeStatus(AnimeListStatus.onHold, <Anime>[
-        _anime(7, title: "Round Trip", episodesWatched: 5, score: 9),
+        _anime(
+          7,
+          title: "Round Trip",
+          episodesWatched: 5,
+          score: 9,
+          isNsfw: true,
+        ),
       ]);
 
       final Anime anime = (await store.pageAnime(
@@ -135,6 +145,44 @@ void main() {
       expect(anime.userStatus, AnimeListStatus.onHold);
       expect(anime.userEpisodesWatched, 5);
       expect(anime.userScore, 9);
+      expect(anime.isNsfw, isTrue);
+    });
+
+    test("filters NSFW entries when requested", () async {
+      await store.replaceAnimeStatus(AnimeListStatus.watching, <Anime>[
+        _anime(1, title: "Safe"),
+        _anime(2, title: "Adult", isNsfw: true),
+      ]);
+
+      expect(await store.countAnime(AnimeListStatus.watching), 2);
+      expect(
+        await store.countAnime(AnimeListStatus.watching, includeNsfw: false),
+        1,
+      );
+
+      final List<Anime> visible = await store.pageAnime(
+        AnimeListStatus.watching,
+        offset: 0,
+        limit: 10,
+        includeNsfw: false,
+      );
+      expect(visible.map((Anime a) => a.id), <int>[1]);
+      expect(visible.single.isNsfw, isFalse);
+
+      final List<Anime> filteredSearch = await store.searchAnime(
+        "a",
+        offset: 0,
+        limit: 10,
+        includeNsfw: false,
+      );
+      expect(filteredSearch.map((Anime a) => a.id), <int>[1]);
+
+      final List<Anime> allSearch = await store.searchAnime(
+        "a",
+        offset: 0,
+        limit: 10,
+      );
+      expect(allSearch.map((Anime a) => a.id), <int>[2, 1]);
     });
 
     test("searches titles case-insensitively", () async {
@@ -295,6 +343,42 @@ void main() {
       expect(moved.id, 2);
       expect(moved.userChaptersRead, 30);
       expect(moved.userVolumesRead, 4);
+    });
+
+    test("round-trips the NSFW flag and filters entries", () async {
+      await store.replaceMangaStatus(MangaListStatus.reading, <Manga>[
+        _manga(1, title: "Safe Manga"),
+        _manga(2, title: "Adult Manga", isNsfw: true),
+      ]);
+
+      final List<Manga> all = await store.pageManga(
+        MangaListStatus.reading,
+        offset: 0,
+        limit: 10,
+      );
+      expect(all.map((Manga m) => m.id), <int>[1, 2]);
+      expect(all.last.isNsfw, isTrue);
+
+      expect(
+        await store.countManga(MangaListStatus.reading, includeNsfw: false),
+        1,
+      );
+
+      final List<Manga> visible = await store.pageManga(
+        MangaListStatus.reading,
+        offset: 0,
+        limit: 10,
+        includeNsfw: false,
+      );
+      expect(visible.map((Manga m) => m.id), <int>[1]);
+
+      final List<Manga> filteredSearch = await store.searchManga(
+        "manga",
+        offset: 0,
+        limit: 10,
+        includeNsfw: false,
+      );
+      expect(filteredSearch.map((Manga m) => m.id), <int>[1]);
     });
   });
 

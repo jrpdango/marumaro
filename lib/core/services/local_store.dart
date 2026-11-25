@@ -9,7 +9,7 @@ import 'package:marumaro/core/models/manga.dart';
 class LocalStore {
   LocalStore({this._factory, this.path});
 
-  static const int _schemaVersion = 2;
+  static const int _schemaVersion = 3;
   static const String _animeTable = "anime";
   static const String _mangaTable = "manga";
   static const String _preferencesTable = "preferences";
@@ -45,6 +45,7 @@ class LocalStore {
         user_status TEXT NOT NULL,
         user_episodes_watched INTEGER NOT NULL,
         user_score INTEGER NOT NULL,
+        is_nsfw INTEGER NOT NULL DEFAULT 0,
         list_updated_at INTEGER NOT NULL,
         synced_at INTEGER NOT NULL
       )
@@ -61,6 +62,7 @@ class LocalStore {
         user_chapters_read INTEGER NOT NULL,
         user_volumes_read INTEGER NOT NULL,
         user_score INTEGER NOT NULL,
+        is_nsfw INTEGER NOT NULL DEFAULT 0,
         list_updated_at INTEGER NOT NULL,
         synced_at INTEGER NOT NULL
       )
@@ -139,11 +141,12 @@ class LocalStore {
     required int offset,
     required int limit,
     ListSort sort = ListSort.defaultSort,
+    bool includeNsfw = true,
   }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.query(
       _animeTable,
-      where: 'user_status = ?',
+      where: 'user_status = ?${_nsfwFilter(includeNsfw)}',
       whereArgs: <String>[status.apiValue],
       orderBy: _orderBy(sort),
       limit: limit,
@@ -152,10 +155,14 @@ class LocalStore {
     return rows.map(_animeFromRow).toList(growable: false);
   }
 
-  Future<int> countAnime(AnimeListStatus status) async {
+  Future<int> countAnime(
+    AnimeListStatus status, {
+    bool includeNsfw = true,
+  }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.rawQuery(
-      'SELECT COUNT(*) AS count FROM $_animeTable WHERE user_status = ?',
+      'SELECT COUNT(*) AS count FROM $_animeTable '
+      'WHERE user_status = ?${_nsfwFilter(includeNsfw)}',
       <String>[status.apiValue],
     );
     return (rows.first['count'] as int?) ?? 0;
@@ -165,11 +172,12 @@ class LocalStore {
     String query, {
     required int offset,
     required int limit,
+    bool includeNsfw = true,
   }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.query(
       _animeTable,
-      where: 'title LIKE ?',
+      where: 'title LIKE ?${_nsfwFilter(includeNsfw)}',
       whereArgs: <String>['%$query%'],
       orderBy: 'title COLLATE NOCASE ASC',
       limit: limit,
@@ -225,11 +233,12 @@ class LocalStore {
     required int offset,
     required int limit,
     ListSort sort = ListSort.defaultSort,
+    bool includeNsfw = true,
   }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.query(
       _mangaTable,
-      where: 'user_status = ?',
+      where: 'user_status = ?${_nsfwFilter(includeNsfw)}',
       whereArgs: <String>[status.apiValue],
       orderBy: _orderBy(sort),
       limit: limit,
@@ -238,10 +247,14 @@ class LocalStore {
     return rows.map(_mangaFromRow).toList(growable: false);
   }
 
-  Future<int> countManga(MangaListStatus status) async {
+  Future<int> countManga(
+    MangaListStatus status, {
+    bool includeNsfw = true,
+  }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.rawQuery(
-      'SELECT COUNT(*) AS count FROM $_mangaTable WHERE user_status = ?',
+      'SELECT COUNT(*) AS count FROM $_mangaTable '
+      'WHERE user_status = ?${_nsfwFilter(includeNsfw)}',
       <String>[status.apiValue],
     );
     return (rows.first['count'] as int?) ?? 0;
@@ -251,11 +264,12 @@ class LocalStore {
     String query, {
     required int offset,
     required int limit,
+    bool includeNsfw = true,
   }) async {
     final Database db = await _db;
     final List<Map<String, Object?>> rows = await db.query(
       _mangaTable,
-      where: 'title LIKE ?',
+      where: 'title LIKE ?${_nsfwFilter(includeNsfw)}',
       whereArgs: <String>['%$query%'],
       orderBy: 'title COLLATE NOCASE ASC',
       limit: limit,
@@ -306,6 +320,9 @@ class LocalStore {
     final Database db = await _db;
     await db.delete(_mangaTable, where: 'id = ?', whereArgs: <int>[id]);
   }
+
+  /// SQL appended to a WHERE clause to exclude adult titles when requested.
+  String _nsfwFilter(bool includeNsfw) => includeNsfw ? '' : ' AND is_nsfw = 0';
 
   String _orderBy(ListSort sort) {
     final String direction = sort.descending ? 'DESC' : 'ASC';
@@ -369,6 +386,7 @@ class LocalStore {
       'user_status': status.apiValue,
       'user_episodes_watched': anime.userEpisodesWatched,
       'user_score': anime.userScore,
+      'is_nsfw': anime.isNsfw ? 1 : 0,
       'list_updated_at': anime.updatedAt.millisecondsSinceEpoch,
       'synced_at': syncedAt,
     };
@@ -390,6 +408,7 @@ class LocalStore {
       'user_chapters_read': manga.userChaptersRead,
       'user_volumes_read': manga.userVolumesRead,
       'user_score': manga.userScore,
+      'is_nsfw': manga.isNsfw ? 1 : 0,
       'list_updated_at': manga.updatedAt.millisecondsSinceEpoch,
       'synced_at': syncedAt,
     };
@@ -405,6 +424,7 @@ class LocalStore {
       userStatus: AnimeListStatus.fromApiValue(row['user_status'] as String?),
       userEpisodesWatched: row['user_episodes_watched'] as int,
       userScore: row['user_score'] as int,
+      isNsfw: (row['is_nsfw'] as int? ?? 0) == 1,
       updatedAt: DateTime.fromMillisecondsSinceEpoch(
         row['list_updated_at'] as int,
       ),
@@ -425,6 +445,7 @@ class LocalStore {
       userChaptersRead: row['user_chapters_read'] as int,
       userVolumesRead: row['user_volumes_read'] as int,
       userScore: row['user_score'] as int,
+      isNsfw: (row['is_nsfw'] as int? ?? 0) == 1,
       updatedAt: DateTime.fromMillisecondsSinceEpoch(
         row['list_updated_at'] as int,
       ),
