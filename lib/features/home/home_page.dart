@@ -82,6 +82,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     controller.setListSort(next);
   }
 
+  /// Opens the list search on the library tabs and the catalog search (for
+  /// adding new titles) on Browse.
+  void _openSearch() {
+    final Widget page = _tabIndex == 2
+        ? const CatalogSearchPage()
+        : SearchPage(
+            initialKind: _isManga ? MediaKind.manga : MediaKind.anime,
+          );
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => page),
+    );
+  }
+
   Widget _buildCurrentPage() {
     switch (_tabIndex) {
       case 0:
@@ -220,14 +233,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               padding: const EdgeInsets.only(top: 22.0),
               child: IconButton(
                 icon: const Icon(Icons.search),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => SearchPage(
-                      initialKind:
-                          _isManga ? MediaKind.manga : MediaKind.anime,
-                    ),
-                  ),
-                ),
+                tooltip: "Search",
+                onPressed: _openSearch,
               ),
             )
           else
@@ -243,7 +250,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           setState(() {
             _tabIndex = index;
             _hasTabBar = index == 0 || index == 1;
-            _hasSearch = index == 0 || index == 1;
+            _hasSearch = index <= 2;
           });
         },
         destinations: const <NavigationDestination>[
