@@ -32,25 +32,48 @@ void main() {
   ) async {
     await tester.pumpWidget(_host(controller));
 
-    final SwitchListTile tile = tester.widget<SwitchListTile>(
-      find.byType(SwitchListTile),
+    final Finder edgeSwipe = find.widgetWithText(
+      SwitchListTile,
+      "Swipe from edge to open menu",
     );
+    final SwitchListTile tile = tester.widget<SwitchListTile>(edgeSwipe);
     expect(tile.value, isFalse);
     expect(controller.edgeSwipeOpensDrawer, isFalse);
   });
 
-  testWidgets("toggling the switch updates the controller", (
+  testWidgets("toggling the edge swipe switch updates the controller", (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(_host(controller));
 
-    await tester.tap(find.byType(SwitchListTile));
+    final Finder edgeSwipe = find.widgetWithText(
+      SwitchListTile,
+      "Swipe from edge to open menu",
+    );
+    await tester.tap(edgeSwipe);
     await tester.pump();
 
     expect(controller.edgeSwipeOpensDrawer, isTrue);
-    final SwitchListTile tile = tester.widget<SwitchListTile>(
-      find.byType(SwitchListTile),
-    );
+    final SwitchListTile tile = tester.widget<SwitchListTile>(edgeSwipe);
     expect(tile.value, isTrue);
+  });
+
+  testWidgets("NSFW switch is off by default and updates the controller", (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_host(controller));
+
+    final Finder nsfw = find.widgetWithText(
+      SwitchListTile,
+      "Show adult titles (NSFW)",
+    );
+    expect(tester.widget<SwitchListTile>(nsfw).value, isFalse);
+    expect(controller.showNsfw, isFalse);
+
+    await tester.tap(nsfw);
+    await tester.pump();
+
+    expect(controller.showNsfw, isTrue);
+    expect(tester.widget<SwitchListTile>(nsfw).value, isTrue);
   });
 }

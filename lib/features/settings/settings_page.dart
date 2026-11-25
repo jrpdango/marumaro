@@ -34,6 +34,23 @@ class SettingsPage extends StatelessWidget {
           ),
           const SizedBox(height: AppTokens.spaceLg),
           Text(
+            "Content",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: AppTokens.spaceMd),
+          Card(
+            child: SwitchListTile(
+              title: const Text("Show adult titles (NSFW)"),
+              subtitle: const Text(
+                "Include adult anime and manga in catalog search and your "
+                "lists.",
+              ),
+              value: controller.showNsfw,
+              onChanged: controller.setShowNsfw,
+            ),
+          ),
+          const SizedBox(height: AppTokens.spaceLg),
+          Text(
             "Navigation",
             style: Theme.of(context).textTheme.titleMedium,
           ),
